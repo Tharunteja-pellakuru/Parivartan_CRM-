@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Parivartan CRM - Client Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#18254D",
+              secondary: "#475569",
+              background: "#F6F9F4",
+              surface: "#FFFFFF",
+              textPrimary: "#1C1C1C",
+              textMuted: "#64748B",
+              success: "#22C55E",
+              warning: "#F59E0B",
+              error: "#EF4444",
+              info: "#3B82F6",
+            },
+            fontSize: {
+              "content-base": ["0.875rem", { lineHeight: "1.6" }],
+              "content-sm": ["0.75rem", { lineHeight: "1.5" }],
+              "content-lg": ["1rem", { lineHeight: "1.6" }],
+              "sidebar-nav": ["0.6875rem", { lineHeight: "1.3" }],
+              "sidebar-badge": ["0.5rem", { lineHeight: "1.2" }],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      /* ── Typography tokens ──────────────────────── */
+
+      :root {
+        /* Typography */
+        --font-size-sidebar-label: 0.6875rem; /* 11px */
+        --font-size-sidebar-badge: 0.5rem; /*  8px */
+        --font-size-sidebar-header: 0.875rem; /* 14px */
+        --font-size-base: 0.875rem; /* 14px */
+        --font-size-sm: 0.75rem; /* 12px */
+        --font-size-lg: 1rem; /* 16px */
+        --font-size-heading: 1.5rem; /* 24px */
+
+        --line-height-base: 1.5;
+        --line-height-tight: 1.3;
+
+        /* Spacing System */
+        --space-1: 0.25rem; /* 4px */
+        --space-2: 0.5rem; /* 8px */
+        --space-3: 0.75rem; /* 12px */
+        --space-4: 1rem; /* 16px */
+        --space-5: 1.25rem; /* 20px */
+        --space-6: 1.5rem; /* 24px */
+        --space-8: 2rem; /* 32px */
+        --space-12: 3rem; /* 48px */
+
+        /* Component Tokens */
+        --radius-sm: 0.5rem; /* 8px */
+        --radius-md: 0.75rem; /* 12px */
+        --radius-lg: 1rem; /* 16px */
+        --radius-xl: 1.5rem; /* 24px */
+        --icon-size-base: 1.125rem; /* 18px */
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f6f9f4;
+        color: #1c1c1c;
+        min-height: 100vh;
+      }
+
+      /* ── Main content typography ────────────────── */
+      main {
+        font-size: var(--font-size-base);
+        line-height: var(--line-height-base);
+      }
+
+      /* ── Sidebar typography ─────────────────────── */
+      aside {
+        font-size: var(--font-size-sidebar-label);
+        line-height: var(--line-height-tight);
+      }
+
+      /* ── Responsive adjustments ─────────────────── */
+      @media (max-width: 768px) {
+        :root {
+          --font-size-base: 0.8125rem; /* 13px */
+          --font-size-heading: 1.25rem; /* 20px */
+          /* Tighten spacing on mobile */
+          --space-4: 0.75rem;
+          --space-5: 1rem;
+          --space-6: 1.25rem;
+        }
+      }
+      @media (max-width: 480px) {
+        :root {
+          --font-size-base: 0.75rem; /* 12px */
+          --font-size-heading: 1.125rem; /* 18px */
+        }
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.2);
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@^19.2.4",
+          "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+          "react/": "https://esm.sh/react@^19.2.4/",
+          "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
+          "lucide-react": "https://esm.sh/lucide-react@^0.564.0",
+          "recharts": "https://esm.sh/recharts@^3.7.0"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/index.css" />
+  </head>
+  <body class="antialiased text-textPrimary">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
