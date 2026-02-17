@@ -25,31 +25,15 @@ import {
   ListChecks,
   X,
 } from "lucide-react";
-import { ANALYTICS_DATA, QUARTERLY_ANALYTICS_DATA } from "../constants";
-import { StatCardProps, FollowUp, Client, Enquiry } from "../types";
+import { ANALYTICS_DATA, QUARTERLY_ANALYTICS_DATA } from "../utils/constants";
+import anandImg from "../assets/Anand.png";
 
-// Defining DashboardProps to fix the missing type error
-interface DashboardProps {
-  followUps: FollowUp[];
-  clients: Client[];
-  enquiries: Enquiry[];
-  onSelectFollowUp: (client: Client, tab?: string) => void;
-  onViewAllFollowUps: () => void;
-  onNavigate: (tab: string) => void;
-}
-
-const StatCard: React.FC<StatCardProps> = ({
-  title,
-  value,
-  trend,
-  trendUp,
-  icon,
-}) => (
+const StatCard = ({ title, value, trend, trendUp, icon }) => (
   <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 transition-all hover:-translate-y-1 hover:shadow-md group flex flex-col justify-between overflow-hidden relative">
     <div>
       <div className="flex justify-between items-start mb-4 relative z-10">
         <div className="p-2.5 bg-primary/5 text-primary rounded-xl group-hover:bg-primary group-hover:text-white transition-all duration-300 shrink-0">
-          {React.cloneElement(icon as React.ReactElement<any>, { size: 20 })}
+          {React.cloneElement(icon, { size: 20 })}
         </div>
         {trend && (
           <span
@@ -71,7 +55,7 @@ const StatCard: React.FC<StatCardProps> = ({
   </div>
 );
 
-const Dashboard: React.FC<DashboardProps> = ({
+const Dashboard = ({
   followUps,
   clients,
   enquiries,
@@ -80,13 +64,11 @@ const Dashboard: React.FC<DashboardProps> = ({
   onNavigate,
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifTab, setNotifTab] = useState<"tasks" | "enquiries">("tasks");
-  const [chartInterval, setChartInterval] = useState<"monthly" | "quarterly">(
-    "monthly",
-  );
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [notifTab, setNotifTab] = useState("tasks");
+  const [chartInterval, setChartInterval] = useState("monthly");
+  const dropdownRef = useRef(null);
 
-  const isToday = (date: string) => {
+  const isToday = (date) => {
     const d = new Date(date);
     const today = new Date();
     return (
@@ -96,7 +78,7 @@ const Dashboard: React.FC<DashboardProps> = ({
     );
   };
 
-  const isMissed = (date: string) => {
+  const isMissed = (date) => {
     const d = new Date(date);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -125,11 +107,8 @@ const Dashboard: React.FC<DashboardProps> = ({
     chartInterval === "monthly" ? ANALYTICS_DATA : QUARTERLY_ANALYTICS_DATA;
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowNotifications(false);
       }
     };
@@ -205,7 +184,100 @@ const Dashboard: React.FC<DashboardProps> = ({
                       </div>
                     </div>
                     <div className="max-h-[300px] overflow-y-auto p-3 no-scrollbar space-y-2">
-                      {/* ... content truncated for brevity, standard notification list ... */}
+                      {/* Content omitted for brevity, logic remains same */}
+                      {notifTab === "tasks" &&
+                        (todayTasks.length + missedTasks.length === 0 ? (
+                          <div className="text-center py-8">
+                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                              No pending tasks
+                            </p>
+                          </div>
+                        ) : (
+                          <>
+                            {missedTasks.map((f) => (
+                              <div
+                                key={f.id}
+                                onClick={() =>
+                                  onSelectFollowUp(
+                                    clients.find((c) => c.id === f.clientId),
+                                    "activity",
+                                  )
+                                }
+                                className="p-3 bg-error/5 border border-error/10 rounded-xl cursor-pointer hover:bg-white hover:border-error/20 transition-all"
+                              >
+                                <div className="flex justify-between items-center mb-1">
+                                  <span className="text-[8px] font-black text-error uppercase tracking-widest">
+                                    Missed
+                                  </span>
+                                  <span className="text-[8px] text-slate-400 font-bold">
+                                    {new Date(f.dueDate).toLocaleDateString()}
+                                  </span>
+                                </div>
+                                <p className="text-xs font-bold text-primary truncate">
+                                  {f.title}
+                                </p>
+                              </div>
+                            ))}
+                            {todayTasks.map((f) => (
+                              <div
+                                key={f.id}
+                                onClick={() =>
+                                  onSelectFollowUp(
+                                    clients.find((c) => c.id === f.clientId),
+                                    "activity",
+                                  )
+                                }
+                                className="p-3 bg-white border border-slate-100 rounded-xl cursor-pointer hover:border-secondary transition-all"
+                              >
+                                <div className="flex justify-between items-center mb-1">
+                                  <span className="text-[8px] font-black text-secondary uppercase tracking-widest">
+                                    {f.priority} Priority
+                                  </span>
+                                  <span className="text-[8px] text-slate-400 font-bold">
+                                    {new Date(f.dueDate).toLocaleTimeString(
+                                      [],
+                                      { hour: "2-digit", minute: "2-digit" },
+                                    )}
+                                  </span>
+                                </div>
+                                <p className="text-xs font-bold text-primary truncate">
+                                  {f.title}
+                                </p>
+                              </div>
+                            ))}
+                          </>
+                        ))}
+                      {notifTab === "enquiries" &&
+                        (newEnquiries.length === 0 ? (
+                          <div className="text-center py-8">
+                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                              No new enquiries
+                            </p>
+                          </div>
+                        ) : (
+                          newEnquiries.map((e) => (
+                            <div
+                              key={e.id}
+                              onClick={() => onNavigate("enquiries")}
+                              className="p-3 bg-white border border-slate-100 rounded-xl cursor-pointer hover:border-secondary transition-all"
+                            >
+                              <div className="flex justify-between items-center mb-1">
+                                <span className="text-[8px] font-black text-secondary uppercase tracking-widest">
+                                  New Enquiry
+                                </span>
+                                <span className="text-[8px] text-slate-400 font-bold">
+                                  {new Date(e.date).toLocaleDateString()}
+                                </span>
+                              </div>
+                              <p className="text-xs font-bold text-primary truncate">
+                                {e.name}
+                              </p>
+                              <p className="text-[10px] text-slate-400 truncate mt-1">
+                                {e.message}
+                              </p>
+                            </div>
+                          ))
+                        ))}
                     </div>
                   </div>
                 </>
@@ -222,7 +294,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 </p>
               </div>
               <img
-                src="./Anand.png"
+                src={anandImg}
                 alt="Profile"
                 className="w-8 h-8 md:w-9 md:h-9 rounded-lg object-cover border border-slate-100 shadow-sm"
               />

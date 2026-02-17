@@ -21,23 +21,13 @@ import {
   Sun,
   Snowflake,
 } from "lucide-react";
-import { Client, Project, InteractionType, Activity, LeadType } from "../types";
-import { MOCK_PROJECTS, MOCK_ACTIVITIES } from "../constants";
+import { MOCK_PROJECTS, MOCK_ACTIVITIES } from "../utils/constants";
 import {
   generateClientSummary,
   suggestNextAction,
 } from "../services/geminiService";
 
-interface ClientDetailProps {
-  client: Client;
-  onBack: () => void;
-  onUpdateClient?: (client: Client) => void;
-  onAddActivity?: (activity: Omit<Activity, "id">) => void;
-  activities: Activity[];
-  initialTab?: "overview" | "projects" | "activity" | "conversations";
-}
-
-const ClientDetail: React.FC<ClientDetailProps> = ({
+const ClientDetail = ({
   client,
   onBack,
   onUpdateClient,
@@ -45,10 +35,8 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
   activities,
   initialTab = "overview",
 }) => {
-  const [activeTab, setActiveTab] = useState<
-    "overview" | "projects" | "activity" | "conversations"
-  >(initialTab);
-  const [nextAction, setNextAction] = useState<string>("");
+  const [activeTab, setActiveTab] = useState(initialTab);
+  const [nextAction, setNextAction] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
   const [editFormData, setEditFormData] = useState({
     name: client.name,
@@ -65,7 +53,7 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
 
   const [isLogging, setIsLogging] = useState(false);
   const [logData, setLogData] = useState({
-    type: "call" as InteractionType,
+    type: "call",
     description: "",
     date: new Date().toISOString().split("T")[0],
     time: new Date().toTimeString().split(" ")[0].substring(0, 5),
@@ -74,7 +62,7 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
   const clientProjects = MOCK_PROJECTS.filter((p) => p.clientId === client.id);
   const clientActivities = activities.filter((a) => a.clientId === client.id);
 
-  const handleLogInteraction = (e: React.FormEvent) => {
+  const handleLogInteraction = (e) => {
     e.preventDefault();
     if (onAddActivity && logData.description) {
       const combinedDateTime = new Date(`${logData.date}T${logData.time}`);
@@ -115,7 +103,7 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
                   {client.name}
                 </h2>
                 <p className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mb-1">
-                  Client Details
+                  {client.status === "Lead" ? "Lead Details" : "Client Details"}
                 </p>
                 <div className="flex items-center gap-2.5 text-[11px] text-textMuted font-bold uppercase tracking-widest truncate">
                   {client.status !== "Lead" && (
@@ -182,7 +170,7 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
                         name: editFormData.name,
                         email: editFormData.email,
                         phone: editFormData.phone,
-                        leadType: editFormData.leadType as LeadType,
+                        leadType: editFormData.leadType,
                         notes: editFormData.notes,
                         website: editFormData.website,
                       });
@@ -270,7 +258,7 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
                       Lead Status
                     </label>
                     <div className="grid grid-cols-3 gap-3">
-                      {(["Hot", "Warm", "Cold"] as LeadType[]).map((type) => (
+                      {["Hot", "Warm", "Cold"].map((type) => (
                         <button
                           key={type}
                           type="button"
@@ -401,7 +389,7 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
                           onClick={() =>
                             setLogData({
                               ...logData,
-                              type: type as InteractionType,
+                              type: type,
                             })
                           }
                           className={`py-2 px-3 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all ${
@@ -497,7 +485,7 @@ const ClientDetail: React.FC<ClientDetailProps> = ({
                 ].map((tab) => (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
+                    onClick={() => setActiveTab(tab.id)}
                     className={`flex-1 px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-primary"}`}
                   >
                     {tab.label}

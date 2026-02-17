@@ -8,7 +8,6 @@ import {
   PauseCircle,
   RefreshCcw,
   Trash2,
-  AlertCircle,
   Flame,
   Sun,
   Snowflake,
@@ -16,27 +15,11 @@ import {
   Send,
   Inbox,
   X,
-  ChevronRight,
   Sparkles,
 } from "lucide-react";
-import { Enquiry, LeadType } from "../types";
 import { analyzeEnquiryRelevance } from "../services/geminiService";
 
-interface EnquiryListProps {
-  enquiries: Enquiry[];
-  onPromote: (enquiry: Enquiry, type: LeadType) => void;
-  onDismiss: (id: string) => void;
-  onHold: (id: string) => void;
-  onRestore: (id: string) => void;
-  onDelete: (id: string) => void;
-  onDeleteAll: () => void;
-  onUpdate: (enquiry: Enquiry) => void;
-  onAdd: (enquiry: Omit<Enquiry, "id" | "date" | "status">) => void;
-}
-
-type TabType = "new" | "hold" | "dismissed";
-
-const EnquiryList: React.FC<EnquiryListProps> = ({
+const EnquiryList = ({
   enquiries,
   onPromote,
   onDismiss,
@@ -47,18 +30,18 @@ const EnquiryList: React.FC<EnquiryListProps> = ({
   onUpdate,
   onAdd,
 }) => {
-  const [activeTab, setActiveTab] = useState<TabType>("new");
+  const [activeTab, setActiveTab] = useState("new");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiAnalysisEnabled, setAiAnalysisEnabled] = useState(false);
   const [hideIrrelevant, setHideIrrelevant] = useState(false);
   const [leadModalOpen, setLeadModalOpen] = useState(false);
-  const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
+  const [selectedEnquiry, setSelectedEnquiry] = useState(null);
   const [promoteFormData, setPromoteFormData] = useState({
     name: "",
     email: "",
     phone: "",
     website: "",
-    leadType: "Warm" as LeadType,
+    leadType: "Warm",
     notes: "",
   });
   const [showSimulateForm, setShowSimulateForm] = useState(false);
@@ -105,7 +88,7 @@ const EnquiryList: React.FC<EnquiryListProps> = ({
     return true;
   });
 
-  const openLeadModal = (enquiry: Enquiry) => {
+  const openLeadModal = (enquiry) => {
     setSelectedEnquiry(enquiry);
     setPromoteFormData({
       name: enquiry.name,
@@ -121,7 +104,7 @@ const EnquiryList: React.FC<EnquiryListProps> = ({
   const confirmLeadConversion = () => {
     if (selectedEnquiry) {
       // Create a temporary updated enquiry object to pass the edited data
-      const updatedEnquiry: Enquiry = {
+      const updatedEnquiry = {
         ...selectedEnquiry,
         name: promoteFormData.name,
         email: promoteFormData.email,
@@ -135,7 +118,7 @@ const EnquiryList: React.FC<EnquiryListProps> = ({
     }
   };
 
-  const openHoldModal = (enquiry: Enquiry) => {
+  const openHoldModal = (enquiry) => {
     setSelectedEnquiry(enquiry);
     setHoldModalOpen(true);
     setHoldReason("");
@@ -151,7 +134,7 @@ const EnquiryList: React.FC<EnquiryListProps> = ({
     }
   };
 
-  const handleSimulateSubmit = (e: React.FormEvent) => {
+  const handleSimulateSubmit = (e) => {
     e.preventDefault();
     onAdd({ ...formData });
     setShowSimulateForm(false);
@@ -188,7 +171,7 @@ const EnquiryList: React.FC<EnquiryListProps> = ({
 
         <div className="bg-white p-2 rounded-[1.5rem] border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
           <div className="flex bg-slate-100 p-1 rounded-xl overflow-x-auto no-scrollbar shrink-0">
-            {(["new", "hold", "dismissed"] as TabType[]).map((tab) => (
+            {["new", "hold", "dismissed"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -417,12 +400,12 @@ const EnquiryList: React.FC<EnquiryListProps> = ({
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-fade-in relative">
             <button
               onClick={() => setShowSimulateForm(false)}
-              className="absolute top-4 right-4 p-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all z-20"
+              className="absolute top-6 right-6 p-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all z-20"
               title="Close"
             >
               <X size={20} strokeWidth={3} />
             </button>
-            <div className="bg-primary p-7 text-white">
+            <div className="bg-primary p-6 text-white">
               <h3 className="text-2xl font-black tracking-tighter mb-1">
                 New Enquiry
               </h3>
@@ -529,7 +512,7 @@ const EnquiryList: React.FC<EnquiryListProps> = ({
       {leadModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-3xl rounded-[2rem] shadow-2xl border border-slate-200 overflow-hidden animate-zoom-in">
-            <div className="bg-[#18254D] p-8 flex justify-between items-center text-white">
+            <div className="bg-[#18254D] p-6 flex justify-between items-center text-white">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
                   <Plus size={24} className="text-white" />
@@ -619,7 +602,7 @@ const EnquiryList: React.FC<EnquiryListProps> = ({
                   Lead Status
                 </label>
                 <div className="grid grid-cols-3 gap-3">
-                  {(["Hot", "Warm", "Cold"] as LeadType[]).map((type) => (
+                  {["Hot", "Warm", "Cold"].map((type) => (
                     <button
                       key={type}
                       type="button"
@@ -687,7 +670,7 @@ const EnquiryList: React.FC<EnquiryListProps> = ({
       {holdModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-fade-in relative">
-            <div className="bg-primary p-7 text-white">
+            <div className="bg-primary p-6 text-white">
               <div className="flex justify-between items-center mb-1">
                 <h3 className="text-2xl font-black tracking-tighter">
                   On Hold

@@ -5,23 +5,13 @@ import {
   Users,
   Shield,
   Save,
-  Plus,
   Camera,
   Check,
-  ChevronRight,
   Zap,
 } from "lucide-react";
+import anandImg from "../assets/Anand.png";
 
-interface Admin {
-  id: string;
-  name: string;
-  email: string;
-  role: "Root" | "Admin" | "Manager" | "Viewer";
-  status: "Active" | "Invited";
-  lastActive: string;
-}
-
-const MOCK_ADMINS: Admin[] = [
+const MOCK_ADMINS = [
   {
     id: "1",
     name: "Anand",
@@ -40,21 +30,19 @@ const MOCK_ADMINS: Admin[] = [
   },
 ];
 
-const Settings: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<
-    "profile" | "security" | "team" | "system"
-  >("profile");
+const Settings = () => {
+  const [activeTab, setActiveTab] = useState("profile");
 
   const [profile, setProfile] = useState({
     name: "Anand",
     email: "root@parivartan.crm",
     phone: "+91 98765 43210",
     bio: "Root Administrator for Parivartan CRM. Managing system architecture and team access.",
-    avatar: "https://picsum.photos/100/100?random=10",
+    avatar: anandImg,
   });
   const [isProfileSaved, setIsProfileSaved] = useState(false);
 
-  const [admins, setAdmins] = useState<Admin[]>(MOCK_ADMINS);
+  const [admins, setAdmins] = useState(MOCK_ADMINS);
 
   const handleProfileSave = () => {
     setIsProfileSaved(true);
@@ -89,14 +77,14 @@ const Settings: React.FC = () => {
               ].map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id)}
                   className={`flex-1 lg:flex-none flex items-center justify-center lg:justify-start gap-3 px-4 py-3 rounded-xl text-[10px] md:text-[11px] font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap ${
                     activeTab === tab.id
                       ? "bg-primary text-white shadow-xl translate-x-1"
                       : "text-slate-500 hover:bg-slate-200/50 hover:text-primary"
                   }`}
                 >
-                  {React.cloneElement(tab.icon as React.ReactElement<any>, {
+                  {React.cloneElement(tab.icon, {
                     size: 16,
                     strokeWidth: 3,
                   })}

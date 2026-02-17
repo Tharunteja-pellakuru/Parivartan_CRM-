@@ -1,6 +1,4 @@
-import { Client, Project, Activity, Enquiry, FollowUp } from "./types";
-
-export const MOCK_CLIENTS: Client[] = [
+export const MOCK_CLIENTS = [
   {
     id: "c1",
     name: "Anand Kumar",
@@ -62,7 +60,7 @@ export const MOCK_CLIENTS: Client[] = [
   },
 ];
 
-export const MOCK_FOLLOW_UPS: FollowUp[] = [
+export const MOCK_FOLLOW_UPS = [
   {
     id: "f1",
     clientId: "c2",
@@ -89,7 +87,7 @@ export const MOCK_FOLLOW_UPS: FollowUp[] = [
   },
 ];
 
-export const MOCK_PROJECTS: Project[] = [
+export const MOCK_PROJECTS = [
   {
     id: "p1",
     clientId: "c1",
@@ -101,7 +99,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
 ];
 
-export const MOCK_ACTIVITIES: Activity[] = [
+export const MOCK_ACTIVITIES = [
   {
     id: "a1",
     clientId: "c1",
@@ -118,7 +116,7 @@ export const MOCK_ACTIVITIES: Activity[] = [
   },
 ];
 
-export const MOCK_ENQUIRIES: Enquiry[] = [
+export const MOCK_ENQUIRIES = [
   {
     id: "e1",
     name: "Tony Stark",

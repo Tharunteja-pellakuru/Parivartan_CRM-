@@ -21,39 +21,8 @@ import {
   Upload,
   Paperclip,
 } from "lucide-react";
-import { Client, ClientStatus, LeadType } from "../types";
 
-interface ClientListProps {
-  clients: Client[];
-  allClients?: Client[];
-  onSelectClient: (client: Client) => void;
-  onAddClient: (
-    clientData: Omit<Client, "id" | "joinedDate" | "lastContact" | "avatar"> & {
-      projectName?: string;
-      onboardingDate?: string;
-      clientType?: "New" | "Existing";
-    },
-  ) => void;
-  onDeleteClient?: (id: string) => void;
-  onOnboardClient?: (
-    id: string,
-    onboardingData: {
-      name: string;
-      email: string;
-      phone: string;
-      clientType: "New" | "Existing";
-      status: ClientStatus;
-      projectName: string;
-      projectDescription: string;
-      onboardingDate: string;
-      deadline: string;
-      scopeDocument: string;
-    },
-  ) => void;
-  title?: string;
-}
-
-const ClientList: React.FC<ClientListProps> = ({
+const ClientList = ({
   clients,
   onSelectClient,
   onAddClient,
@@ -63,12 +32,12 @@ const ClientList: React.FC<ClientListProps> = ({
   title = "Clients",
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState<string>("All");
-  const [leadTypeFilter, setLeadTypeFilter] = useState<string>("All");
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [leadTypeFilter, setLeadTypeFilter] = useState("All");
   const [isTierDropdownOpen, setIsTierDropdownOpen] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showOnboardModal, setShowOnboardModal] = useState(false);
-  const [onboardingLeadId, setOnboardingLeadId] = useState<string | null>(null);
+  const [onboardingLeadId, setOnboardingLeadId] = useState(null);
   const [isNameDropdownOpen, setIsNameDropdownOpen] = useState(false);
   const [nameSearch, setNameSearch] = useState("");
 
@@ -76,13 +45,14 @@ const ClientList: React.FC<ClientListProps> = ({
     name: "",
     email: "",
     phone: "",
-    clientType: "New" as "New" | "Existing",
-    status: "Active" as ClientStatus,
+    clientType: "New",
+    status: "Active",
     projectName: "",
     projectDescription: "",
     onboardingDate: new Date().toISOString().split("T")[0],
     deadline: "",
     scopeDocument: "",
+    projectStatus: "Planning",
   });
 
   const [formData, setFormData] = useState({
@@ -90,17 +60,17 @@ const ClientList: React.FC<ClientListProps> = ({
     company: "",
     email: "",
     phone: "",
-    status: (title === "Leads" ? "Lead" : "Active") as ClientStatus,
-    leadType: (title === "Leads" ? "Warm" : undefined) as LeadType | undefined,
+    status: title === "Leads" ? "Lead" : "Active",
+    leadType: title === "Leads" ? "Warm" : undefined,
     industry: "",
     notes: "",
     projectName: "",
     onboardingDate: new Date().toISOString().split("T")[0],
-    clientType: "New" as "New" | "Existing",
+    clientType: "New",
     website: "",
   });
 
-  const handleOnboardSubmit = (e: React.FormEvent) => {
+  const handleOnboardSubmit = (e) => {
     e.preventDefault();
     if (onOnboardClient && onboardingLeadId) {
       onOnboardClient(onboardingLeadId, onboardingData);
@@ -117,6 +87,7 @@ const ClientList: React.FC<ClientListProps> = ({
         onboardingDate: new Date().toISOString().split("T")[0],
         deadline: "",
         scopeDocument: "",
+        projectStatus: "Planning",
       });
     }
   };
@@ -135,7 +106,7 @@ const ClientList: React.FC<ClientListProps> = ({
     return matchesSearch && matchesStatus && matchesLeadType;
   });
 
-  const getStatusBadge = (client: Client) => {
+  const getStatusBadge = (client) => {
     if (client.status === "Lead" && client.leadType) {
       switch (client.leadType) {
         case "Hot":
@@ -205,7 +176,7 @@ const ClientList: React.FC<ClientListProps> = ({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (onAddClient) {
       const submissionData = {
@@ -220,15 +191,14 @@ const ClientList: React.FC<ClientListProps> = ({
         company: "",
         email: "",
         phone: "",
-        status: (title === "Leads" ? "Lead" : "Active") as ClientStatus,
-        leadType: (title === "Leads" ? "Warm" : undefined) as
-          | LeadType
-          | undefined,
+        status: title === "Leads" ? "Lead" : "Active",
+        leadType: title === "Leads" ? "Warm" : undefined,
         industry: "",
         notes: "",
         projectName: "",
         onboardingDate: new Date().toISOString().split("T")[0],
-        clientType: "New" as "New" | "Existing",
+        clientType: "New",
+        website: "",
       });
     }
   };
@@ -425,6 +395,15 @@ const ClientList: React.FC<ClientListProps> = ({
                                   email: client.email,
                                   phone: client.phone,
                                   clientType: "New",
+                                  status: "Active",
+                                  projectName: "",
+                                  projectDescription: "",
+                                  onboardingDate: new Date()
+                                    .toISOString()
+                                    .split("T")[0],
+                                  deadline: "",
+                                  scopeDocument: "",
+                                  projectStatus: "Planning",
                                 });
                                 setShowOnboardModal(true);
                               }}
@@ -478,7 +457,7 @@ const ClientList: React.FC<ClientListProps> = ({
             <div className="bg-primary p-6 text-white relative">
               <button
                 onClick={() => setShowAddModal(false)}
-                className="absolute top-10 right-10 p-2 hover:bg-white/10 rounded-2xl transition-colors"
+                className="absolute top-6 right-6 p-2 hover:bg-white/10 rounded-2xl transition-colors"
               >
                 <X size={28} strokeWidth={3} />
               </button>
@@ -494,6 +473,9 @@ const ClientList: React.FC<ClientListProps> = ({
                   <h3 className="text-xl font-black tracking-tighter leading-none">
                     New {title === "Leads" ? "Lead" : "Client"}
                   </h3>
+                  <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mt-1">
+                    {title === "Leads" ? "Lead Details" : "Client Details"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -710,7 +692,7 @@ const ClientList: React.FC<ClientListProps> = ({
                       Lead Status
                     </label>
                     <div className="grid grid-cols-3 gap-3">
-                      {(["Hot", "Warm", "Cold"] as LeadType[]).map((type) => (
+                      {["Hot", "Warm", "Cold"].map((type) => (
                         <button
                           key={type}
                           type="button"
@@ -773,7 +755,7 @@ const ClientList: React.FC<ClientListProps> = ({
                       Client Status
                     </label>
                     <div className="grid grid-cols-2 gap-4">
-                      {(["Active", "Inactive"] as const).map((status) => (
+                      {["Active", "Inactive"].map((status) => (
                         <label
                           key={status}
                           className={`flex items-center gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:border-primary transition-all group has-[:checked]:bg-primary/5 has-[:checked]:border-primary`}
@@ -787,7 +769,7 @@ const ClientList: React.FC<ClientListProps> = ({
                               onChange={() =>
                                 setFormData({
                                   ...formData,
-                                  status: status as ClientStatus,
+                                  status: status,
                                 })
                               }
                               className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-full checked:border-primary transition-all"
@@ -806,55 +788,66 @@ const ClientList: React.FC<ClientListProps> = ({
                 )}
               </div>
 
-              <div className="pt-4">
+              <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-4 bg-[#18254D] text-white rounded-xl hover:bg-slate-800 text-[12px] font-black uppercase tracking-[0.4em] transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2"
+                  className="w-full h-14 bg-[#18254D] text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] shadow-xl active:scale-[0.97] transition-all hover:bg-[#1e2e5e] hover:shadow-2xl flex items-center justify-center gap-3 group/btn"
                 >
-                  Add {title === "Leads" ? "Lead" : "Client"}
+                  <UserPlus
+                    size={20}
+                    className="group-hover/btn:translate-x-1 transition-transform"
+                  />
+                  <span>Add {title === "Leads" ? "Lead" : "Client"}</span>
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+      {/* Onboard Modal */}
       {showOnboardModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-fade-in my-auto flex flex-col">
-            <div className="bg-[#18254D] p-7 text-white relative">
+            <div className="bg-primary p-6 text-white relative">
               <button
                 onClick={() => setShowOnboardModal(false)}
-                className="absolute top-10 right-10 p-2 hover:bg-white/10 rounded-2xl transition-colors"
+                className="absolute top-6 right-6 p-2 hover:bg-white/10 rounded-2xl transition-colors"
               >
                 <X size={28} strokeWidth={3} />
               </button>
               <div className="flex items-center gap-4">
-                <div className="w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center shadow-lg border border-white/20">
-                  <UserPlus size={28} className="text-white" strokeWidth={3} />
+                <div className="w-10 h-10 bg-secondary/10 rounded-xl flex items-center justify-center shadow-lg border border-secondary/20">
+                  <UserCheck
+                    size={28}
+                    className="text-secondary"
+                    strokeWidth={3}
+                  />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black tracking-tight leading-none">
-                    New Client
+                  <h3 className="text-xl font-black tracking-tighter leading-none">
+                    Convert to Client
                   </h3>
+                  <p className="text-secondary text-[11px] font-bold uppercase tracking-widest mt-1">
+                    Onboard Lead to Active Status
+                  </p>
                 </div>
               </div>
             </div>
 
             <form
               onSubmit={handleOnboardSubmit}
-              className="p-6 md:p-8 space-y-6"
+              className="p-5 md:p-6 space-y-4"
             >
-              {/* Client Type selection */}
               <div className="space-y-3 pb-2">
                 <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
                   Client Type
                 </label>
                 <div className="flex gap-4">
-                  <label className="flex-1 flex items-center gap-4 p-5 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:border-[#18254D] transition-all group has-[:checked]:bg-[#18254D]/5 has-[:checked]:border-[#18254D]">
+                  <label className="flex-1 flex items-center gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:border-primary transition-all group has-[:checked]:bg-primary/5 has-[:checked]:border-primary">
                     <div className="relative flex items-center justify-center">
                       <input
                         type="radio"
-                        name="clientTypeOnboard"
+                        name="onboardClientType"
                         value="New"
                         checked={onboardingData.clientType === "New"}
                         onChange={() =>
@@ -863,25 +856,25 @@ const ClientList: React.FC<ClientListProps> = ({
                             clientType: "New",
                           })
                         }
-                        className="peer appearance-none w-6 h-6 border-2 border-slate-300 rounded-full checked:border-[#18254D] transition-all"
+                        className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-full checked:border-primary transition-all"
                       />
-                      <div className="absolute w-3 h-3 bg-[#18254D] rounded-full scale-0 peer-checked:scale-100 transition-transform" />
+                      <div className="absolute w-2.5 h-2.5 bg-primary rounded-full scale-0 peer-checked:scale-100 transition-transform" />
                     </div>
                     <div>
                       <p className="text-sm font-black text-primary leading-none">
                         New Client
                       </p>
-                      <p className="text-[10px] text-textMuted font-bold mt-1">
+                      <p className="text-[9px] text-textMuted font-bold mt-1">
                         First-time engagement
                       </p>
                     </div>
                   </label>
 
-                  <label className="flex-1 flex items-center gap-4 p-5 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:border-[#18254D] transition-all group has-[:checked]:bg-[#18254D]/5 has-[:checked]:border-[#18254D]">
+                  <label className="flex-1 flex items-center gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:border-primary transition-all group has-[:checked]:bg-primary/5 has-[:checked]:border-primary">
                     <div className="relative flex items-center justify-center">
                       <input
                         type="radio"
-                        name="clientTypeOnboard"
+                        name="onboardClientType"
                         value="Existing"
                         checked={onboardingData.clientType === "Existing"}
                         onChange={() =>
@@ -890,15 +883,15 @@ const ClientList: React.FC<ClientListProps> = ({
                             clientType: "Existing",
                           })
                         }
-                        className="peer appearance-none w-6 h-6 border-2 border-slate-300 rounded-full checked:border-[#18254D] transition-all"
+                        className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-full checked:border-primary transition-all"
                       />
-                      <div className="absolute w-3 h-3 bg-[#18254D] rounded-full scale-0 peer-checked:scale-100 transition-transform" />
+                      <div className="absolute w-2.5 h-2.5 bg-primary rounded-full scale-0 peer-checked:scale-100 transition-transform" />
                     </div>
                     <div>
                       <p className="text-sm font-black text-primary leading-none">
                         Existing Client
                       </p>
-                      <p className="text-[10px] text-textMuted font-bold mt-1">
+                      <p className="text-[9px] text-textMuted font-bold mt-1">
                         Repeat organization
                       </p>
                     </div>
@@ -906,331 +899,299 @@ const ClientList: React.FC<ClientListProps> = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                    Client Name
-                  </label>
-                  <div className="relative">
-                    <input
-                      required
-                      type="text"
-                      placeholder={
-                        onboardingData.clientType === "Existing"
-                          ? "Search existing clients..."
-                          : "e.g. Anand Kumar"
-                      }
-                      className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
-                      value={onboardingData.name}
-                      onChange={(e) => {
-                        setOnboardingData({
-                          ...onboardingData,
-                          name: e.target.value,
-                        });
-                        if (onboardingData.clientType === "Existing") {
-                          setIsNameDropdownOpen(true);
-                          setNameSearch(e.target.value);
-                        }
-                      }}
-                      onFocus={() => {
-                        if (onboardingData.clientType === "Existing") {
-                          setIsNameDropdownOpen(true);
-                        }
-                      }}
-                    />
-
-                    {onboardingData.clientType === "Existing" &&
-                      isNameDropdownOpen && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-xl shadow-2xl py-2 z-[110] max-h-60 overflow-y-auto animate-fade-in-up">
-                          {allClients
-                            .filter((c) =>
-                              c.name
-                                .toLowerCase()
-                                .includes(nameSearch.toLowerCase()),
-                            )
-                            .map((client) => (
-                              <button
-                                key={client.id}
-                                type="button"
-                                onClick={() => {
-                                  setOnboardingData({
-                                    ...onboardingData,
-                                    name: client.name,
-                                    email: client.email,
-                                    phone: client.phone,
-                                  });
-                                  setIsNameDropdownOpen(false);
-                                  setNameSearch("");
-                                }}
-                                className="w-full text-left px-5 py-4 hover:bg-slate-50 transition-colors flex items-center justify-between group"
-                              >
-                                <div>
-                                  <p className="text-sm font-black text-primary group-hover:text-secondary">
-                                    {client.name}
-                                  </p>
-                                  <p className="text-[11px] text-textMuted font-bold">
-                                    {client.company}
-                                  </p>
-                                </div>
-                                <ChevronRight
-                                  size={16}
-                                  className="text-slate-300 group-hover:text-secondary transition-colors"
-                                />
-                              </button>
-                            ))}
-                        </div>
-                      )}
-
-                    {onboardingData.clientType === "Existing" &&
-                      isNameDropdownOpen && (
-                        <div
-                          className="fixed inset-0 z-[105]"
-                          onClick={() => setIsNameDropdownOpen(false)}
-                        />
-                      )}
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                    Email ID
-                  </label>
-                  <input
-                    required
-                    type="email"
-                    placeholder="e.g. anand.kumar@fintech.in"
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
-                    value={onboardingData.email}
-                    onChange={(e) =>
-                      setOnboardingData({
-                        ...onboardingData,
-                        email: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-
-                <div className="md:col-span-2 space-y-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                    Phone Number
-                  </label>
-                  <input
-                    required
-                    type="tel"
-                    placeholder="+91 000..."
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
-                    value={onboardingData.phone}
-                    onChange={(e) =>
-                      setOnboardingData({
-                        ...onboardingData,
-                        phone: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-
-                <div className="space-y-3 pb-2 md:col-span-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                    Client Status
-                  </label>
-                  <div className="grid grid-cols-2 gap-4">
-                    {(["Active", "Inactive"] as const).map((status) => (
-                      <label
-                        key={status}
-                        className={`flex items-center gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:border-[#18254D] transition-all group has-[:checked]:bg-[#18254D]/5 has-[:checked]:border-[#18254D]`}
-                      >
-                        <div className="relative flex items-center justify-center">
-                          <input
-                            type="radio"
-                            name="clientStatusOnboard"
-                            value={status}
-                            checked={onboardingData.status === status}
-                            onChange={() =>
-                              setOnboardingData({
-                                ...onboardingData,
-                                status: status as ClientStatus,
-                              })
-                            }
-                            className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-full checked:border-[#18254D] transition-all"
-                          />
-                          <div className="absolute w-2.5 h-2.5 bg-[#18254D] rounded-full scale-0 peer-checked:scale-100 transition-transform" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-black text-primary leading-none">
-                            {status}
-                          </p>
-                        </div>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Project Details Section Added */}
-                <div className="md:col-span-2 pt-4 border-t border-slate-100 space-y-6">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 bg-primary/5 rounded-lg text-primary">
-                      <Briefcase size={18} strokeWidth={3} />
-                    </div>
-                    <h4 className="text-sm font-black text-primary uppercase tracking-wider">
-                      Project Details
-                    </h4>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                        Project Name
-                      </label>
+              <div className="space-y-3 pb-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                      Client Name
+                    </label>
+                    <div className="relative">
                       <input
                         required
                         type="text"
-                        placeholder="e.g. Website Redesign"
-                        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
-                        value={onboardingData.projectName}
-                        onChange={(e) =>
+                        placeholder={
+                          onboardingData.clientType === "Existing"
+                            ? "Search existing clients..."
+                            : "e.g. Anand Kumar"
+                        }
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
+                        value={onboardingData.name}
+                        onChange={(e) => {
                           setOnboardingData({
                             ...onboardingData,
-                            projectName: e.target.value,
-                          })
-                        }
+                            name: e.target.value,
+                          });
+                          if (onboardingData.clientType === "Existing") {
+                            setIsNameDropdownOpen(true);
+                            setNameSearch(e.target.value);
+                          }
+                        }}
+                        onFocus={() => {
+                          if (onboardingData.clientType === "Existing") {
+                            setIsNameDropdownOpen(true);
+                          }
+                        }}
                       />
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                        Scope Document
-                      </label>
-                      <div className="relative group">
-                        <input
-                          type="file"
-                          id="scope-upload"
-                          className="hidden"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              setOnboardingData({
-                                ...onboardingData,
-                                scopeDocument: file.name,
-                              });
-                            }
-                          }}
-                        />
-                        <label
-                          htmlFor="scope-upload"
-                          className={`w-full flex items-center justify-between px-5 py-4 bg-slate-50 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
-                            onboardingData.scopeDocument
-                              ? "border-emerald-200 bg-emerald-50/30"
-                              : "border-slate-200 hover:border-secondary hover:bg-white"
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`p-2 rounded-lg ${
-                                onboardingData.scopeDocument
-                                  ? "bg-emerald-500 text-white"
-                                  : "bg-slate-200 text-slate-400 group-hover:bg-secondary group-hover:text-white"
-                              } transition-all`}
-                            >
-                              {onboardingData.scopeDocument ? (
-                                <Paperclip size={16} strokeWidth={3} />
-                              ) : (
-                                <Upload size={16} strokeWidth={3} />
-                              )}
-                            </div>
-                            <span
-                              className={`text-sm font-bold ${
-                                onboardingData.scopeDocument
-                                  ? "text-emerald-700"
-                                  : "text-slate-400 group-hover:text-primary"
-                              }`}
-                            >
-                              {onboardingData.scopeDocument ||
-                                "Upload Document"}
-                            </span>
+                      {onboardingData.clientType === "Existing" &&
+                        isNameDropdownOpen && (
+                          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-xl shadow-2xl py-2 z-[110] max-h-60 overflow-y-auto animate-fade-in-up">
+                            {allClients
+                              .filter((c) =>
+                                c.name
+                                  .toLowerCase()
+                                  .includes(nameSearch.toLowerCase()),
+                              )
+                              .map((client) => (
+                                <button
+                                  key={client.id}
+                                  type="button"
+                                  onClick={() => {
+                                    setOnboardingData({
+                                      ...onboardingData,
+                                      name: client.name,
+                                      email: client.email,
+                                      phone: client.phone,
+                                    });
+                                    setIsNameDropdownOpen(false);
+                                    setNameSearch("");
+                                  }}
+                                  className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors flex items-center justify-between group"
+                                >
+                                  <div>
+                                    <p className="text-sm font-black text-primary group-hover:text-secondary">
+                                      {client.name}
+                                    </p>
+                                    <p className="text-[10px] text-textMuted font-bold">
+                                      {client.company}
+                                    </p>
+                                  </div>
+                                  <ChevronRight
+                                    size={14}
+                                    className="text-slate-300 group-hover:text-secondary transition-colors"
+                                  />
+                                </button>
+                              ))}
                           </div>
-                          {onboardingData.scopeDocument && (
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
+                        )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                      Email ID
+                    </label>
+                    <input
+                      required
+                      type="email"
+                      placeholder="e.g. anand.kumar@fintech.in"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
+                      value={onboardingData.email}
+                      onChange={(e) =>
+                        setOnboardingData({
+                          ...onboardingData,
+                          email: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                      Phone Number
+                    </label>
+                    <input
+                      required
+                      type="tel"
+                      placeholder="+91 000..."
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
+                      value={onboardingData.phone}
+                      onChange={(e) =>
+                        setOnboardingData({
+                          ...onboardingData,
+                          phone: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                      Client Status
+                    </label>
+                    <div className="grid grid-cols-2 gap-4">
+                      {["Active", "Inactive"].map((status) => (
+                        <label
+                          key={status}
+                          className={`flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:border-primary transition-all group has-[:checked]:bg-primary/5 has-[:checked]:border-primary`}
+                        >
+                          <div className="relative flex items-center justify-center">
+                            <input
+                              type="radio"
+                              name="onboardClientStatus"
+                              value={status}
+                              checked={onboardingData.status === status}
+                              onChange={() =>
                                 setOnboardingData({
                                   ...onboardingData,
-                                  scopeDocument: "",
-                                });
-                              }}
-                              className="p-1.5 hover:bg-emerald-100 rounded-lg text-emerald-500 transition-colors"
-                            >
-                              <X size={16} strokeWidth={3} />
-                            </button>
-                          )}
+                                  status: status,
+                                })
+                              }
+                              className="peer appearance-none w-4 h-4 border-2 border-slate-300 rounded-full checked:border-primary transition-all"
+                            />
+                            <div className="absolute w-2 h-2 bg-primary rounded-full scale-0 peer-checked:scale-100 transition-transform" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-black text-primary leading-none">
+                              {status}
+                            </p>
+                          </div>
                         </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                      Project Name
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      placeholder="e.g. Website Redesign"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
+                      value={onboardingData.projectName}
+                      onChange={(e) =>
+                        setOnboardingData({
+                          ...onboardingData,
+                          projectName: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                      Project Status
+                    </label>
+                    <div className="relative">
+                      <select
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold appearance-none"
+                        value={onboardingData.projectStatus}
+                        onChange={(e) =>
+                          setOnboardingData({
+                            ...onboardingData,
+                            projectStatus: e.target.value,
+                          })
+                        }
+                      >
+                        <option value="Planning">Planning</option>
+                        <option value="On Going">On Going</option>
+                        <option value="Testing">Testing</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                      <ChevronDown
+                        size={16}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                      Project Description
+                    </label>
+                    <textarea
+                      rows={2}
+                      placeholder="Brief overview of the project scope..."
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold resize-none"
+                      value={onboardingData.projectDescription}
+                      onChange={(e) =>
+                        setOnboardingData({
+                          ...onboardingData,
+                          projectDescription: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                      Onboarding Date
+                    </label>
+                    <input
+                      type="date"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
+                      value={onboardingData.onboardingDate}
+                      onChange={(e) =>
+                        setOnboardingData({
+                          ...onboardingData,
+                          onboardingDate: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                      Deadline (Tentative)
+                    </label>
+                    <input
+                      type="date"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
+                      value={onboardingData.deadline}
+                      onChange={(e) =>
+                        setOnboardingData({
+                          ...onboardingData,
+                          deadline: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                      Scope Document
+                    </label>
+                    <div className="relative group">
+                      <input
+                        type="file"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            setOnboardingData({
+                              ...onboardingData,
+                              scopeDocument: file.name,
+                            });
+                          }
+                        }}
+                      />
+                      <div className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl group-hover:border-secondary group-hover:bg-secondary/5 transition-all flex items-center gap-3">
+                        <div className="p-2 bg-white border border-slate-200 rounded-lg shadow-sm">
+                          <Upload size={16} className="text-secondary" />
+                        </div>
+                        <span
+                          className={`text-sm font-bold ${onboardingData.scopeDocument ? "text-primary" : "text-slate-400"}`}
+                        >
+                          {onboardingData.scopeDocument ||
+                            "Click to upload scope document (PDF, DOCX)"}
+                        </span>
                       </div>
-                    </div>
-
-                    <div className="md:col-span-2 space-y-2">
-                      <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                        Project Description
-                      </label>
-                      <textarea
-                        rows={3}
-                        placeholder="Briefly describe the project scope..."
-                        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold resize-none"
-                        value={onboardingData.projectDescription}
-                        onChange={(e) =>
-                          setOnboardingData({
-                            ...onboardingData,
-                            projectDescription: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                        Onboarding Date
-                      </label>
-                      <input
-                        required
-                        type="date"
-                        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
-                        value={onboardingData.onboardingDate}
-                        onChange={(e) =>
-                          setOnboardingData({
-                            ...onboardingData,
-                            onboardingDate: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                        Project Deadline
-                      </label>
-                      <input
-                        required
-                        type="date"
-                        className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
-                        value={onboardingData.deadline}
-                        onChange={(e) =>
-                          setOnboardingData({
-                            ...onboardingData,
-                            deadline: e.target.value,
-                          })
-                        }
-                      />
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-6">
+              <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-5 bg-[#18254D] text-white rounded-xl hover:bg-slate-800 text-[13px] font-black uppercase tracking-[0.4em] transition-all shadow-xl active:scale-95 flex items-center justify-center gap-2"
+                  className="w-full h-14 bg-[#18254D] text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] shadow-xl active:scale-[0.97] transition-all hover:bg-[#1e2e5e] hover:shadow-2xl flex items-center justify-center gap-3 group/btn"
                 >
-                  Add Client
+                  <Briefcase
+                    size={20}
+                    className="group-hover/btn:translate-x-1 transition-transform"
+                  />
+                  <span>Initialize Project</span>
                 </button>
               </div>
             </form>

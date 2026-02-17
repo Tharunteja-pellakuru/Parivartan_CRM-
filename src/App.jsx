@@ -10,28 +10,25 @@ import Settings from "./components/Settings";
 import LoginPage from "./components/LoginPage";
 import { Menu, Zap } from "lucide-react";
 import Logo from "./components/Logo";
-import { Client, Enquiry, LeadType, FollowUp, Activity } from "./types";
 import {
   MOCK_CLIENTS,
   MOCK_ENQUIRIES,
   MOCK_FOLLOW_UPS,
   MOCK_ACTIVITIES,
-} from "./constants";
+} from "./utils/constants";
 
-const App: React.FC = () => {
+const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  const [detailTab, setDetailTab] = useState<
-    "overview" | "projects" | "activity" | "conversations"
-  >("overview");
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [detailTab, setDetailTab] = useState("overview");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   // State management for data
-  const [clients, setClients] = useState<Client[]>(MOCK_CLIENTS);
-  const [enquiries, setEnquiries] = useState<Enquiry[]>(MOCK_ENQUIRIES);
-  const [followUps, setFollowUps] = useState<FollowUp[]>(MOCK_FOLLOW_UPS);
-  const [activities, setActivities] = useState<Activity[]>(MOCK_ACTIVITIES);
+  const [clients, setClients] = useState(MOCK_CLIENTS);
+  const [enquiries, setEnquiries] = useState(MOCK_ENQUIRIES);
+  const [followUps, setFollowUps] = useState(MOCK_FOLLOW_UPS);
+  const [activities, setActivities] = useState(MOCK_ACTIVITIES);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -43,9 +40,9 @@ const App: React.FC = () => {
     setSelectedClient(null);
   };
 
-  const handleClientSelect = (client: Client, tab: string = "overview") => {
+  const handleClientSelect = (client, tab = "overview") => {
     setSelectedClient(client);
-    setDetailTab(tab as any);
+    setDetailTab(tab);
     setActiveTab("client-detail");
     setIsMobileSidebarOpen(false);
   };
@@ -56,25 +53,19 @@ const App: React.FC = () => {
     setActiveTab(returnTab);
   };
 
-  const handleTabChange = (tab: string) => {
+  const handleTabChange = (tab) => {
     setActiveTab(tab);
     setSelectedClient(null);
     setDetailTab("overview");
     setIsMobileSidebarOpen(false);
   };
 
-  const handleDeleteClient = (id: string) => {
+  const handleDeleteClient = (id) => {
     setClients((prev) => prev.filter((c) => c.id !== id));
   };
 
-  const handleAddClient = (
-    data: Omit<Client, "id" | "joinedDate" | "lastContact" | "avatar"> & {
-      projectName?: string;
-      onboardingDate?: string;
-      clientType?: "New" | "Existing";
-    },
-  ) => {
-    const newClient: Client = {
+  const handleAddClient = (data) => {
+    const newClient = {
       id: `c-${Date.now()}`,
       name: data.name,
       company: data.company,
@@ -92,21 +83,7 @@ const App: React.FC = () => {
     setClients([newClient, ...clients]);
   };
 
-  const handleOnboardClient = (
-    id: string,
-    onboardingData: {
-      name: string;
-      email: string;
-      phone: string;
-      clientType: "New" | "Existing";
-      status: ClientStatus;
-      projectName: string;
-      projectDescription: string;
-      onboardingDate: string;
-      deadline: string;
-      scopeDocument: string;
-    },
-  ) => {
+  const handleOnboardClient = (id, onboardingData) => {
     setClients((prev) =>
       prev.map((c) =>
         c.id === id
@@ -115,14 +92,14 @@ const App: React.FC = () => {
               ...onboardingData,
               status: onboardingData.status,
               joinedDate: onboardingData.onboardingDate,
-              notes: `${c.notes}\n\n[Project Onboarding]\nProject: ${onboardingData.projectName}\nDescription: ${onboardingData.projectDescription}\nDeadline: ${onboardingData.deadline}\nScope: ${onboardingData.scopeDocument}`,
+              notes: `${c.notes}\n\n[Project Onboarding]\nProject: ${onboardingData.projectName}\nStatus: ${onboardingData.projectStatus}\nDescription: ${onboardingData.projectDescription}\nDeadline: ${onboardingData.deadline}\nScope: ${onboardingData.scopeDocument}`,
             }
           : c,
       ),
     );
   };
 
-  const handleUpdateClient = (updatedClient: Client) => {
+  const handleUpdateClient = (updatedClient) => {
     setClients((prev) =>
       prev.map((c) => (c.id === updatedClient.id ? updatedClient : c)),
     );
@@ -147,7 +124,7 @@ const App: React.FC = () => {
           <EnquiryList
             enquiries={enquiries}
             onPromote={(enquiry, type) => {
-              const newClient: Client = {
+              const newClient = {
                 id: `c-${Date.now()}`,
                 name: enquiry.name,
                 company: enquiry.website
@@ -199,7 +176,7 @@ const App: React.FC = () => {
               )
             }
             onAdd={(data) => {
-              const newEnquiry: Enquiry = {
+              const newEnquiry = {
                 id: `e-${Date.now()}`,
                 ...data,
                 date: new Date().toISOString(),

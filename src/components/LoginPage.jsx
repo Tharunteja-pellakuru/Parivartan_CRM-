@@ -8,17 +8,14 @@ import {
   EyeOff,
   Leaf,
 } from "lucide-react";
+import logoImg from "../assets/Logo.png";
 
-interface LoginPageProps {
-  onLogin: () => void;
-}
-
-const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
+const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState("admin@parivartan.crm");
   const [password, setPassword] = useState("admin123");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const [imgError, setImgError] = useState(false);
 
   const isEmailValid = useMemo(() => {
@@ -33,7 +30,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
   const isFormValid = isEmailValid && isPasswordValid;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isFormValid) return;
 
@@ -64,7 +61,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         <div className="flex items-center justify-center gap-4 mb-4 md:mb-6">
           {!imgError ? (
             <img
-              src="./Logo.png"
+              src={logoImg}
               alt="Logo"
               className="w-14 h-14 md:w-18 lg:w-22 object-contain drop-shadow-xl"
               onError={() => setImgError(true)}

@@ -8,21 +8,12 @@ import {
   UserPlus,
   BellRing,
   LogOut,
-  Leaf,
   X,
 } from "lucide-react";
 import Logo from "./Logo";
+import anandImg from "../assets/Anand.png";
 
-interface SidebarProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
-  onLogout: () => void;
-  enquiryCount?: number;
-  followUpCount?: number;
-  onCloseMobile?: () => void;
-}
-
-const Sidebar: React.FC<SidebarProps> = ({
+const Sidebar = ({
   activeTab,
   setActiveTab,
   onLogout,
@@ -99,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="p-4 border-t border-white/5 shrink-0 bg-white/5">
         <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors group">
           <img
-            src="./Anand.png"
+            src={anandImg}
             alt="User"
             className="w-10 h-10 rounded-lg border border-white/10"
           />

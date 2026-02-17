@@ -1,23 +1,8 @@
 import React, { useState } from "react";
-import { MOCK_PROJECTS, MOCK_CLIENTS } from "../constants";
-import { Project, ProjectStatus } from "../types";
-import {
-  Calendar,
-  DollarSign,
-  MoreVertical,
-  Plus,
-  Clock,
-  LayoutGrid,
-} from "lucide-react";
+import { MOCK_PROJECTS, MOCK_CLIENTS } from "../utils/constants";
+import { Calendar, DollarSign, MoreVertical, Plus, Clock } from "lucide-react";
 
-const COLUMNS: {
-  id: ProjectStatus;
-  title: string;
-  color: string;
-  dotColor: string;
-  activeTabBg: string;
-  activeTabText: string;
-}[] = [
+const COLUMNS = [
   {
     id: "Planning",
     title: "Planning",
@@ -52,7 +37,7 @@ const COLUMNS: {
   },
 ];
 
-const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
+const ProjectCard = ({ project }) => {
   const client = MOCK_CLIENTS.find((c) => c.id === project.clientId);
 
   return (
@@ -106,10 +91,10 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
   );
 };
 
-const ProjectBoard: React.FC = () => {
-  const [activeStage, setActiveStage] = useState<ProjectStatus>("Planning");
+const ProjectBoard = () => {
+  const [activeStage, setActiveStage] = useState("Planning");
 
-  const activeColumn = COLUMNS.find((c) => c.id === activeStage)!;
+  const activeColumn = COLUMNS.find((c) => c.id === activeStage);
   const filteredProjects = MOCK_PROJECTS.filter(
     (p) => p.status === activeStage,
   );

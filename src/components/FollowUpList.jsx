@@ -6,20 +6,10 @@ import {
   Plus,
   MessageSquare,
   Phone,
-  X,
   Check,
 } from "lucide-react";
-import { FollowUp, Client, Priority } from "../types";
 
-interface FollowUpListProps {
-  followUps: FollowUp[];
-  clients: Client[];
-  onToggleStatus: (id: string) => void;
-  onAddFollowUp: (data: Omit<FollowUp, "id" | "status">) => void;
-  onSelectClient: (client: Client, tab?: string) => void;
-}
-
-const FollowUpList: React.FC<FollowUpListProps> = ({
+const FollowUpList = ({
   followUps,
   clients,
   onToggleStatus,
@@ -27,20 +17,18 @@ const FollowUpList: React.FC<FollowUpListProps> = ({
   onSelectClient,
 }) => {
   const [showAddModal, setShowAddModal] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<
-    "All" | "Overdue" | "Today" | "Upcoming"
-  >("All");
+  const [activeFilter, setActiveFilter] = useState("All");
   const [formData, setFormData] = useState({
     clientId: "",
     title: "",
     dueDate: new Date().toISOString().split("T")[0],
-    priority: "Medium" as Priority,
+    priority: "Medium",
   });
 
-  const getClientById = (id: string) => clients.find((c) => c.id === id);
-  const isOverdue = (date: string) =>
+  const getClientById = (id) => clients.find((c) => c.id === id);
+  const isOverdue = (date) =>
     new Date(date) < new Date(new Date().setHours(0, 0, 0, 0));
-  const isToday = (date: string) => {
+  const isToday = (date) => {
     const d = new Date(date);
     const today = new Date();
     return (
@@ -67,7 +55,7 @@ const FollowUpList: React.FC<FollowUpListProps> = ({
       (a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
     );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     onAddFollowUp(formData);
     setShowAddModal(false);
@@ -79,7 +67,7 @@ const FollowUpList: React.FC<FollowUpListProps> = ({
     });
   };
 
-  const getPriorityBadge = (p: Priority) => {
+  const getPriorityBadge = (p) => {
     switch (p) {
       case "High":
         return "bg-error/10 text-error border-error/20";
@@ -122,7 +110,7 @@ const FollowUpList: React.FC<FollowUpListProps> = ({
             {["All", "Overdue", "Today", "Upcoming"].map((f) => (
               <button
                 key={f}
-                onClick={() => setActiveFilter(f as any)}
+                onClick={() => setActiveFilter(f)}
                 className={`flex-1 px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeFilter === f ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
               >
                 {f}
@@ -225,7 +213,13 @@ const FollowUpList: React.FC<FollowUpListProps> = ({
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-fade-in">
-            <div className="bg-primary p-6 text-white">
+            <div className="bg-primary p-6 text-white relative">
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="absolute top-6 right-6 p-2 hover:bg-white/10 rounded-2xl transition-colors"
+              >
+                <X size={24} strokeWidth={3} />
+              </button>
               <h3 className="text-lg font-black tracking-tighter mb-1">
                 New Task
               </h3>
@@ -276,7 +270,7 @@ const FollowUpList: React.FC<FollowUpListProps> = ({
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        priority: e.target.value as any,
+                        priority: e.target.value,
                       })
                     }
                   >

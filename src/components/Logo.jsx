@@ -1,24 +1,15 @@
 import React, { useState } from "react";
 import { Leaf } from "lucide-react";
+import logoImg from "../assets/Logo.png";
 
-interface LogoProps {
-  className?: string;
-  size?: number;
-  showText?: boolean;
-}
-
-const Logo: React.FC<LogoProps> = ({
-  className = "",
-  size = 48,
-  showText = true,
-}) => {
+const Logo = ({ className = "", size = 48, showText = true }) => {
   const [imgError, setImgError] = useState(false);
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       {!imgError ? (
         <img
-          src="./Logo.png"
+          src={logoImg}
           alt="Parivartan CRM Logo"
           style={{ width: size, height: size }}
           className="object-contain"
