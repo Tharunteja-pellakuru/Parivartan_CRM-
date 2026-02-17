@@ -91,131 +91,135 @@ const FollowUpList: React.FC<FollowUpListProps> = ({
   };
 
   return (
-    <div className="space-y-5 animate-fade-in w-full">
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-        <div className="max-w-2xl">
-          <h2 className="text-lg md:text-xl lg:text-2xl font-black text-primary tracking-tighter mb-1.5">
-            Follow-Ups
-          </h2>
-          <p className="text-xs md:text-sm text-textMuted font-medium leading-relaxed">
-            Stay on top of your client communications.
-          </p>
-        </div>
-        <div className="w-full lg:w-auto">
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="w-full lg:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all text-[11px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 group"
-          >
-            <Plus
-              size={16}
-              strokeWidth={3}
-              className="group-hover:rotate-90 transition-transform"
-            />{" "}
-            New Follow-Up
-          </button>
-        </div>
-      </div>
-
-      <div className="bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm flex overflow-x-auto no-scrollbar">
-        <div className="flex bg-slate-100 p-1 rounded-lg w-full">
-          {["All", "Overdue", "Today", "Upcoming"].map((f) => (
-            <button
-              key={f}
-              onClick={() => setActiveFilter(f as any)}
-              className={`flex-1 px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeFilter === f ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
-            >
-              {f}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-4 w-full">
-        {filteredFollowUps.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 bg-white rounded-2xl border border-slate-200 shadow-sm w-full">
-            <Bell size={24} className="text-slate-100 mb-3" />
-            <p className="text-[10px] font-black text-primary uppercase tracking-widest">
-              No Active Tasks
+    <div className="w-full relative">
+      <div className="space-y-5 animate-fade-in w-full">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+          <div className="max-w-2xl">
+            <h2 className="text-lg md:text-xl lg:text-2xl font-black text-primary tracking-tighter mb-1.5">
+              Follow-Ups
+            </h2>
+            <p className="text-xs md:text-sm text-textMuted font-medium leading-relaxed">
+              Stay on top of your client communications.
             </p>
           </div>
-        ) : (
-          filteredFollowUps.map((f) => {
-            const client = getClientById(f.clientId);
-            const overdue = isOverdue(f.dueDate) && f.status === "pending";
-            return (
-              <div
-                key={f.id}
-                className={`group bg-white rounded-xl border transition-all hover:shadow-md flex flex-col md:flex-row items-center p-4 md:p-4 gap-4 ${f.status === "completed" ? "opacity-50 grayscale" : overdue ? "border-error/20 bg-error/[0.01]" : "border-slate-200 hover:border-secondary/30"}`}
+          <div className="w-full lg:w-auto">
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="w-full lg:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all text-[11px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 group"
+            >
+              <Plus
+                size={16}
+                strokeWidth={3}
+                className="group-hover:rotate-90 transition-transform"
+              />{" "}
+              New Follow-Up
+            </button>
+          </div>
+        </div>
+
+        <div className="bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm flex overflow-x-auto no-scrollbar">
+          <div className="flex bg-slate-100 p-1 rounded-lg w-full">
+            {["All", "Overdue", "Today", "Upcoming"].map((f) => (
+              <button
+                key={f}
+                onClick={() => setActiveFilter(f as any)}
+                className={`flex-1 px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeFilter === f ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
               >
-                <button
-                  onClick={() => onToggleStatus(f.id)}
-                  className={`w-9 h-9 rounded-lg border-3 transition-all flex items-center justify-center shrink-0 ${f.status === "completed" ? "bg-success border-success text-white" : "bg-white border-slate-100 text-transparent hover:border-secondary"}`}
-                >
-                  {f.status === "completed" ? (
-                    <Check size={16} strokeWidth={4} />
-                  ) : (
-                    <CheckCircle2 size={14} strokeWidth={3} />
-                  )}
-                </button>
-                <div className="flex-1 min-w-0 text-center md:text-left">
-                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-1.5">
-                    <span
-                      className={`px-2.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest border ${getPriorityBadge(f.priority)}`}
-                    >
-                      {f.priority}
-                    </span>
-                    {overdue && (
-                      <span className="text-[8px] font-black uppercase tracking-widest text-error bg-error/10 px-2.5 py-0.5 rounded-md border border-error/20">
-                        Overdue
-                      </span>
-                    )}
-                  </div>
-                  <h4
-                    className={`text-sm font-black text-primary tracking-tight truncate ${f.status === "completed" ? "line-through opacity-50" : ""}`}
-                  >
-                    {f.title}
-                  </h4>
-                  <div className="flex items-center justify-center md:justify-start gap-2 mt-1.5 text-[10px] text-textMuted font-black uppercase tracking-widest">
-                    <Clock size={12} className="text-secondary" />
-                    {new Date(f.dueDate).toLocaleDateString([], {
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </div>
-                </div>
+                {f}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4 w-full">
+          {filteredFollowUps.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 bg-white rounded-2xl border border-slate-200 shadow-sm w-full">
+              <Bell size={24} className="text-slate-100 mb-3" />
+              <p className="text-[10px] font-black text-primary uppercase tracking-widest">
+                No Active Tasks
+              </p>
+            </div>
+          ) : (
+            filteredFollowUps.map((f) => {
+              const client = getClientById(f.clientId);
+              const overdue = isOverdue(f.dueDate) && f.status === "pending";
+              return (
                 <div
-                  onClick={() => client && onSelectClient(client)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:border-slate-200 cursor-pointer transition-all shadow-inner shrink-0"
+                  key={f.id}
+                  className={`group bg-white rounded-xl border transition-all hover:shadow-md flex flex-col md:flex-row items-center p-4 md:p-4 gap-4 ${f.status === "completed" ? "opacity-50 grayscale" : overdue ? "border-error/20 bg-error/[0.01]" : "border-slate-200 hover:border-secondary/30"}`}
                 >
-                  <img
-                    src={client?.avatar}
-                    className="w-8 h-8 rounded-lg object-cover border border-slate-200"
-                    alt=""
-                  />
-                  <div className="text-left">
-                    <p className="text-[12px] font-black text-primary truncate leading-none">
-                      {client?.name}
-                    </p>
-                    <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">
-                      {client?.company}
-                    </p>
+                  <button
+                    onClick={() => onToggleStatus(f.id)}
+                    className={`w-9 h-9 rounded-lg border-3 transition-all flex items-center justify-center shrink-0 ${f.status === "completed" ? "bg-success border-success text-white" : "bg-white border-slate-100 text-transparent hover:border-secondary"}`}
+                  >
+                    {f.status === "completed" ? (
+                      <Check size={16} strokeWidth={4} />
+                    ) : (
+                      <CheckCircle2 size={14} strokeWidth={3} />
+                    )}
+                  </button>
+                  <div className="flex-1 min-w-0 text-center md:text-left">
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-1.5">
+                      <span
+                        className={`px-2.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest border ${getPriorityBadge(f.priority)}`}
+                      >
+                        {f.priority}
+                      </span>
+                      {overdue && (
+                        <span className="text-[8px] font-black uppercase tracking-widest text-error bg-error/10 px-2.5 py-0.5 rounded-md border border-error/20">
+                          Overdue
+                        </span>
+                      )}
+                    </div>
+                    <h4
+                      className={`text-sm font-black text-primary tracking-tight truncate ${f.status === "completed" ? "line-through opacity-50" : ""}`}
+                    >
+                      {f.title}
+                    </h4>
+                    <div className="flex items-center justify-center md:justify-start gap-2 mt-1.5 text-[10px] text-textMuted font-black uppercase tracking-widest">
+                      <Clock size={12} className="text-secondary" />
+                      {new Date(f.dueDate).toLocaleDateString([], {
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </div>
+                  </div>
+                  <div
+                    onClick={() => client && onSelectClient(client)}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:border-slate-200 cursor-pointer transition-all shadow-inner shrink-0"
+                  >
+                    <img
+                      src={client?.avatar}
+                      className="w-8 h-8 rounded-lg object-cover border border-slate-200"
+                      alt=""
+                    />
+                    <div className="text-left">
+                      <p className="text-[12px] font-black text-primary truncate leading-none">
+                        {client?.name}
+                      </p>
+                      <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">
+                        {client?.company}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() =>
+                        client && onSelectClient(client, "activity")
+                      }
+                      className="p-3.5 bg-white border border-slate-200 text-slate-400 rounded-xl hover:text-primary transition-all active:scale-90"
+                    >
+                      <MessageSquare size={16} />
+                    </button>
+                    <button className="p-3.5 bg-white border border-slate-200 text-slate-400 rounded-xl hover:text-secondary transition-all active:scale-90">
+                      <Phone size={16} />
+                    </button>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => client && onSelectClient(client, "activity")}
-                    className="p-3.5 bg-white border border-slate-200 text-slate-400 rounded-xl hover:text-primary transition-all active:scale-90"
-                  >
-                    <MessageSquare size={16} />
-                  </button>
-                  <button className="p-3.5 bg-white border border-slate-200 text-slate-400 rounded-xl hover:text-secondary transition-all active:scale-90">
-                    <Phone size={16} />
-                  </button>
-                </div>
-              </div>
-            );
-          })
-        )}
+              );
+            })
+          )}
+        </div>
       </div>
 
       {showAddModal && (

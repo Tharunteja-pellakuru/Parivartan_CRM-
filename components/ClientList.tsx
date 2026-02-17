@@ -234,236 +234,240 @@ const ClientList: React.FC<ClientListProps> = ({
   };
 
   return (
-    <div className="space-y-5 animate-fade-in w-full">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-        <div className="max-w-2xl">
-          <h2 className="text-lg md:text-xl lg:text-2xl font-black text-primary tracking-tighter mb-2">
-            {title}
-          </h2>
-          <p className="text-xs md:text-sm text-textMuted font-medium leading-relaxed">
-            Manage your network of {title.toLowerCase()} and strategic
-            partnerships.
-          </p>
+    <div className="w-full relative">
+      <div className="space-y-5 animate-fade-in w-full">
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+          <div className="max-w-2xl">
+            <h2 className="text-lg md:text-xl lg:text-2xl font-black text-primary tracking-tighter mb-2">
+              {title}
+            </h2>
+            <p className="text-xs md:text-sm text-textMuted font-medium leading-relaxed">
+              Manage your network of {title.toLowerCase()} and strategic
+              partnerships.
+            </p>
+          </div>
+          <div className="w-full lg:w-auto">
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="w-full lg:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all text-[11px] font-black uppercase tracking-[0.25em] shadow-lg active:scale-95 group"
+            >
+              <Plus
+                size={18}
+                strokeWidth={3}
+                className="group-hover:rotate-90 transition-transform"
+              />
+              Add {title === "Leads" ? "Lead" : "Client"}
+            </button>
+          </div>
         </div>
-        <div className="w-full lg:w-auto">
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="w-full lg:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all text-[11px] font-black uppercase tracking-[0.25em] shadow-lg active:scale-95 group"
-          >
-            <Plus
+
+        {/* Control Bar */}
+        <div className="bg-white p-2 md:p-3 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="relative w-full md:w-96">
+            <Search
               size={18}
-              strokeWidth={3}
-              className="group-hover:rotate-90 transition-transform"
+              className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"
             />
-            Add {title === "Leads" ? "Lead" : "Client"}
-          </button>
-        </div>
-      </div>
+            <input
+              type="text"
+              placeholder={`Search ${title.toLowerCase()}...`}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-14 pr-6 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all"
+            />
+          </div>
 
-      {/* Control Bar */}
-      <div className="bg-white p-2 md:p-3 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
-        <div className="relative w-full md:w-96">
-          <Search
-            size={18}
-            className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"
-          />
-          <input
-            type="text"
-            placeholder={`Search ${title.toLowerCase()}...`}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-14 pr-6 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all"
-          />
-        </div>
-
-        <div className="flex gap-4 w-full md:w-auto no-scrollbar">
-          {title === "Leads" && (
-            <div className="relative">
-              <button
-                onClick={() => setIsTierDropdownOpen(!isTierDropdownOpen)}
-                className="flex items-center justify-between gap-3 px-5 py-3 bg-slate-50 border border-slate-100 rounded-xl text-[10px] font-black uppercase tracking-widest text-[#18254D] hover:bg-white hover:border-slate-200 transition-all min-w-[160px] shadow-sm shadow-slate-200/50 group"
-              >
-                <span>
-                  {leadTypeFilter === "All" ? "All Tiers" : leadTypeFilter}
-                </span>
-                <ChevronDown
-                  size={14}
-                  strokeWidth={3}
-                  className={`transition-transform duration-300 ${isTierDropdownOpen ? "rotate-180" : ""}`}
-                />
-              </button>
-
-              {isTierDropdownOpen && (
-                <>
-                  <div
-                    className="fixed inset-0 z-[80]"
-                    onClick={() => setIsTierDropdownOpen(false)}
+          <div className="flex gap-4 w-full md:w-auto no-scrollbar">
+            {title === "Leads" && (
+              <div className="relative">
+                <button
+                  onClick={() => setIsTierDropdownOpen(!isTierDropdownOpen)}
+                  className="flex items-center justify-between gap-3 px-5 py-3 bg-slate-50 border border-slate-100 rounded-xl text-[10px] font-black uppercase tracking-widest text-[#18254D] hover:bg-white hover:border-slate-200 transition-all min-w-[160px] shadow-sm shadow-slate-200/50 group"
+                >
+                  <span>
+                    {leadTypeFilter === "All"
+                      ? "All Lead Status"
+                      : leadTypeFilter}
+                  </span>
+                  <ChevronDown
+                    size={14}
+                    strokeWidth={3}
+                    className={`transition-transform duration-300 ${isTierDropdownOpen ? "rotate-180" : ""}`}
                   />
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-xl shadow-2xl py-2 z-[90] animate-fade-in-up origin-top">
-                    {["All", "Hot", "Warm", "Cold"].map((tier) => (
-                      <button
-                        key={tier}
-                        onClick={() => {
-                          setLeadTypeFilter(tier);
-                          setIsTierDropdownOpen(false);
-                        }}
-                        className={`w-full text-left px-5 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
-                          leadTypeFilter === (tier === "All" ? "All" : tier)
-                            ? "bg-[#18254D] text-white"
-                            : "text-[#18254D] hover:bg-slate-50"
-                        }`}
-                      >
-                        {tier === "All" ? "All Tiers" : tier}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
+                </button>
 
-      {/* Main List */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden w-full">
-        <div className="overflow-x-auto no-scrollbar">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-slate-50/50">
-                <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
-                  Identity
-                </th>
-                <th className="px-6 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
-                  {title === "Leads" ? "Lead Status" : "Status"}
-                </th>
-                <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
-                  {title === "Leads" ? "Note" : "Industry Sector"}
-                </th>
-                <th className="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
-                  Last Pulse
-                </th>
-                <th className="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
-                  Control
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filteredClients.map((client) => {
-                const status = getStatusBadge(client);
-                return (
-                  <tr
-                    key={client.id}
-                    onClick={() => onSelectClient(client)}
-                    className="group hover:bg-slate-50/50 cursor-pointer transition-all"
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-6">
-                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary flex items-center justify-center text-white font-black text-xl border-2 border-slate-50 shadow-lg shrink-0">
-                          {client.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="font-black text-sm text-primary tracking-tight leading-none mb-1 group-hover:text-secondary transition-colors">
-                            {client.name}
-                          </div>
-                          {title !== "Leads" && (
-                            <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest truncate">
-                              {client.company}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex justify-center">
-                        <span
-                          className={`px-4 py-1.5 rounded-xl text-[9px] font-black border uppercase flex items-center gap-2 shadow-sm transition-all ${status.className}`}
+                {isTierDropdownOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-[80]"
+                      onClick={() => setIsTierDropdownOpen(false)}
+                    />
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-xl shadow-2xl py-2 z-[90] animate-fade-in-up origin-top">
+                      {["All", "Hot", "Warm", "Cold"].map((tier) => (
+                        <button
+                          key={tier}
+                          onClick={() => {
+                            setLeadTypeFilter(tier);
+                            setIsTierDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-5 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                            leadTypeFilter === (tier === "All" ? "All" : tier)
+                              ? "bg-[#18254D] text-white"
+                              : "text-[#18254D] hover:bg-slate-50"
+                          }`}
                         >
-                          {status.icon}
-                          {status.label}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center border border-slate-100">
-                          {client.status === "Lead" ? (
-                            <Tag size={16} className="text-secondary" />
-                          ) : (
-                            <Briefcase size={16} className="text-slate-400" />
+                          {tier === "All" ? "All Tiers" : tier}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Main List */}
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden w-full">
+          <div className="overflow-x-auto no-scrollbar">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-slate-50/50">
+                  <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
+                    Identity
+                  </th>
+                  <th className="px-6 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
+                    {title === "Leads" ? "Lead Status" : "Status"}
+                  </th>
+                  <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
+                    {title === "Leads" ? "Note" : "Industry Sector"}
+                  </th>
+                  <th className="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
+                    Last Pulse
+                  </th>
+                  <th className="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
+                    Control
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredClients.map((client) => {
+                  const status = getStatusBadge(client);
+                  return (
+                    <tr
+                      key={client.id}
+                      onClick={() => onSelectClient(client)}
+                      className="group hover:bg-slate-50/50 cursor-pointer transition-all"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-6">
+                          <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary flex items-center justify-center text-white font-black text-xl border-2 border-slate-50 shadow-lg shrink-0">
+                            {client.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="font-black text-sm text-primary tracking-tight leading-none mb-1 group-hover:text-secondary transition-colors">
+                              {client.name}
+                            </div>
+                            {title !== "Leads" && (
+                              <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest truncate">
+                                {client.company}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex justify-center">
+                          <span
+                            className={`px-4 py-1.5 rounded-xl text-[9px] font-black border uppercase flex items-center gap-2 shadow-sm transition-all ${status.className}`}
+                          >
+                            {status.icon}
+                            {status.label}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center border border-slate-100">
+                            {client.status === "Lead" ? (
+                              <Tag size={16} className="text-secondary" />
+                            ) : (
+                              <Briefcase size={16} className="text-slate-400" />
+                            )}
+                          </div>
+                          <span className="text-sm font-bold text-primary truncate max-w-[200px]">
+                            {client.status === "Lead"
+                              ? client.notes || client.industry
+                              : client.industry}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-[10px] text-slate-400 text-right font-black uppercase tracking-widest">
+                        {new Date(client.lastContact).toLocaleDateString([], {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div
+                          className="flex justify-end gap-3"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {onOnboardClient && client.status === "Lead" && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOnboardingLeadId(client.id);
+                                setOnboardingData({
+                                  name: client.name,
+                                  email: client.email,
+                                  phone: client.phone,
+                                  clientType: "New",
+                                });
+                                setShowOnboardModal(true);
+                              }}
+                              className="p-2.5 bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-emerald-500 hover:border-emerald-500 hover:bg-emerald-50 transition-all active:scale-90 shadow-sm"
+                              title="Convert to Client"
+                            >
+                              <UserCheck size={18} />
+                            </button>
+                          )}
+                          {onDeleteClient && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onDeleteClient(client.id);
+                              }}
+                              className="p-2.5 bg-white border border-slate-200 rounded-lg text-slate-300 hover:text-error hover:border-error hover:bg-error/5 transition-all active:scale-90 shadow-sm"
+                            >
+                              <Trash2 size={18} />
+                            </button>
                           )}
                         </div>
-                        <span className="text-sm font-bold text-primary truncate max-w-[200px]">
-                          {client.status === "Lead"
-                            ? client.notes || client.industry
-                            : client.industry}
-                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+                {filteredClients.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-10 py-32 text-center">
+                      <div className="w-14 h-14 bg-slate-50 text-slate-200 p-4 rounded-xl mb-4 shadow-inner flex items-center justify-center mx-auto">
+                        <Search size={32} />
                       </div>
-                    </td>
-                    <td className="px-6 py-4 text-[10px] text-slate-400 text-right font-black uppercase tracking-widest">
-                      {new Date(client.lastContact).toLocaleDateString([], {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div
-                        className="flex justify-end gap-3"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {onOnboardClient && client.status === "Lead" && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setOnboardingLeadId(client.id);
-                              setOnboardingData({
-                                name: client.name,
-                                email: client.email,
-                                phone: client.phone,
-                                clientType: "New",
-                              });
-                              setShowOnboardModal(true);
-                            }}
-                            className="p-2.5 bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-emerald-500 hover:border-emerald-500 hover:bg-emerald-50 transition-all active:scale-90 shadow-sm"
-                            title="Convert to Client"
-                          >
-                            <UserCheck size={18} />
-                          </button>
-                        )}
-                        {onDeleteClient && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onDeleteClient(client.id);
-                            }}
-                            className="p-2.5 bg-white border border-slate-200 rounded-lg text-slate-300 hover:text-error hover:border-error hover:bg-error/5 transition-all active:scale-90 shadow-sm"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-                        )}
-                      </div>
+                      <p className="text-[11px] font-black text-primary uppercase tracking-[0.4em]">
+                        Zero Results
+                      </p>
+                      <p className="text-sm font-medium text-slate-400 mt-2">
+                        No matching records detected in this segment.
+                      </p>
                     </td>
                   </tr>
-                );
-              })}
-              {filteredClients.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="px-10 py-32 text-center">
-                    <div className="w-14 h-14 bg-slate-50 text-slate-200 p-4 rounded-xl mb-4 shadow-inner flex items-center justify-center mx-auto">
-                      <Search size={32} />
-                    </div>
-                    <p className="text-[11px] font-black text-primary uppercase tracking-[0.4em]">
-                      Zero Results
-                    </p>
-                    <p className="text-sm font-medium text-slate-400 mt-2">
-                      No matching records detected in this segment.
-                    </p>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

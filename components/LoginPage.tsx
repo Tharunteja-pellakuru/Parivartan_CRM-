@@ -61,29 +61,28 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
       <div className="w-full max-w-md md:max-w-[420px] lg:max-w-md mx-auto animate-fade-in relative z-10 flex flex-col items-center justify-center h-full">
         {/* Logo Section */}
-        <div className="flex items-center justify-center gap-3 mb-3 md:mb-4">
+        <div className="flex items-center justify-center gap-4 mb-4 md:mb-6">
           {!imgError ? (
             <img
               src="./Logo.png"
               alt="Logo"
-              className="w-10 h-10 md:w-12 lg:w-16 object-contain drop-shadow-xl"
+              className="w-14 h-14 md:w-18 lg:w-22 object-contain drop-shadow-xl"
               onError={() => setImgError(true)}
             />
           ) : (
-            <div className="w-10 h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg">
-              {/* Fixed: Removed md:size and lg:size as they are not valid Lucide props. Used responsive classes instead. */}
+            <div className="w-14 h-14 md:w-18 md:h-18 lg:w-22 lg:h-22 bg-primary text-white rounded-xl flex items-center justify-center shadow-lg">
               <Leaf
-                size={24}
-                className="md:w-8 md:h-8 lg:w-10 lg:h-10"
+                size={32}
+                className="md:w-10 md:h-10 lg:w-14 lg:h-14"
                 fill="currentColor"
               />
             </div>
           )}
           <div className="flex flex-col border-l-2 border-primary/10 pl-4">
-            <h1 className="text-lg md:text-xl lg:text-2xl font-black text-primary tracking-tighter leading-none">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-primary tracking-tighter leading-none">
               Parivartan
             </h1>
-            <p className="text-[8px] md:text-[9px] lg:text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] mt-1">
+            <p className="text-[10px] md:text-xs lg:text-sm font-black text-slate-500 uppercase tracking-[0.4em] mt-1">
               CRM Portal
             </p>
           </div>
@@ -92,10 +91,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         {/* Login Card */}
         <div className="bg-white p-4 md:p-6 lg:p-8 rounded-xl md:rounded-2xl lg:rounded-2xl shadow-xl border border-slate-200 w-full">
           <div className="mb-3 md:mb-4 lg:mb-6 text-center">
-            <h2 className="text-base md:text-lg lg:text-xl font-black text-primary tracking-tighter">
+            <h2 className="text-lg md:text-xl lg:text-2xl font-black text-primary tracking-tighter">
               Welcome Back
             </h2>
-            <p className="text-[9px] md:text-[10px] lg:text-xs text-textMuted font-bold uppercase tracking-widest mt-1">
+            <p className="text-[10px] md:text-xs lg:text-sm text-textMuted font-bold uppercase tracking-widest mt-1">
               Please sign in to your account
             </p>
           </div>
@@ -105,18 +104,18 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             className="space-y-3 md:space-y-3 lg:space-y-4"
           >
             <div className="space-y-1">
-              <label className="text-[8px] md:text-[9px] font-black text-slate-900 uppercase tracking-[0.2em] ml-2">
+              <label className="text-[9px] md:text-[10px] font-black text-[#18254D] uppercase tracking-[0.2em] ml-2">
                 Email ID
               </label>
               <div className="relative group">
                 <Mail
                   size={16}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#18254D] transition-colors"
                 />
                 <input
                   type="email"
                   required
-                  className="w-full pl-12 pr-4 py-2.5 md:py-3 lg:py-3.5 bg-slate-50 border border-slate-200 rounded-xl md:rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-slate-200 focus:border-slate-900 transition-all font-bold placeholder:text-slate-300"
+                  className="w-full pl-12 pr-4 py-3 md:py-3.5 lg:py-4 bg-slate-50 border border-slate-200 rounded-xl md:rounded-xl text-base focus:outline-none focus:ring-4 focus:ring-[#18254D]/20 focus:border-[#18254D] transition-all font-bold placeholder:text-slate-300"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@parivartan.crm"
@@ -125,18 +124,18 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[8px] md:text-[9px] font-black text-slate-900 uppercase tracking-[0.2em] ml-2">
+              <label className="text-[9px] md:text-[10px] font-black text-[#18254D] uppercase tracking-[0.2em] ml-2">
                 Password
               </label>
               <div className="relative group">
                 <Lock
                   size={16}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-slate-900 transition-colors"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#18254D] transition-colors"
                 />
                 <input
                   type={showPassword ? "text" : "password"}
                   required
-                  className="w-full pl-12 pr-12 py-2.5 md:py-3 lg:py-3.5 bg-slate-50 border border-slate-200 rounded-xl md:rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-slate-200 focus:border-slate-900 transition-all font-bold placeholder:text-slate-300"
+                  className="w-full pl-12 pr-12 py-3 md:py-3.5 lg:py-4 bg-slate-50 border border-slate-200 rounded-xl md:rounded-xl text-base focus:outline-none focus:ring-4 focus:ring-[#18254D]/20 focus:border-[#18254D] transition-all font-bold placeholder:text-slate-300"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
@@ -144,7 +143,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-900 transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#18254D] transition-colors"
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -163,9 +162,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             <button
               type="submit"
               disabled={!isFormValid || isLoading}
-              className={`w-full py-2.5 md:py-3 lg:py-3.5 rounded-xl md:rounded-xl lg:rounded-xl font-black text-[9px] lg:text-[11px] uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all shadow-lg active:scale-[0.97] ${
+              className={`w-full py-3 md:py-3.5 lg:py-4 rounded-xl md:rounded-xl lg:rounded-xl font-black text-[11px] lg:text-sm uppercase tracking-[0.3em] flex items-center justify-center gap-3 transition-all shadow-lg active:scale-[0.97] ${
                 isFormValid && !isLoading
-                  ? "bg-slate-900 text-white hover:bg-black"
+                  ? "bg-[#18254D] text-white hover:bg-[#0f1a38]"
                   : "bg-slate-200 text-slate-400 cursor-not-allowed"
               }`}
             >
@@ -184,7 +183,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           </form>
         </div>
 
-        <p className="text-center mt-4 md:mb-2 text-[8px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest opacity-60">
+        <p className="text-center mt-4 md:mb-2 text-[10px] lg:text-xs font-black text-slate-400 uppercase tracking-widest opacity-60">
           © Copyright 2026 Parivartan. All Rights Reserved.
         </p>
       </div>

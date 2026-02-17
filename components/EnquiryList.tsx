@@ -160,7 +160,7 @@ const EnquiryList: React.FC<EnquiryListProps> = ({
   };
 
   return (
-    <React.Fragment>
+    <div className="w-full relative">
       <div className="space-y-5 animate-fade-in w-full">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div className="max-w-2xl">
@@ -684,7 +684,6 @@ const EnquiryList: React.FC<EnquiryListProps> = ({
         </div>
       )}
 
-      {/* Hold Modal */}
       {holdModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-fade-in relative">
@@ -731,7 +730,7 @@ const EnquiryList: React.FC<EnquiryListProps> = ({
           </div>
         </div>
       )}
-    </React.Fragment>
+    </div>
   );
 };
 

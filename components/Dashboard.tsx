@@ -96,11 +96,22 @@ const Dashboard: React.FC<DashboardProps> = ({
     );
   };
 
+  const isMissed = (date: string) => {
+    const d = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return d < today;
+  };
+
   const newEnquiries = enquiries.filter((e) => e.status === "new");
   const todayTasks = followUps.filter(
     (f) => isToday(f.dueDate) && f.status === "pending",
   );
-  const totalNotifications = newEnquiries.length + todayTasks.length;
+  const missedTasks = followUps.filter(
+    (f) => isMissed(f.dueDate) && f.status === "pending",
+  );
+  const totalNotifications =
+    newEnquiries.length + todayTasks.length + missedTasks.length;
 
   const newEnquiriesCount = newEnquiries.length;
   const leadCount = clients.filter((c) => c.status === "Lead").length;
@@ -127,244 +138,309 @@ const Dashboard: React.FC<DashboardProps> = ({
   }, []);
 
   return (
-    <div className="space-y-6 md:space-y-8 animate-fade-in relative">
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-        <div className="max-w-2xl">
-          <h2 className="text-xl md:text-2xl lg:text-3xl font-black text-[#18254D] tracking-tighter mb-2">
-            Welcome back, Anand.
-          </h2>
-          <p className="text-sm md:text-base text-textMuted font-medium leading-relaxed">
-            Let's build something remarkable today.
-          </p>
-        </div>
+    <div className="w-full relative">
+      <div className="space-y-6 md:space-y-8 animate-fade-in relative z-0">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+          <div className="max-w-2xl">
+            <h2 className="text-xl md:text-2xl lg:text-3xl font-black text-[#18254D] tracking-tighter mb-2">
+              Welcome back, Anand.
+            </h2>
+            <p className="text-sm md:text-base text-textMuted font-medium leading-relaxed">
+              Let's build something remarkable today.
+            </p>
+          </div>
 
-        <div className="flex items-center bg-white p-1 rounded-full border border-slate-200 shadow-sm w-full lg:w-auto relative z-20">
-          <div
-            className="relative flex-1 lg:flex-initial lg:w-10"
-            ref={dropdownRef}
-          >
-            <button
-              onClick={() => setShowNotifications(!showNotifications)}
-              className={`h-11 md:h-12 w-full rounded-full transition-all relative flex items-center justify-center ${
-                showNotifications
-                  ? "bg-primary text-white"
-                  : "bg-transparent text-primary hover:bg-slate-50"
-              }`}
+          <div className="flex items-center bg-white p-1 rounded-full border border-slate-200 shadow-sm w-full lg:w-auto relative z-20">
+            <div
+              className="relative flex-1 lg:flex-initial lg:w-10"
+              ref={dropdownRef}
             >
-              <Bell size={18} strokeWidth={2.5} />
-              {totalNotifications > 0 && !showNotifications && (
-                <span className="bg-[#18254D] text-white text-[9px] font-black rounded-lg px-1 py-0.5 shadow-sm absolute top-1.5 right-1/4 lg:right-0">
-                  {totalNotifications}
-                </span>
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className={`h-11 md:h-12 w-full rounded-full transition-all relative flex items-center justify-center ${
+                  showNotifications
+                    ? "bg-primary text-white"
+                    : "bg-transparent text-primary hover:bg-slate-50"
+                }`}
+              >
+                <Bell size={18} strokeWidth={2.5} />
+                {totalNotifications > 0 && !showNotifications && (
+                  <span className="bg-[#18254D] text-white text-[9px] font-black rounded-lg px-1 py-0.5 shadow-sm absolute top-1.5 right-1/4 lg:right-0">
+                    {totalNotifications}
+                  </span>
+                )}
+              </button>
+              {showNotifications && (
+                <>
+                  <div
+                    className="fixed inset-0 z-[90]"
+                    onClick={() => setShowNotifications(false)}
+                  />
+                  <div className="fixed lg:absolute left-1/2 md:left-auto lg:right-0 -translate-x-1/2 lg:translate-x-0 mt-3 w-[calc(100%-2rem)] md:w-[320px] bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-fade-in z-[100] top-24 lg:top-auto">
+                    <div className="p-5 pb-3 border-b border-slate-100 bg-slate-50/50">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.2em]">
+                          Notifications
+                        </h3>
+                        <button
+                          onClick={() => setShowNotifications(false)}
+                          className="p-1 hover:bg-slate-200 rounded-lg text-slate-400"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                      <div className="flex p-1 bg-slate-200/50 rounded-xl">
+                        <button
+                          onClick={() => setNotifTab("tasks")}
+                          className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${notifTab === "tasks" ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
+                        >
+                          Tasks
+                        </button>
+                        <button
+                          onClick={() => setNotifTab("enquiries")}
+                          className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${notifTab === "enquiries" ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
+                        >
+                          Enquiries
+                        </button>
+                      </div>
+                    </div>
+                    <div className="max-h-[300px] overflow-y-auto p-3 no-scrollbar space-y-2">
+                      {/* ... content truncated for brevity, standard notification list ... */}
+                    </div>
+                  </div>
+                </>
               )}
-            </button>
-            {showNotifications && (
-              <div className="fixed lg:absolute left-1/2 md:left-auto lg:right-0 -translate-x-1/2 lg:translate-x-0 mt-3 w-[calc(100%-2rem)] md:w-[320px] bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-fade-in z-[100] top-24 lg:top-auto">
-                <div className="p-5 pb-3 border-b border-slate-100 bg-slate-50/50">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.2em]">
-                      Notifications
-                    </h3>
-                    <button
-                      onClick={() => setShowNotifications(false)}
-                      className="p-1 hover:bg-slate-200 rounded-lg text-slate-400"
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                  <div className="flex p-1 bg-slate-200/50 rounded-xl">
-                    <button
-                      onClick={() => setNotifTab("tasks")}
-                      className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${notifTab === "tasks" ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
-                    >
-                      Tasks
-                    </button>
-                    <button
-                      onClick={() => setNotifTab("enquiries")}
-                      className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${notifTab === "enquiries" ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
-                    >
-                      Enquiries
-                    </button>
-                  </div>
-                </div>
-                <div className="max-h-[300px] overflow-y-auto p-3 no-scrollbar space-y-2">
-                  {/* ... content truncated for brevity, standard notification list ... */}
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="w-[1px] h-6 bg-slate-100 mx-1" />
-          <div className="flex-1 lg:flex-initial flex items-center justify-center sm:justify-end gap-2 px-2 min-w-max">
-            <div className="text-right flex flex-col items-end">
-              <p className="text-xs font-black text-primary leading-none">
-                Anand
-              </p>
-              <p className="text-[9px] font-black text-secondary uppercase tracking-widest mt-0.5">
-                Root
-              </p>
             </div>
-            <img
-              src="./Anand.png"
-              alt="Profile"
-              className="w-8 h-8 md:w-9 md:h-9 rounded-lg object-cover border border-slate-100 shadow-sm"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-        <StatCard
-          title="New Enquiries"
-          value={newEnquiriesCount.toString()}
-          trend="+4 today"
-          trendUp={true}
-          icon={<Inbox />}
-        />
-        <StatCard
-          title="Total Leads"
-          value={leadCount.toString()}
-          trend="Steady"
-          trendUp={true}
-          icon={<UserPlus />}
-        />
-        <StatCard
-          title="Total Active"
-          value={clientCount.toString()}
-          trend="Retained"
-          trendUp={true}
-          icon={<Users />}
-        />
-        <StatCard
-          title="Engagement Rate"
-          value={`${engagementRate}%`}
-          trend="Optimal"
-          trendUp={true}
-          icon={<Activity />}
-        />
-      </div>
-
-      <div className="flex flex-col lg:flex-row gap-4 md:gap-5">
-        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col w-full lg:w-[380px]">
-          <h3 className="text-base font-black text-primary tracking-tighter mb-5">
-            Today's Task
-          </h3>
-          <div className="space-y-4 flex-1 overflow-y-auto pr-1 no-scrollbar max-h-[450px]">
-            {todayTasks.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <CheckCircle2 size={18} className="text-slate-200 mb-3" />
-                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
-                  Clear
+            <div className="w-[1px] h-6 bg-slate-100 mx-1" />
+            <div className="flex-1 lg:flex-initial flex items-center justify-center sm:justify-end gap-2 px-2 min-w-max">
+              <div className="text-right flex flex-col items-end">
+                <p className="text-xs font-black text-primary leading-none">
+                  Anand
+                </p>
+                <p className="text-[9px] font-black text-secondary uppercase tracking-widest mt-0.5">
+                  Root
                 </p>
               </div>
-            ) : (
-              todayTasks.map((f) => {
-                const client = clients.find((c) => c.id === f.clientId);
-                return (
-                  <div
-                    key={f.id}
-                    onClick={() =>
-                      client && onSelectFollowUp(client, "activity")
-                    }
-                    className="p-5 bg-slate-50 border border-slate-100 rounded-2xl hover:bg-white hover:border-secondary transition-all cursor-pointer shadow-sm group"
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <span
-                        className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest ${f.priority === "High" ? "bg-error/10 text-error" : "bg-info/10 text-info"}`}
-                      >
-                        {f.priority}
-                      </span>
-                      <span className="text-[8px] text-textMuted font-black flex items-center gap-1 uppercase">
-                        <Clock size={10} />{" "}
-                        {new Date(f.dueDate).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </div>
-                    <h4 className="text-sm font-bold text-primary group-hover:text-secondary truncate">
-                      {f.title}
-                    </h4>
-                  </div>
-                );
-              })
-            )}
+              <img
+                src="./Anand.png"
+                alt="Profile"
+                className="w-8 h-8 md:w-9 md:h-9 rounded-lg object-cover border border-slate-100 shadow-sm"
+              />
+            </div>
           </div>
-          <button
-            onClick={onViewAllFollowUps}
-            className="w-full text-center text-[10px] text-primary font-black uppercase tracking-[0.2em] bg-slate-100 py-4 rounded-xl hover:bg-slate-200 transition-all mt-6"
-          >
-            View All Tasks
-          </button>
         </div>
 
-        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 flex-1">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <div>
-              <h3 className="text-base font-black text-primary tracking-tighter">
-                Engagement Rate
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+          <StatCard
+            title="New Enquiries"
+            value={newEnquiriesCount.toString()}
+            trend="+4 today"
+            trendUp={true}
+            icon={<Inbox />}
+          />
+          <StatCard
+            title="Total Leads"
+            value={leadCount.toString()}
+            trend="Steady"
+            trendUp={true}
+            icon={<UserPlus />}
+          />
+          <StatCard
+            title="Lead → Client Conversion"
+            value={clientCount.toString()}
+            trend="Retained"
+            trendUp={true}
+            icon={<Users />}
+          />
+          <StatCard
+            title="Engagement Rate"
+            value={`${engagementRate}%`}
+            trend="Optimal"
+            trendUp={true}
+            icon={<Activity />}
+          />
+        </div>
+
+        <div className="flex flex-col gap-4 md:gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
+            <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col w-full h-[500px]">
+              <h3 className="text-base font-black text-primary tracking-tighter mb-5">
+                Today's Task
               </h3>
-            </div>
-            <div className="flex gap-1.5 bg-slate-100 p-1 rounded-lg">
+              <div className="space-y-4 flex-1 overflow-y-auto pr-1 no-scrollbar">
+                {todayTasks.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-center">
+                    <CheckCircle2 size={24} className="text-slate-200 mb-3" />
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                      All Caught Up
+                    </p>
+                  </div>
+                ) : (
+                  todayTasks.map((f) => {
+                    const client = clients.find((c) => c.id === f.clientId);
+                    return (
+                      <div
+                        key={f.id}
+                        onClick={() =>
+                          client && onSelectFollowUp(client, "activity")
+                        }
+                        className="p-5 bg-slate-50 border border-slate-100 rounded-2xl hover:bg-white hover:border-secondary transition-all cursor-pointer shadow-sm group"
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <span
+                            className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest ${f.priority === "High" ? "bg-error/10 text-error" : "bg-info/10 text-info"}`}
+                          >
+                            {f.priority}
+                          </span>
+                          <span className="text-[8px] text-textMuted font-black flex items-center gap-1 uppercase">
+                            <Clock size={10} />{" "}
+                            {new Date(f.dueDate).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </span>
+                        </div>
+                        <h4 className="text-sm font-bold text-primary group-hover:text-secondary truncate">
+                          {f.title}
+                        </h4>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
               <button
-                onClick={() => setChartInterval("monthly")}
-                className={`text-[9px] font-black px-4 py-1.5 rounded-md transition-all ${chartInterval === "monthly" ? "bg-white text-primary shadow-sm" : "text-textMuted"}`}
+                onClick={onViewAllFollowUps}
+                className="w-full text-center text-[10px] text-primary font-black uppercase tracking-[0.2em] bg-slate-100 py-4 rounded-xl hover:bg-slate-200 transition-all mt-6 shrink-0"
               >
-                Month
+                View All Tasks
               </button>
+            </div>
+
+            <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col w-full h-[500px]">
+              <h3 className="text-base font-black text-error tracking-tighter mb-5 flex items-center gap-2">
+                Missed Tasks
+                {missedTasks.length > 0 && (
+                  <span className="bg-error/10 text-error text-[10px] px-2 py-0.5 rounded-full">
+                    {missedTasks.length}
+                  </span>
+                )}
+              </h3>
+              <div className="space-y-4 flex-1 overflow-y-auto pr-1 no-scrollbar">
+                {missedTasks.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-center">
+                    <CheckCircle2 size={24} className="text-slate-200 mb-3" />
+                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                      No Missed Tasks
+                    </p>
+                  </div>
+                ) : (
+                  missedTasks.map((f) => {
+                    const client = clients.find((c) => c.id === f.clientId);
+                    return (
+                      <div
+                        key={f.id}
+                        onClick={() =>
+                          client && onSelectFollowUp(client, "activity")
+                        }
+                        className="p-5 bg-error/5 border border-error/10 rounded-2xl hover:bg-white hover:border-error transition-all cursor-pointer shadow-sm group"
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <span
+                            className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest bg-white/50 text-error border border-error/10`}
+                          >
+                            Overdue
+                          </span>
+                          <span className="text-[8px] text-error/60 font-black flex items-center gap-1 uppercase">
+                            <Clock size={10} />{" "}
+                            {new Date(f.dueDate).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <h4 className="text-sm font-bold text-primary group-hover:text-error truncate">
+                          {f.title}
+                        </h4>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
               <button
-                onClick={() => setChartInterval("quarterly")}
-                className={`text-[9px] font-black px-4 py-1.5 rounded-md transition-all ${chartInterval === "quarterly" ? "bg-white text-primary shadow-sm" : "text-textMuted"}`}
+                onClick={onViewAllFollowUps}
+                className="w-full text-center text-[10px] text-error font-black uppercase tracking-[0.2em] bg-error/5 py-4 rounded-xl hover:bg-error/10 transition-all mt-6 shrink-0"
               >
-                Quarter
+                View All Tasks
               </button>
             </div>
           </div>
-          <div className="h-64 md:h-72 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={chartData}>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#F1F5F9"
-                />
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "#64748b", fontSize: 9, fontWeight: 800 }}
-                />
-                <YAxis
-                  yAxisId="left"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "#64748b", fontSize: 9, fontWeight: 800 }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    borderRadius: "12px",
-                    border: "1px solid #E2E8F0",
-                    fontSize: "10px",
-                  }}
-                />
-                <Area
-                  yAxisId="left"
-                  type="monotone"
-                  dataKey="enquiries"
-                  stroke="#1F3A5F"
-                  fill="#1F3A5F"
-                  fillOpacity={0.05}
-                  strokeWidth={2.5}
-                />
-                <Line
-                  yAxisId="left"
-                  type="monotone"
-                  dataKey="clients"
-                  stroke="#2EC4B6"
-                  strokeWidth={2.5}
-                  dot={{ r: 3 }}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
+
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 flex-1">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+              <div>
+                <h3 className="text-base font-black text-primary tracking-tighter">
+                  Engagement Rate
+                </h3>
+              </div>
+              <div className="flex gap-1.5 bg-slate-100 p-1 rounded-lg">
+                <button
+                  onClick={() => setChartInterval("monthly")}
+                  className={`text-[9px] font-black px-4 py-1.5 rounded-md transition-all ${chartInterval === "monthly" ? "bg-white text-primary shadow-sm" : "text-textMuted"}`}
+                >
+                  Month
+                </button>
+                <button
+                  onClick={() => setChartInterval("quarterly")}
+                  className={`text-[9px] font-black px-4 py-1.5 rounded-md transition-all ${chartInterval === "quarterly" ? "bg-white text-primary shadow-sm" : "text-textMuted"}`}
+                >
+                  Quarter
+                </button>
+              </div>
+            </div>
+            <div className="h-64 md:h-72 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <ComposedChart data={chartData}>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    vertical={false}
+                    stroke="#F1F5F9"
+                  />
+                  <XAxis
+                    dataKey="name"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: "#64748b", fontSize: 9, fontWeight: 800 }}
+                  />
+                  <YAxis
+                    yAxisId="left"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: "#64748b", fontSize: 9, fontWeight: 800 }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      borderRadius: "12px",
+                      border: "1px solid #E2E8F0",
+                      fontSize: "10px",
+                    }}
+                  />
+                  <Area
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="enquiries"
+                    stroke="#1F3A5F"
+                    fill="#1F3A5F"
+                    fillOpacity={0.05}
+                    strokeWidth={2.5}
+                  />
+                  <Line
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="clients"
+                    stroke="#2EC4B6"
+                    strokeWidth={2.5}
+                    dot={{ r: 3 }}
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
       </div>
