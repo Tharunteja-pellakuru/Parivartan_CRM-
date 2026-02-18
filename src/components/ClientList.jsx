@@ -20,6 +20,8 @@ import {
   UserCheck,
   Upload,
   Paperclip,
+  UserX,
+  RotateCcw,
 } from "lucide-react";
 
 const ClientList = ({
@@ -28,6 +30,8 @@ const ClientList = ({
   onAddClient,
   onDeleteClient,
   onOnboardClient,
+  onDismissLead,
+  onRestoreLead,
   allClients = [],
   title = "Clients",
 }) => {
@@ -40,6 +44,15 @@ const ClientList = ({
   const [onboardingLeadId, setOnboardingLeadId] = useState(null);
   const [isNameDropdownOpen, setIsNameDropdownOpen] = useState(false);
   const [nameSearch, setNameSearch] = useState("");
+  const [leadView, setLeadView] = useState("Pending");
+  const [clientSearchQuery, setClientSearchQuery] = useState("");
+  const [isClientDropdownOpen, setIsClientDropdownOpen] = useState(false);
+  const [isProjectStatusDropdownOpen, setIsProjectStatusDropdownOpen] =
+    useState(false);
+  const [
+    isOnboardProjectStatusDropdownOpen,
+    setIsOnboardProjectStatusDropdownOpen,
+  ] = useState(false);
 
   const [onboardingData, setOnboardingData] = useState({
     name: "",
@@ -68,6 +81,10 @@ const ClientList = ({
     onboardingDate: new Date().toISOString().split("T")[0],
     clientType: "New",
     website: "",
+    projectDescription: "",
+    deadline: "",
+    scopeDocument: "",
+    projectStatus: "Planning",
   });
 
   const handleOnboardSubmit = (e) => {
@@ -76,6 +93,12 @@ const ClientList = ({
       onOnboardClient(onboardingLeadId, onboardingData);
       setShowOnboardModal(false);
       setOnboardingLeadId(null);
+
+      // Automatically switch to Converted view for Leads
+      if (title === "Leads") {
+        setLeadView("Converted");
+      }
+
       setOnboardingData({
         name: "",
         email: "",
@@ -96,18 +119,33 @@ const ClientList = ({
     const matchesSearch =
       client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       client.company.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
+
+    let matchesStatus =
       filterStatus === "All" || client.status === filterStatus;
     let matchesLeadType = true;
+
     if (title === "Leads") {
+      // Sub-filter by Lead View (Pending, Converted, Dismissed)
+      if (leadView === "Pending") {
+        if (client.status !== "Lead" || client.isConverted) return false;
+      } else if (leadView === "Converted") {
+        if (!client.isConverted || client.status === "Dismissed") return false;
+      } else if (leadView === "Dismissed") {
+        if (client.status !== "Dismissed") return false;
+      }
+
       matchesLeadType =
         leadTypeFilter === "All" || client.leadType === leadTypeFilter;
     }
+
     return matchesSearch && matchesStatus && matchesLeadType;
   });
 
   const getStatusBadge = (client) => {
-    if (client.status === "Lead" && client.leadType) {
+    if (
+      (client.status === "Lead" || (client.isConverted && title === "Leads")) &&
+      client.leadType
+    ) {
       switch (client.leadType) {
         case "Hot":
           return {
@@ -167,6 +205,12 @@ const ClientList = ({
           className: "bg-slate-100 text-slate-400 border-slate-200",
           icon: null,
         };
+      case "Dismissed":
+        return {
+          label: "Dismissed",
+          className: "bg-slate-100 text-slate-400 border-slate-200",
+          icon: <UserX size={12} />,
+        };
       default:
         return {
           label: client.status,
@@ -199,6 +243,10 @@ const ClientList = ({
         onboardingDate: new Date().toISOString().split("T")[0],
         clientType: "New",
         website: "",
+        projectDescription: "",
+        deadline: "",
+        scopeDocument: "",
+        projectStatus: "Planning",
       });
     }
   };
@@ -248,12 +296,12 @@ const ClientList = ({
             />
           </div>
 
-          <div className="flex gap-4 w-full md:w-auto no-scrollbar">
+          <div className="flex items-center gap-4 w-full md:w-auto shrink-0">
             {title === "Leads" && (
-              <div className="relative">
+              <div className="relative shrink-0">
                 <button
                   onClick={() => setIsTierDropdownOpen(!isTierDropdownOpen)}
-                  className="flex items-center justify-between gap-3 px-5 py-3 bg-slate-50 border border-slate-100 rounded-xl text-[10px] font-black uppercase tracking-widest text-[#18254D] hover:bg-white hover:border-slate-200 transition-all min-w-[160px] shadow-sm shadow-slate-200/50 group"
+                  className="flex items-center justify-between gap-4 px-6 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-[11px] font-black uppercase tracking-widest text-[#18254D] hover:bg-white hover:border-slate-200 transition-all min-w-[180px] shadow-sm shadow-slate-200/50 group"
                 >
                   <span>
                     {leadTypeFilter === "All"
@@ -261,7 +309,7 @@ const ClientList = ({
                       : leadTypeFilter}
                   </span>
                   <ChevronDown
-                    size={14}
+                    size={16}
                     strokeWidth={3}
                     className={`transition-transform duration-300 ${isTierDropdownOpen ? "rotate-180" : ""}`}
                   />
@@ -273,7 +321,7 @@ const ClientList = ({
                       className="fixed inset-0 z-[80]"
                       onClick={() => setIsTierDropdownOpen(false)}
                     />
-                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-xl shadow-2xl py-2 z-[90] animate-fade-in-up origin-top">
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[90] animate-fade-in-up origin-top">
                       {["All", "Hot", "Warm", "Cold"].map((tier) => (
                         <button
                           key={tier}
@@ -281,10 +329,12 @@ const ClientList = ({
                             setLeadTypeFilter(tier);
                             setIsTierDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-5 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
-                            leadTypeFilter === (tier === "All" ? "All" : tier)
+                          className={`w-full text-left px-5 py-4 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                            tier === "All"
                               ? "bg-[#18254D] text-white"
-                              : "text-[#18254D] hover:bg-slate-50"
+                              : leadTypeFilter === tier
+                                ? "bg-slate-100 text-[#18254D]"
+                                : "text-[#18254D] hover:bg-slate-50"
                           }`}
                         >
                           {tier === "All" ? "All Tiers" : tier}
@@ -297,6 +347,46 @@ const ClientList = ({
             )}
           </div>
         </div>
+
+        {/* Lead View Toggles (Leads Only) */}
+        {title === "Leads" && (
+          <div className="flex justify-center my-6">
+            <div className="inline-flex bg-slate-100/50 p-1.5 rounded-2xl border border-slate-200 shadow-sm leading-none h-[54px] items-center gap-1">
+              {["Pending", "Converted", "Dismissed"].map((view) => {
+                const colors = {
+                  Pending: {
+                    active: "text-blue-600 border-blue-100 bg-white",
+                    hover: "hover:text-blue-500 hover:bg-white/50",
+                  },
+                  Converted: {
+                    active: "text-emerald-600 border-emerald-100 bg-white",
+                    hover: "hover:text-emerald-500 hover:bg-white/50",
+                  },
+                  Dismissed: {
+                    active: "text-rose-600 border-rose-100 bg-white",
+                    hover: "hover:text-rose-500 hover:bg-white/50",
+                  },
+                };
+                const activeColor = colors[view].active;
+                const hoverColor = colors[view].hover;
+
+                return (
+                  <button
+                    key={view}
+                    onClick={() => setLeadView(view)}
+                    className={`px-6 h-full rounded-xl text-[11px] font-black uppercase tracking-[0.15em] transition-all flex items-center justify-center min-w-[120px] border border-transparent ${
+                      leadView === view
+                        ? `${activeColor} shadow-md`
+                        : `text-slate-400 ${hoverColor}`
+                    }`}
+                  >
+                    {view}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Main List */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden w-full">
@@ -413,15 +503,56 @@ const ClientList = ({
                               <UserCheck size={18} />
                             </button>
                           )}
-                          {onDeleteClient && (
+                          {onDeleteClient &&
+                            (title !== "Leads" || leadView === "Dismissed") && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onDeleteClient(client.id);
+                                }}
+                                className="p-2.5 bg-white border border-slate-200 rounded-lg text-slate-300 hover:text-error hover:border-error hover:bg-error/5 transition-all active:scale-90 shadow-sm"
+                              >
+                                <Trash2 size={18} />
+                              </button>
+                            )}
+                          {onDismissLead &&
+                            (client.status === "Lead" || client.isConverted) &&
+                            client.status !== "Dismissed" && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onDismissLead(client.id);
+                                }}
+                                className="p-2.5 bg-white border border-slate-200 rounded-lg text-slate-300 hover:text-amber-500 hover:border-amber-500 hover:bg-amber-50 transition-all active:scale-90 shadow-sm"
+                                title="Dismiss Lead"
+                              >
+                                <UserX size={18} />
+                              </button>
+                            )}
+                          {onRestoreLead &&
+                            client.isConverted &&
+                            client.status !== "Dismissed" && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onRestoreLead(client.id);
+                                }}
+                                className="p-2.5 bg-white border border-slate-200 rounded-lg text-slate-300 hover:text-blue-500 hover:border-blue-500 hover:bg-blue-50 transition-all active:scale-90 shadow-sm"
+                                title="Revert as Lead"
+                              >
+                                <RotateCcw size={18} />
+                              </button>
+                            )}
+                          {onRestoreLead && client.status === "Dismissed" && (
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                onDeleteClient(client.id);
+                                onRestoreLead(client.id);
                               }}
-                              className="p-2.5 bg-white border border-slate-200 rounded-lg text-slate-300 hover:text-error hover:border-error hover:bg-error/5 transition-all active:scale-90 shadow-sm"
+                              className="p-2.5 bg-white border border-slate-200 rounded-lg text-slate-300 hover:text-blue-500 hover:border-blue-500 hover:bg-blue-50 transition-all active:scale-90 shadow-sm"
+                              title="Restore Lead"
                             >
-                              <Trash2 size={18} />
+                              <RotateCcw size={18} />
                             </button>
                           )}
                         </div>
@@ -480,216 +611,76 @@ const ClientList = ({
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-5 md:p-6 space-y-4">
-              {title !== "Leads" && (
-                <div className="space-y-3 pb-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                    Client Type
-                  </label>
-                  <div className="flex gap-4">
-                    <label className="flex-1 flex items-center gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:border-primary transition-all group has-[:checked]:bg-primary/5 has-[:checked]:border-primary">
-                      <div className="relative flex items-center justify-center">
-                        <input
-                          type="radio"
-                          name="clientType"
-                          value="New"
-                          checked={formData.clientType === "New"}
-                          onChange={() =>
-                            setFormData({ ...formData, clientType: "New" })
-                          }
-                          className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-full checked:border-primary transition-all"
-                        />
-                        <div className="absolute w-2.5 h-2.5 bg-primary rounded-full scale-0 peer-checked:scale-100 transition-transform" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-black text-primary leading-none">
-                          New Client
-                        </p>
-                        <p className="text-[9px] text-textMuted font-bold mt-1">
-                          First-time engagement
-                        </p>
-                      </div>
+            <form onSubmit={handleSubmit} className="p-5 md:p-6 space-y-6">
+              {title === "Leads" ? (
+                /* ADD LEAD FIELDS */
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      CLIENT NAME
                     </label>
-
-                    <label className="flex-1 flex items-center gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:border-primary transition-all group has-[:checked]:bg-primary/5 has-[:checked]:border-primary">
-                      <div className="relative flex items-center justify-center">
-                        <input
-                          type="radio"
-                          name="clientType"
-                          value="Existing"
-                          checked={formData.clientType === "Existing"}
-                          onChange={() =>
-                            setFormData({ ...formData, clientType: "Existing" })
-                          }
-                          className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-full checked:border-primary transition-all"
-                        />
-                        <div className="absolute w-2.5 h-2.5 bg-primary rounded-full scale-0 peer-checked:scale-100 transition-transform" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-black text-primary leading-none">
-                          Existing Client
-                        </p>
-                        <p className="text-[9px] text-textMuted font-bold mt-1">
-                          Repeat organization
-                        </p>
-                      </div>
-                    </label>
-                  </div>
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {/* Onboarding Date and Project Name removed as requested */}
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                    {title === "Leads" ? "Full Name" : "Client Name"}
-                  </label>
-                  <div className="relative">
                     <input
                       required
                       type="text"
-                      placeholder={
-                        formData.clientType === "Existing"
-                          ? "Search existing clients..."
-                          : "e.g. Anand Kumar"
-                      }
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
+                      placeholder="Anand Kumar"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
                       value={formData.name}
-                      onChange={(e) => {
-                        setFormData({ ...formData, name: e.target.value });
-                        if (formData.clientType === "Existing") {
-                          setIsNameDropdownOpen(true);
-                          setNameSearch(e.target.value);
-                        }
-                      }}
-                      onFocus={() => {
-                        if (formData.clientType === "Existing") {
-                          setIsNameDropdownOpen(true);
-                        }
-                      }}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                     />
-
-                    {formData.clientType === "Existing" &&
-                      isNameDropdownOpen && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-xl shadow-2xl py-2 z-[110] max-h-60 overflow-y-auto animate-fade-in-up">
-                          {allClients
-                            .filter((c) =>
-                              c.name
-                                .toLowerCase()
-                                .includes(nameSearch.toLowerCase()),
-                            )
-                            .map((client) => (
-                              <button
-                                key={client.id}
-                                type="button"
-                                onClick={() => {
-                                  setFormData({
-                                    ...formData,
-                                    name: client.name,
-                                    company: client.company,
-                                    email: client.email,
-                                    phone: client.phone,
-                                    industry: client.industry,
-                                  });
-                                  setIsNameDropdownOpen(false);
-                                  setNameSearch("");
-                                }}
-                                className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors flex items-center justify-between group"
-                              >
-                                <div>
-                                  <p className="text-sm font-black text-primary group-hover:text-secondary">
-                                    {client.name}
-                                  </p>
-                                  <p className="text-[10px] text-textMuted font-bold">
-                                    {client.company}
-                                  </p>
-                                </div>
-                                <ChevronRight
-                                  size={14}
-                                  className="text-slate-300 group-hover:text-secondary transition-colors"
-                                />
-                              </button>
-                            ))}
-                          {allClients.filter((c) =>
-                            c.name
-                              .toLowerCase()
-                              .includes(nameSearch.toLowerCase()),
-                          ).length === 0 && (
-                            <div className="px-4 py-3 text-center">
-                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                No clients found
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                    {formData.clientType === "Existing" &&
-                      isNameDropdownOpen && (
-                        <div
-                          className="fixed inset-0 z-[105]"
-                          onClick={() => setIsNameDropdownOpen(false)}
-                        />
-                      )}
                   </div>
-                </div>
 
-                {/* Company Name removed as requested */}
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                    Email ID
-                  </label>
-                  <input
-                    required
-                    type="email"
-                    placeholder="e.g. anand.kumar@fintech.in"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                    Phone Number
-                  </label>
-                  <input
-                    required
-                    type="tel"
-                    placeholder="+91 000..."
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
-                    value={formData.phone}
-                    onChange={(e) =>
-                      setFormData({ ...formData, phone: e.target.value })
-                    }
-                  />
-                </div>
-
-                {title === "Leads" && (
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                      Website Url
+                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      EMAIL ID
+                    </label>
+                    <input
+                      required
+                      type="email"
+                      placeholder="anand.kumar@fintech.in"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      PHONE NUMBER
+                    </label>
+                    <input
+                      required
+                      type="tel"
+                      placeholder="+91 98765 43210"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                      value={formData.phone}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      WEBSITE URL
                     </label>
                     <input
                       type="url"
-                      placeholder="e.g. https://www.company.com"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
+                      placeholder="https://www.company.com"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
                       value={formData.website}
                       onChange={(e) =>
                         setFormData({ ...formData, website: e.target.value })
                       }
                     />
                   </div>
-                )}
 
-                {title === "Leads" && (
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                      Lead Status
+                  <div className="md:col-span-2 space-y-2">
+                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      LEAD STATUS
                     </label>
                     <div className="grid grid-cols-3 gap-3">
                       {["Hot", "Warm", "Cold"].map((type) => (
@@ -702,22 +693,22 @@ const ClientList = ({
                               leadType: type,
                             })
                           }
-                          className={`flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all ${
+                          className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 transition-all ${
                             formData.leadType === type
                               ? type === "Hot"
-                                ? "bg-error/5 border-error text-error shadow-lg shadow-error/10 scale-105"
+                                ? "bg-error/5 border-error text-error shadow-lg shadow-error/10 scale-[1.02]"
                                 : type === "Warm"
-                                  ? "bg-warning/5 border-warning text-warning shadow-lg shadow-warning/10 scale-105"
-                                  : "bg-info/5 border-info text-info shadow-lg shadow-info/10 scale-105"
+                                  ? "bg-warning/5 border-warning text-warning shadow-lg shadow-warning/10 scale-[1.02]"
+                                  : "bg-info/5 border-info text-info shadow-lg shadow-info/10 scale-[1.02]"
                               : "bg-slate-50 border-slate-100 text-slate-400 grayscale opacity-60 hover:opacity-100 hover:grayscale-0"
                           }`}
                         >
                           {type === "Hot" ? (
-                            <Flame size={24} strokeWidth={2.5} />
+                            <Flame size={20} strokeWidth={2.5} />
                           ) : type === "Warm" ? (
-                            <Sun size={24} strokeWidth={2.5} />
+                            <Sun size={20} strokeWidth={2.5} />
                           ) : (
-                            <Snowflake size={24} strokeWidth={2.5} />
+                            <Snowflake size={20} strokeWidth={2.5} />
                           )}
                           <span className="text-[10px] font-black uppercase tracking-widest">
                             {type}
@@ -726,67 +717,308 @@ const ClientList = ({
                       ))}
                     </div>
                   </div>
-                )}
 
-                {title === "Leads" && (
                   <div className="md:col-span-2 space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                      Note
+                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      NOTE
                     </label>
                     <textarea
                       rows={3}
                       placeholder="Add any additional context..."
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold resize-none"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold resize-none shadow-sm"
                       value={formData.notes || formData.industry}
                       onChange={(e) =>
                         setFormData({
                           ...formData,
                           notes: e.target.value,
-                          industry: e.target.value, // Keeping industry in sync for backward compatibility if needed
+                          industry: e.target.value,
                         })
                       }
                     />
                   </div>
-                )}
-                {/* Client Status added as requested */}
-                {title !== "Leads" && (
-                  <div className="space-y-3 pb-2 col-span-1 md:col-span-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                      Client Status
+                </div>
+              ) : (
+                /* ADD CLIENT FIELDS */
+                <>
+                  {/* CLIENT DETAILS HEADING */}
+                  <div className="flex items-center gap-3 pt-2">
+                    <div className="h-[2px] w-8 bg-secondary rounded-full" />
+                    <h4 className="text-[14px] font-black text-[#18254D] uppercase tracking-[0.2em]">
+                      Client Details
+                    </h4>
+                    <div className="h-[2px] flex-1 bg-slate-100 rounded-full" />
+                  </div>
+
+                  {/* CLIENT TYPE */}
+                  <div className="space-y-3 pb-2">
+                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      CLIENT TYPE
                     </label>
-                    <div className="grid grid-cols-2 gap-4">
-                      {["Active", "Inactive"].map((status) => (
-                        <label
-                          key={status}
-                          className={`flex items-center gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:border-primary transition-all group has-[:checked]:bg-primary/5 has-[:checked]:border-primary`}
-                        >
-                          <div className="relative flex items-center justify-center">
-                            <input
-                              type="radio"
-                              name="clientStatusManual"
-                              value={status}
-                              checked={formData.status === status}
-                              onChange={() =>
-                                setFormData({
-                                  ...formData,
-                                  status: status,
-                                })
-                              }
-                              className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-full checked:border-primary transition-all"
-                            />
-                            <div className="absolute w-2.5 h-2.5 bg-primary rounded-full scale-0 peer-checked:scale-100 transition-transform" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-black text-primary leading-none">
-                              {status}
-                            </p>
-                          </div>
-                        </label>
-                      ))}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <label className="flex-1 flex items-center gap-3 p-4 bg-white border-2 border-[#18254D] rounded-2xl cursor-pointer transition-all group shadow-sm">
+                        <div className="relative flex items-center justify-center">
+                          <input
+                            type="radio"
+                            name="clientType"
+                            value="New"
+                            checked={formData.clientType === "New"}
+                            readOnly
+                            className="peer appearance-none w-6 h-6 border-2 border-[#18254D] rounded-full checked:border-[#18254D] transition-all"
+                          />
+                          <div className="absolute w-3 h-3 bg-[#18254D] rounded-full" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-black text-[#18254D] leading-none">
+                            New Client
+                          </p>
+                          <p className="text-[9px] text-slate-400 font-bold mt-1">
+                            First-time engagement
+                          </p>
+                        </div>
+                      </label>
+                      {/* EXISTING CLIENT REMOVED */}
                     </div>
                   </div>
-                )}
-              </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {/* NAME & EMAIL */}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                        CLIENT NAME
+                      </label>
+                      <input
+                        required
+                        type="text"
+                        placeholder="Anand Kumar"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                        value={formData.name}
+                        onChange={(e) =>
+                          setFormData({ ...formData, name: e.target.value })
+                        }
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                        EMAIL ID
+                      </label>
+                      <input
+                        required
+                        type="email"
+                        placeholder="anand.kumar@fintech.in"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                        value={formData.email}
+                        onChange={(e) =>
+                          setFormData({ ...formData, email: e.target.value })
+                        }
+                      />
+                    </div>
+
+                    {/* PHONE & STATUS */}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                        PHONE NUMBER
+                      </label>
+                      <input
+                        required
+                        type="tel"
+                        placeholder="+91 98765 43210"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                        value={formData.phone}
+                        onChange={(e) =>
+                          setFormData({ ...formData, phone: e.target.value })
+                        }
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                        CLIENT STATUS
+                      </label>
+                      <div className="grid grid-cols-2 gap-3">
+                        {["Active", "Inactive"].map((status) => (
+                          <label
+                            key={status}
+                            className={`flex items-center gap-3 h-[46px] px-4 bg-white border rounded-xl cursor-pointer transition-all group shadow-sm ${
+                              formData.status === status
+                                ? "border-[#18254D] bg-[#18254D]/5"
+                                : "border-slate-200"
+                            }`}
+                          >
+                            <div className="relative flex items-center justify-center">
+                              <input
+                                type="radio"
+                                name="clientStatus"
+                                value={status}
+                                checked={formData.status === status}
+                                onChange={() =>
+                                  setFormData({ ...formData, status: status })
+                                }
+                                className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-full checked:border-[#18254D] transition-all"
+                              />
+                              <div
+                                className={`absolute w-2.5 h-2.5 bg-[#18254D] rounded-full transition-transform ${
+                                  formData.status === status
+                                    ? "scale-100"
+                                    : "scale-0"
+                                }`}
+                              />
+                            </div>
+                            <p className="text-sm font-black text-[#18254D] leading-none">
+                              {status}
+                            </p>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* PROJECT DETAILS HEADING */}
+                  <div className="flex items-center gap-3 pt-6">
+                    <div className="h-[2px] w-8 bg-secondary rounded-full" />
+                    <h4 className="text-[14px] font-black text-[#18254D] uppercase tracking-[0.2em]">
+                      Project Details
+                    </h4>
+                    <div className="h-[2px] flex-1 bg-slate-100 rounded-full" />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {/* PROJECT NAME & STATUS */}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                        PROJECT NAME
+                      </label>
+                      <input
+                        required
+                        type="text"
+                        placeholder="e.g. Website Redesign"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                        value={formData.projectName}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            projectName: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                        PROJECT STATUS
+                      </label>
+                      <div className="relative">
+                        <select
+                          className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold appearance-none shadow-sm"
+                          value={formData.projectStatus}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              projectStatus: e.target.value,
+                            })
+                          }
+                        >
+                          <option value="Planning">Planning</option>
+                          <option value="On Going">On Going</option>
+                          <option value="Testing">Testing</option>
+                          <option value="Completed">Completed</option>
+                        </select>
+                        <ChevronDown
+                          size={16}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                        />
+                      </div>
+                    </div>
+
+                    {/* PROJECT DESCRIPTION */}
+                    <div className="space-y-2 md:col-span-2">
+                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                        PROJECT DESCRIPTION
+                      </label>
+                      <textarea
+                        rows={2}
+                        placeholder="Brief overview of the project scope..."
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold resize-none shadow-sm"
+                        value={formData.projectDescription}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            projectDescription: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    {/* DATES */}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                        ONBOARDING DATE
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                        value={formData.onboardingDate}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            onboardingDate: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                        DEADLINE (TENTATIVE)
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                        value={formData.deadline}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            deadline: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+
+                    {/* SCOPE DOCUMENT */}
+                    <div className="space-y-2 md:col-span-2">
+                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                        SCOPE DOCUMENT
+                      </label>
+                      <div className="relative group">
+                        <input
+                          type="file"
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              setFormData({
+                                ...formData,
+                                scopeDocument: file.name,
+                              });
+                            }
+                          }}
+                        />
+                        <div className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl group-hover:border-secondary group-hover:bg-secondary/5 transition-all flex items-center gap-3 shadow-sm">
+                          <div className="p-2 bg-white border border-slate-200 rounded-lg shadow-sm">
+                            <Upload size={16} className="text-secondary" />
+                          </div>
+                          <span
+                            className={`text-sm font-bold ${formData.scopeDocument ? "text-[#18254D]" : "text-slate-400"}`}
+                          >
+                            {formData.scopeDocument ||
+                              "Click to upload scope document (PDF, DOCX)"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
 
               <div className="pt-2">
                 <button
@@ -797,7 +1029,7 @@ const ClientList = ({
                     size={20}
                     className="group-hover/btn:translate-x-1 transition-transform"
                   />
-                  <span>Add {title === "Leads" ? "Lead" : "Client"}</span>
+                  <span>ADD {title === "Leads" ? "LEAD" : "CLIENT"}</span>
                 </button>
               </div>
             </form>
@@ -838,12 +1070,28 @@ const ClientList = ({
               onSubmit={handleOnboardSubmit}
               className="p-5 md:p-6 space-y-4"
             >
+              {/* CLIENT DETAILS HEADING */}
+              <div className="flex items-center gap-3 pt-2">
+                <div className="h-[2px] w-8 bg-secondary rounded-full" />
+                <h4 className="text-[14px] font-black text-[#18254D] uppercase tracking-[0.2em]">
+                  Client Details
+                </h4>
+                <div className="h-[2px] flex-1 bg-slate-100 rounded-full" />
+              </div>
+
+              {/* CLIENT TYPE */}
               <div className="space-y-3 pb-2">
-                <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                  Client Type
+                <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  CLIENT TYPE
                 </label>
-                <div className="flex gap-4">
-                  <label className="flex-1 flex items-center gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:border-primary transition-all group has-[:checked]:bg-primary/5 has-[:checked]:border-primary">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label
+                    className={`flex-1 flex items-center gap-3 p-4 bg-white border-2 rounded-2xl cursor-pointer transition-all group shadow-sm ${
+                      onboardingData.clientType === "New"
+                        ? "border-[#18254D]"
+                        : "border-slate-100"
+                    }`}
+                  >
                     <div className="relative flex items-center justify-center">
                       <input
                         type="radio"
@@ -856,327 +1104,403 @@ const ClientList = ({
                             clientType: "New",
                           })
                         }
-                        className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-full checked:border-primary transition-all"
+                        className="peer appearance-none w-6 h-6 border-2 border-slate-200 rounded-full checked:border-[#18254D] transition-all"
                       />
-                      <div className="absolute w-2.5 h-2.5 bg-primary rounded-full scale-0 peer-checked:scale-100 transition-transform" />
+                      <div
+                        className={`absolute w-3 h-3 bg-[#18254D] rounded-full transition-transform ${
+                          onboardingData.clientType === "New"
+                            ? "scale-100"
+                            : "scale-0"
+                        }`}
+                      />
                     </div>
                     <div>
-                      <p className="text-sm font-black text-primary leading-none">
+                      <p className="text-sm font-black text-[#18254D] leading-none">
                         New Client
                       </p>
-                      <p className="text-[9px] text-textMuted font-bold mt-1">
+                      <p className="text-[9px] text-slate-400 font-bold mt-1">
                         First-time engagement
                       </p>
                     </div>
                   </label>
 
-                  <label className="flex-1 flex items-center gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer hover:border-primary transition-all group has-[:checked]:bg-primary/5 has-[:checked]:border-primary">
+                  <label
+                    className={`flex-1 flex items-center gap-3 p-4 bg-white border-2 rounded-2xl cursor-pointer transition-all group shadow-sm ${
+                      onboardingData.clientType === "Existing Client"
+                        ? "border-[#18254D]"
+                        : "border-slate-100"
+                    }`}
+                  >
                     <div className="relative flex items-center justify-center">
                       <input
                         type="radio"
                         name="onboardClientType"
-                        value="Existing"
-                        checked={onboardingData.clientType === "Existing"}
+                        value="Existing Client"
+                        checked={
+                          onboardingData.clientType === "Existing Client"
+                        }
                         onChange={() =>
                           setOnboardingData({
                             ...onboardingData,
-                            clientType: "Existing",
+                            clientType: "Existing Client",
                           })
                         }
-                        className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-full checked:border-primary transition-all"
+                        className="peer appearance-none w-6 h-6 border-2 border-slate-200 rounded-full checked:border-[#18254D] transition-all"
                       />
-                      <div className="absolute w-2.5 h-2.5 bg-primary rounded-full scale-0 peer-checked:scale-100 transition-transform" />
+                      <div
+                        className={`absolute w-3 h-3 bg-[#18254D] rounded-full transition-transform ${
+                          onboardingData.clientType === "Existing Client"
+                            ? "scale-100"
+                            : "scale-0"
+                        }`}
+                      />
                     </div>
                     <div>
-                      <p className="text-sm font-black text-primary leading-none">
+                      <p className="text-sm font-black text-[#18254D] leading-none">
                         Existing Client
                       </p>
-                      <p className="text-[9px] text-textMuted font-bold mt-1">
-                        Repeat organization
+                      <p className="text-[9px] text-slate-400 font-bold mt-1">
+                        Returning or Converted
                       </p>
                     </div>
                   </label>
                 </div>
               </div>
 
-              <div className="space-y-3 pb-2">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                      Client Name
-                    </label>
-                    <div className="relative">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="space-y-2 relative">
+                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    CLIENT NAME
+                  </label>
+                  <div className="relative">
+                    {onboardingData.clientType === "Existing Client" ? (
+                      <div className="relative">
+                        <div
+                          className="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus-within:ring-4 focus-within:ring-secondary/10 focus-within:border-secondary transition-all cursor-pointer flex items-center justify-between shadow-sm shadow-slate-200/50 group"
+                          onClick={() =>
+                            setIsClientDropdownOpen(!isClientDropdownOpen)
+                          }
+                        >
+                          <span
+                            className={`text-sm font-black uppercase tracking-tight ${onboardingData.name ? "text-primary" : "text-slate-400"}`}
+                          >
+                            {onboardingData.name || "Select an existing client"}
+                          </span>
+                          <ChevronDown
+                            size={16}
+                            strokeWidth={3}
+                            className={`text-slate-400 transition-transform duration-300 ${isClientDropdownOpen ? "rotate-180" : ""}`}
+                          />
+                        </div>
+
+                        {isClientDropdownOpen && (
+                          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-2xl z-[110] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                            <div className="p-3 border-b border-slate-100 bg-slate-50/50">
+                              <div className="relative">
+                                <Search
+                                  size={14}
+                                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Search by name..."
+                                  className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary"
+                                  value={clientSearchQuery}
+                                  onChange={(e) =>
+                                    setClientSearchQuery(e.target.value)
+                                  }
+                                  onClick={(e) => e.stopPropagation()}
+                                  autoFocus
+                                />
+                              </div>
+                            </div>
+                            <div className="max-h-[200px] overflow-y-auto p-2">
+                              {allClients
+                                .filter(
+                                  (c) =>
+                                    c.status !== "Lead" &&
+                                    c.name
+                                      .toLowerCase()
+                                      .includes(
+                                        clientSearchQuery.toLowerCase(),
+                                      ),
+                                )
+                                .map((client) => (
+                                  <div
+                                    key={client.id}
+                                    className="px-4 py-3 hover:bg-slate-50 rounded-xl cursor-pointer group transition-colors"
+                                    onClick={() => {
+                                      setOnboardingData({
+                                        ...onboardingData,
+                                        name: client.name,
+                                        email: client.email,
+                                        phone: client.phone,
+                                      });
+                                      setIsClientDropdownOpen(false);
+                                      setClientSearchQuery("");
+                                    }}
+                                  >
+                                    <p className="text-sm font-black text-[#18254D] group-hover:text-secondary transition-colors">
+                                      {client.name}
+                                    </p>
+                                    <p className="text-[10px] text-slate-400 font-bold mt-0.5">
+                                      {client.company || client.email}
+                                    </p>
+                                  </div>
+                                ))}
+                              {allClients.filter(
+                                (c) =>
+                                  c.status !== "Lead" &&
+                                  c.name
+                                    .toLowerCase()
+                                    .includes(clientSearchQuery.toLowerCase()),
+                              ).length === 0 && (
+                                <div className="p-6 text-center">
+                                  <p className="text-xs font-bold text-slate-400">
+                                    No clients found matching "
+                                    {clientSearchQuery}"
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
                       <input
                         required
                         type="text"
-                        placeholder={
-                          onboardingData.clientType === "Existing"
-                            ? "Search existing clients..."
-                            : "e.g. Anand Kumar"
-                        }
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
+                        placeholder="e.g. Anand Kumar"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
                         value={onboardingData.name}
-                        onChange={(e) => {
-                          setOnboardingData({
-                            ...onboardingData,
-                            name: e.target.value,
-                          });
-                          if (onboardingData.clientType === "Existing") {
-                            setIsNameDropdownOpen(true);
-                            setNameSearch(e.target.value);
-                          }
-                        }}
-                        onFocus={() => {
-                          if (onboardingData.clientType === "Existing") {
-                            setIsNameDropdownOpen(true);
-                          }
-                        }}
-                      />
-                      {onboardingData.clientType === "Existing" &&
-                        isNameDropdownOpen && (
-                          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-xl shadow-2xl py-2 z-[110] max-h-60 overflow-y-auto animate-fade-in-up">
-                            {allClients
-                              .filter((c) =>
-                                c.name
-                                  .toLowerCase()
-                                  .includes(nameSearch.toLowerCase()),
-                              )
-                              .map((client) => (
-                                <button
-                                  key={client.id}
-                                  type="button"
-                                  onClick={() => {
-                                    setOnboardingData({
-                                      ...onboardingData,
-                                      name: client.name,
-                                      email: client.email,
-                                      phone: client.phone,
-                                    });
-                                    setIsNameDropdownOpen(false);
-                                    setNameSearch("");
-                                  }}
-                                  className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors flex items-center justify-between group"
-                                >
-                                  <div>
-                                    <p className="text-sm font-black text-primary group-hover:text-secondary">
-                                      {client.name}
-                                    </p>
-                                    <p className="text-[10px] text-textMuted font-bold">
-                                      {client.company}
-                                    </p>
-                                  </div>
-                                  <ChevronRight
-                                    size={14}
-                                    className="text-slate-300 group-hover:text-secondary transition-colors"
-                                  />
-                                </button>
-                              ))}
-                          </div>
-                        )}
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                      Email ID
-                    </label>
-                    <input
-                      required
-                      type="email"
-                      placeholder="e.g. anand.kumar@fintech.in"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
-                      value={onboardingData.email}
-                      onChange={(e) =>
-                        setOnboardingData({
-                          ...onboardingData,
-                          email: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                      Phone Number
-                    </label>
-                    <input
-                      required
-                      type="tel"
-                      placeholder="+91 000..."
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
-                      value={onboardingData.phone}
-                      onChange={(e) =>
-                        setOnboardingData({
-                          ...onboardingData,
-                          phone: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                      Client Status
-                    </label>
-                    <div className="grid grid-cols-2 gap-4">
-                      {["Active", "Inactive"].map((status) => (
-                        <label
-                          key={status}
-                          className={`flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:border-primary transition-all group has-[:checked]:bg-primary/5 has-[:checked]:border-primary`}
-                        >
-                          <div className="relative flex items-center justify-center">
-                            <input
-                              type="radio"
-                              name="onboardClientStatus"
-                              value={status}
-                              checked={onboardingData.status === status}
-                              onChange={() =>
-                                setOnboardingData({
-                                  ...onboardingData,
-                                  status: status,
-                                })
-                              }
-                              className="peer appearance-none w-4 h-4 border-2 border-slate-300 rounded-full checked:border-primary transition-all"
-                            />
-                            <div className="absolute w-2 h-2 bg-primary rounded-full scale-0 peer-checked:scale-100 transition-transform" />
-                          </div>
-                          <div>
-                            <p className="text-xs font-black text-primary leading-none">
-                              {status}
-                            </p>
-                          </div>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                      Project Name
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      placeholder="e.g. Website Redesign"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
-                      value={onboardingData.projectName}
-                      onChange={(e) =>
-                        setOnboardingData({
-                          ...onboardingData,
-                          projectName: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                      Project Status
-                    </label>
-                    <div className="relative">
-                      <select
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold appearance-none"
-                        value={onboardingData.projectStatus}
                         onChange={(e) =>
                           setOnboardingData({
                             ...onboardingData,
-                            projectStatus: e.target.value,
+                            name: e.target.value,
                           })
                         }
+                      />
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    EMAIL ID
+                  </label>
+                  <input
+                    required
+                    type="email"
+                    placeholder="e.g. anand.kumar@fintech.in"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                    value={onboardingData.email}
+                    onChange={(e) =>
+                      setOnboardingData({
+                        ...onboardingData,
+                        email: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    PHONE NUMBER
+                  </label>
+                  <input
+                    required
+                    type="tel"
+                    placeholder="+91 98765 43210"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                    value={onboardingData.phone}
+                    onChange={(e) =>
+                      setOnboardingData({
+                        ...onboardingData,
+                        phone: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    CLIENT STATUS
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {["Active", "Inactive"].map((status) => (
+                      <label
+                        key={status}
+                        className={`flex items-center gap-3 h-[46px] px-4 bg-white border rounded-xl cursor-pointer transition-all group shadow-sm ${
+                          onboardingData.status === status
+                            ? "border-[#18254D] bg-[#18254D]/5"
+                            : "border-slate-200"
+                        }`}
                       >
-                        <option value="Planning">Planning</option>
-                        <option value="On Going">On Going</option>
-                        <option value="Testing">Testing</option>
-                        <option value="Completed">Completed</option>
-                      </select>
-                      <ChevronDown
-                        size={16}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 md:col-span-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                      Project Description
-                    </label>
-                    <textarea
-                      rows={2}
-                      placeholder="Brief overview of the project scope..."
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold resize-none"
-                      value={onboardingData.projectDescription}
-                      onChange={(e) =>
-                        setOnboardingData({
-                          ...onboardingData,
-                          projectDescription: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                      Onboarding Date
-                    </label>
-                    <input
-                      type="date"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
-                      value={onboardingData.onboardingDate}
-                      onChange={(e) =>
-                        setOnboardingData({
-                          ...onboardingData,
-                          onboardingDate: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                      Deadline (Tentative)
-                    </label>
-                    <input
-                      type="date"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
-                      value={onboardingData.deadline}
-                      onChange={(e) =>
-                        setOnboardingData({
-                          ...onboardingData,
-                          deadline: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-
-                  <div className="space-y-2 md:col-span-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
-                      Scope Document
-                    </label>
-                    <div className="relative group">
-                      <input
-                        type="file"
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-                          if (file) {
-                            setOnboardingData({
-                              ...onboardingData,
-                              scopeDocument: file.name,
-                            });
-                          }
-                        }}
-                      />
-                      <div className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl group-hover:border-secondary group-hover:bg-secondary/5 transition-all flex items-center gap-3">
-                        <div className="p-2 bg-white border border-slate-200 rounded-lg shadow-sm">
-                          <Upload size={16} className="text-secondary" />
+                        <div className="relative flex items-center justify-center">
+                          <input
+                            type="radio"
+                            name="onboardClientStatus"
+                            value={status}
+                            checked={onboardingData.status === status}
+                            onChange={() =>
+                              setOnboardingData({
+                                ...onboardingData,
+                                status: status,
+                              })
+                            }
+                            className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-full checked:border-[#18254D] transition-all"
+                          />
+                          <div
+                            className={`absolute w-2.5 h-2.5 bg-[#18254D] rounded-full transition-transform ${
+                              onboardingData.status === status
+                                ? "scale-100"
+                                : "scale-0"
+                            }`}
+                          />
                         </div>
-                        <span
-                          className={`text-sm font-bold ${onboardingData.scopeDocument ? "text-primary" : "text-slate-400"}`}
-                        >
-                          {onboardingData.scopeDocument ||
-                            "Click to upload scope document (PDF, DOCX)"}
-                        </span>
+                        <p className="text-sm font-black text-[#18254D] leading-none">
+                          {status}
+                        </p>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* PROJECT DETAILS HEADING */}
+              <div className="flex items-center gap-3 pt-6">
+                <div className="h-[2px] w-8 bg-secondary rounded-full" />
+                <h4 className="text-[14px] font-black text-[#18254D] uppercase tracking-[0.2em]">
+                  Project Details
+                </h4>
+                <div className="h-[2px] flex-1 bg-slate-100 rounded-full" />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    PROJECT NAME
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="e.g. Website Redesign"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                    value={onboardingData.projectName}
+                    onChange={(e) =>
+                      setOnboardingData({
+                        ...onboardingData,
+                        projectName: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    PROJECT STATUS
+                  </label>
+                  <select
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold appearance-none shadow-sm"
+                    value={onboardingData.projectStatus}
+                    onChange={(e) =>
+                      setOnboardingData({
+                        ...onboardingData,
+                        projectStatus: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="Planning">Planning</option>
+                    <option value="On Going">On Going</option>
+                    <option value="Testing">Testing</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                  <ChevronDown
+                    size={16}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                  />
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    PROJECT DESCRIPTION
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder="Brief overview of the project scope..."
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm resize-none"
+                    value={onboardingData.projectDescription}
+                    onChange={(e) =>
+                      setOnboardingData({
+                        ...onboardingData,
+                        projectDescription: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    ONBOARDING DATE
+                  </label>
+                  <input
+                    type="date"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                    value={onboardingData.onboardingDate}
+                    onChange={(e) =>
+                      setOnboardingData({
+                        ...onboardingData,
+                        onboardingDate: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    DEADLINE (TENTATIVE)
+                  </label>
+                  <input
+                    type="date"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                    value={onboardingData.deadline}
+                    onChange={(e) =>
+                      setOnboardingData({
+                        ...onboardingData,
+                        deadline: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    SCOPE DOCUMENT
+                  </label>
+                  <div className="relative group">
+                    <input
+                      type="file"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          setOnboardingData({
+                            ...onboardingData,
+                            scopeDocument: file.name,
+                          });
+                        }
+                      }}
+                    />
+                    <div className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl group-hover:border-secondary group-hover:bg-secondary/5 transition-all flex items-center gap-3 shadow-sm">
+                      <div className="p-2 bg-white border border-slate-200 rounded-lg shadow-sm">
+                        <Upload size={16} className="text-secondary" />
                       </div>
+                      <span
+                        className={`text-sm font-bold ${onboardingData.scopeDocument ? "text-[#18254D]" : "text-slate-400"}`}
+                      >
+                        {onboardingData.scopeDocument ||
+                          "Click to upload scope document (PDF, DOCX)"}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -1187,11 +1511,11 @@ const ClientList = ({
                   type="submit"
                   className="w-full h-14 bg-[#18254D] text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] shadow-xl active:scale-[0.97] transition-all hover:bg-[#1e2e5e] hover:shadow-2xl flex items-center justify-center gap-3 group/btn"
                 >
-                  <Briefcase
+                  <UserCheck
                     size={20}
                     className="group-hover/btn:translate-x-1 transition-transform"
                   />
-                  <span>Initialize Project</span>
+                  <span>CONVERT TO CLIENT</span>
                 </button>
               </div>
             </form>

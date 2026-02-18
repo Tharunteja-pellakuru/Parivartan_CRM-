@@ -14,6 +14,7 @@ import {
   Plus,
   Send,
   Inbox,
+  Search,
   X,
   Sparkles,
 } from "lucide-react";
@@ -31,6 +32,7 @@ const EnquiryList = ({
   onAdd,
 }) => {
   const [activeTab, setActiveTab] = useState("new");
+  const [searchTerm, setSearchTerm] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiAnalysisEnabled, setAiAnalysisEnabled] = useState(false);
   const [hideIrrelevant, setHideIrrelevant] = useState(false);
@@ -82,6 +84,14 @@ const EnquiryList = ({
     else if (activeTab === "dismissed") matchesTab = e.status === "dismissed";
 
     if (!matchesTab) return false;
+
+    const matchesSearch =
+      e.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      e.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (e.message && e.message.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    if (!matchesSearch) return false;
+
     if (activeTab === "new" && hideIrrelevant) {
       if (e.aiAnalysis && !e.aiAnalysis.isRelevant) return false;
     }
@@ -169,63 +179,102 @@ const EnquiryList = ({
           </div>
         </div>
 
-        <div className="bg-white p-2 rounded-[1.5rem] border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
-          <div className="flex bg-slate-100 p-1 rounded-xl overflow-x-auto no-scrollbar shrink-0">
-            {["new", "hold", "dismissed"].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`flex-1 md:flex-initial px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
-                  activeTab === tab
-                    ? "bg-white text-primary shadow-sm"
-                    : "text-slate-500"
-                }`}
-              >
-                {tab === "new"
-                  ? "Inbox"
-                  : tab === "hold"
-                    ? "On Hold"
-                    : "Dismissed"}
-              </button>
-            ))}
-          </div>
+        <div className="bg-white p-2 md:p-3 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
+          {/* AI Controls Moved inside Control Bar for Enquiries */}
+          <div className="flex items-center justify-between w-full">
+            <div className="relative w-full md:w-96">
+              <Search
+                size={18}
+                className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"
+              />
+              <input
+                type="text"
+                placeholder={`Search in ${activeTab === "new" ? "Inbox" : activeTab === "hold" ? "On Hold" : "Dismissed"}...`}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-14 pr-6 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all"
+              />
+            </div>
 
-          {activeTab === "new" && (
-            <div className="flex items-center justify-between md:justify-end gap-4 px-3 border-t md:border-t-0 md:border-l border-slate-100 mt-2 md:mt-0 pt-3 md:pt-0">
-              <div className="flex items-center gap-2.5">
-                <span
-                  className={`text-[9px] font-black uppercase tracking-widest ${aiAnalysisEnabled ? "text-primary" : "text-slate-400"}`}
-                >
-                  AI Analysis
-                </span>
-                <button
-                  onClick={() => setAiAnalysisEnabled(!aiAnalysisEnabled)}
-                  className={`relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full transition-colors ${aiAnalysisEnabled ? "bg-secondary" : "bg-slate-200"}`}
-                >
+            <div className="flex items-center gap-4">
+              {activeTab === "new" && (
+                <div className="flex items-center gap-2.5 px-4 h-[46px] bg-slate-50 border border-slate-100 rounded-xl">
                   <span
-                    className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition duration-200 ${aiAnalysisEnabled ? "translate-x-5" : "translate-x-1"} mt-0.5`}
-                  />
-                </button>
-              </div>
-              {aiAnalysisEnabled && (
-                <div className="flex items-center gap-2.5 pl-6 border-l border-slate-100">
-                  <span
-                    className={`text-[9px] font-black uppercase tracking-widest ${hideIrrelevant ? "text-primary" : "text-slate-400"}`}
+                    className={`text-[9px] font-black uppercase tracking-widest ${aiAnalysisEnabled ? "text-primary" : "text-slate-400"}`}
                   >
-                    Filter Spam
+                    AI Analysis
                   </span>
                   <button
-                    onClick={() => setHideIrrelevant(!hideIrrelevant)}
-                    className={`relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full transition-colors ${hideIrrelevant ? "bg-primary" : "bg-slate-200"}`}
+                    onClick={() => setAiAnalysisEnabled(!aiAnalysisEnabled)}
+                    className={`relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full transition-colors ${aiAnalysisEnabled ? "bg-secondary" : "bg-slate-200"}`}
                   >
                     <span
-                      className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition duration-200 ${hideIrrelevant ? "translate-x-5" : "translate-x-1"} mt-0.5`}
+                      className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition duration-200 ${aiAnalysisEnabled ? "translate-x-5" : "translate-x-1"} mt-0.5`}
                     />
                   </button>
+                  {aiAnalysisEnabled && (
+                    <div className="flex items-center gap-2.5 pl-4 border-l border-slate-200 ml-4 h-full">
+                      <span
+                        className={`text-[9px] font-black uppercase tracking-widest ${hideIrrelevant ? "text-primary" : "text-slate-400"}`}
+                      >
+                        Filter Spam
+                      </span>
+                      <button
+                        onClick={() => setHideIrrelevant(!hideIrrelevant)}
+                        className={`relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full transition-colors ${hideIrrelevant ? "bg-primary" : "bg-slate-200"}`}
+                      >
+                        <span
+                          className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition duration-200 ${hideIrrelevant ? "translate-x-5" : "translate-x-1"} mt-0.5`}
+                        />
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
+          </div>
+        </div>
+
+        {/* Lead View Toggles (Enquiries) */}
+        <div className="flex justify-center my-6">
+          <div className="inline-flex bg-slate-100/50 p-1.5 rounded-2xl border border-slate-200 shadow-sm leading-none h-[54px] items-center gap-1">
+            {["new", "hold", "dismissed"].map((tab) => {
+              const colors = {
+                new: {
+                  active: "text-blue-600 border-blue-100 bg-white",
+                  hover: "hover:text-blue-500 hover:bg-white/50",
+                },
+                hold: {
+                  active: "text-orange-600 border-orange-100 bg-white",
+                  hover: "hover:text-orange-500 hover:bg-white/50",
+                },
+                dismissed: {
+                  active: "text-rose-600 border-rose-100 bg-white",
+                  hover: "hover:text-rose-500 hover:bg-white/50",
+                },
+              };
+              const activeColor = colors[tab].active;
+              const hoverColor = colors[tab].hover;
+
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-6 h-full rounded-xl text-[11px] font-black uppercase tracking-[0.15em] transition-all flex items-center justify-center min-w-[120px] border border-transparent whitespace-nowrap ${
+                    activeTab === tab
+                      ? `${activeColor} shadow-md`
+                      : `text-slate-400 ${hoverColor}`
+                  }`}
+                >
+                  {tab === "new"
+                    ? "Inbox"
+                    : tab === "hold"
+                      ? "On Hold"
+                      : "Dismissed"}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="flex flex-col gap-4 w-full">

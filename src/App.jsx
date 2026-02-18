@@ -67,18 +67,15 @@ const App = () => {
   const handleAddClient = (data) => {
     const newClient = {
       id: `c-${Date.now()}`,
-      name: data.name,
-      company: data.company,
-      email: data.email,
-      phone: data.phone,
-      status: data.status,
-      leadType: data.leadType,
+      ...data,
       avatar: `https://picsum.photos/100/100?random=${clients.length + 10}`,
       joinedDate: data.onboardingDate || new Date().toISOString().split("T")[0],
       lastContact: new Date().toISOString().split("T")[0],
-      industry: "Unknown",
-      notes: `${data.clientType === "Existing" ? "[Existing Client] " : "[New Client] "}${data.projectName ? `[Project: ${data.projectName}]: ` : ""}${data.notes}\n\n`,
-      website: data.website,
+      industry: data.industry || "Unknown",
+      notes:
+        data.title === "Leads"
+          ? data.notes
+          : `${data.notes || ""}\n\n[Project Details]\nProject: ${data.projectName}\nStatus: ${data.projectStatus}\nDescription: ${data.projectDescription}\nDeadline: ${data.deadline}\nScope: ${data.scopeDocument}`,
     };
     setClients([newClient, ...clients]);
   };
@@ -91,6 +88,7 @@ const App = () => {
               ...c,
               ...onboardingData,
               status: onboardingData.status,
+              isConverted: true,
               joinedDate: onboardingData.onboardingDate,
               notes: `${c.notes}\n\n[Project Onboarding]\nProject: ${onboardingData.projectName}\nStatus: ${onboardingData.projectStatus}\nDescription: ${onboardingData.projectDescription}\nDeadline: ${onboardingData.deadline}\nScope: ${onboardingData.scopeDocument}`,
             }
@@ -104,6 +102,20 @@ const App = () => {
       prev.map((c) => (c.id === updatedClient.id ? updatedClient : c)),
     );
     setSelectedClient(updatedClient); // Sync current detail view
+  };
+
+  const handleDismissLead = (id) => {
+    setClients((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, status: "Dismissed" } : c)),
+    );
+  };
+
+  const handleRestoreLead = (id) => {
+    setClients((prev) =>
+      prev.map((c) =>
+        c.id === id ? { ...c, status: "Lead", isConverted: false } : c,
+      ),
+    );
   };
 
   const renderContent = () => {
@@ -216,10 +228,17 @@ const App = () => {
       case "leads":
         return (
           <ClientList
-            clients={clients.filter((c) => c.status === "Lead")}
+            clients={clients.filter(
+              (c) =>
+                c.status === "Lead" ||
+                c.status === "Dismissed" ||
+                c.isConverted,
+            )}
             onSelectClient={handleClientSelect}
             onDeleteClient={handleDeleteClient}
             onOnboardClient={handleOnboardClient}
+            onDismissLead={handleDismissLead}
+            onRestoreLead={handleRestoreLead}
             onAddClient={handleAddClient}
             allClients={clients}
             title="Leads"
