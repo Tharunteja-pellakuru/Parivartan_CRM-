@@ -102,13 +102,14 @@ const ClientDetail = ({
                 <h2 className="text-lg md:text-xl font-black text-primary tracking-tighter truncate leading-none mb-1.5">
                   {client.name}
                 </h2>
-                <p className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mb-1">
-                  {client.status === "Lead" ? "Lead Details" : "Client Details"}
-                </p>
                 <div className="flex items-center gap-2.5 text-[11px] text-textMuted font-bold uppercase tracking-widest truncate">
-                  {client.status !== "Lead" && (
-                    <span className="truncate">{client.company}</span>
-                  )}
+                  <span className="truncate">
+                    {client.status === "Lead"
+                      ? client.company || "Independent"
+                      : client.projectName ||
+                        client.company ||
+                        "Global Project"}
+                  </span>
                   <span className="px-3 py-1 bg-secondary/10 text-secondary rounded-lg text-[9px] font-black tracking-widest border border-secondary/20">
                     {client.status}
                   </span>
@@ -142,8 +143,8 @@ const ClientDetail = ({
         <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
           {/* Edit Lead Modal */}
           {showEditModal && (
-            <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-primary/40 backdrop-blur-sm animate-fade-in">
-              <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-zoom-in">
+            <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-primary/40 backdrop-blur-sm animate-fade-in overflow-y-auto py-10">
+              <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-zoom-in my-auto">
                 <div className="bg-primary p-6 flex justify-between items-center text-white">
                   <div>
                     <h3 className="text-lg font-black tracking-tighter uppercase leading-tight">
@@ -268,22 +269,22 @@ const ClientDetail = ({
                               leadType: type,
                             })
                           }
-                          className={`flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all ${
+                          className={`flex flex-col items-center justify-center gap-2 p-3 rounded-2xl border-2 transition-all ${
                             editFormData.leadType === type
                               ? type === "Hot"
-                                ? "bg-error/5 border-error text-error shadow-lg shadow-error/10 scale-105"
+                                ? "bg-error/5 border-error text-error shadow-lg shadow-error/10 scale-[1.02]"
                                 : type === "Warm"
-                                  ? "bg-warning/5 border-warning text-warning shadow-lg shadow-warning/10 scale-105"
-                                  : "bg-info/5 border-info text-info shadow-lg shadow-info/10 scale-105"
+                                  ? "bg-warning/5 border-warning text-warning shadow-lg shadow-warning/10 scale-[1.02]"
+                                  : "bg-info/5 border-info text-info shadow-lg shadow-info/10 scale-[1.02]"
                               : "bg-slate-50 border-slate-100 text-slate-400 grayscale opacity-60 hover:opacity-100 hover:grayscale-0"
                           }`}
                         >
                           {type === "Hot" ? (
-                            <Flame size={24} strokeWidth={2.5} />
+                            <Flame size={18} strokeWidth={2.5} />
                           ) : type === "Warm" ? (
-                            <Sun size={24} strokeWidth={2.5} />
+                            <Sun size={18} strokeWidth={2.5} />
                           ) : (
-                            <Snowflake size={24} strokeWidth={2.5} />
+                            <Snowflake size={18} strokeWidth={2.5} />
                           )}
                           <span className="text-[10px] font-black uppercase tracking-widest">
                             {type}
@@ -326,8 +327,8 @@ const ClientDetail = ({
 
           {/* Log Activity Modal */}
           {isLogging && (
-            <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-primary/40 backdrop-blur-sm animate-fade-in">
-              <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden animate-zoom-in">
+            <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-primary/40 backdrop-blur-sm animate-fade-in overflow-y-auto py-10">
+              <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-zoom-in my-auto">
                 <div className="bg-primary p-6 flex justify-between items-center text-white">
                   <div>
                     <h3 className="text-lg font-black tracking-tighter uppercase leading-tight">
@@ -539,25 +540,54 @@ const ClientDetail = ({
                           <Target size={16} />
                         </div>
                         <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
-                          Contract Valuation
+                          Project Category
                         </h3>
-                        <p className="text-lg md:text-xl font-black text-primary tracking-tighter">
-                          $
-                          {clientProjects
-                            .reduce((acc, p) => acc + p.budget, 0)
-                            .toLocaleString()}
+                        <p className="text-lg md:text-xl font-black text-primary tracking-tighter uppercase">
+                          {client.projectCategory || client.industry || "Tech"}
                         </p>
                       </div>
                       <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 group relative overflow-hidden">
                         <div className="p-2 bg-secondary/5 text-secondary rounded-lg w-fit mb-3 group-hover:bg-secondary group-hover:text-white transition-all">
-                          <Briefcase size={16} />
+                          <Zap size={16} />
                         </div>
                         <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
-                          Live Projects
+                          Project Priority
                         </h3>
-                        <p className="text-lg md:text-xl font-black text-primary tracking-tighter">
-                          {clientProjects.length}
+                        <p className="text-lg md:text-xl font-black text-primary tracking-tighter uppercase">
+                          {client.projectPriority || "Medium"}
                         </p>
+                      </div>
+                      <div className="bg-white p-5 rounded-xl shadow-sm border border-slate-200 group relative overflow-hidden md:col-span-2">
+                        <div className="p-2 bg-info/5 text-info rounded-lg w-fit mb-3 group-hover:bg-info group-hover:text-white transition-all">
+                          <Calendar size={16} />
+                        </div>
+                        <div className="flex justify-between items-end">
+                          <div>
+                            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                              Current Deadline
+                            </h3>
+                            <p className="text-lg md:text-xl font-black text-primary tracking-tighter uppercase">
+                              {client.deadline
+                                ? new Date(client.deadline).toLocaleDateString(
+                                    [],
+                                    {
+                                      month: "long",
+                                      day: "numeric",
+                                      year: "numeric",
+                                    },
+                                  )
+                                : "Not Set"}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                              Status
+                            </h3>
+                            <p className="text-xs font-black text-secondary uppercase tracking-widest">
+                              {client.projectStatus || "Active"}
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </>
                   )}

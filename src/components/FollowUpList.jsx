@@ -7,6 +7,9 @@ import {
   MessageSquare,
   Phone,
   Check,
+  X,
+  ChevronDown,
+  UserPlus,
 } from "lucide-react";
 
 const FollowUpList = ({
@@ -15,9 +18,13 @@ const FollowUpList = ({
   onToggleStatus,
   onAddFollowUp,
   onSelectClient,
+  onNavigate,
+  typeFilter = "All",
 }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [activeFilter, setActiveFilter] = useState("All");
+  const [isClientDropdownOpen, setIsClientDropdownOpen] = useState(false);
+  const [isPriorityDropdownOpen, setIsPriorityDropdownOpen] = useState(false);
   const [formData, setFormData] = useState({
     clientId: "",
     title: "",
@@ -40,6 +47,13 @@ const FollowUpList = ({
 
   const filteredFollowUps = followUps
     .filter((f) => {
+      const client = getClientById(f.clientId);
+      if (typeFilter !== "All") {
+        if (!client) return false;
+        if (typeFilter === "Active" && client.status !== "Active") return false;
+        if (typeFilter === "Lead" && client.status !== "Lead") return false;
+      }
+
       if (f.status === "completed" && activeFilter !== "All") return false;
       if (activeFilter === "Overdue")
         return isOverdue(f.dueDate) && f.status === "pending";
@@ -84,15 +98,23 @@ const FollowUpList = ({
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div className="max-w-2xl">
             <h2 className="text-lg md:text-xl lg:text-2xl font-black text-primary tracking-tighter mb-1.5">
-              Follow-Ups
+              {typeFilter === "Active"
+                ? "Client Follow-Ups"
+                : typeFilter === "Lead"
+                  ? "Lead Follow-Ups"
+                  : "Follow-Ups"}
             </h2>
             <p className="text-xs md:text-sm text-textMuted font-medium leading-relaxed">
-              Stay on top of your client communications.
+              {typeFilter === "Active"
+                ? "Manage communications with your onboarded clients."
+                : typeFilter === "Lead"
+                  ? "Track interactions with your potential leads."
+                  : "Stay on top of your client and lead communications."}
             </p>
           </div>
           <div className="w-full lg:w-auto">
             <button
-              onClick={() => setShowAddModal(true)}
+              onClick={() => onNavigate && onNavigate("leads")}
               className="w-full lg:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all text-[11px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 group"
             >
               <Plus
@@ -211,8 +233,8 @@ const FollowUpList = ({
       </div>
 
       {showAddModal && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-fade-in">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-fade-in my-auto">
             <div className="bg-primary p-6 text-white relative">
               <button
                 onClick={() => setShowAddModal(false)}
@@ -229,55 +251,152 @@ const FollowUpList = ({
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div className="space-y-4">
-                <select
-                  required
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold appearance-none"
-                  value={formData.clientId}
-                  onChange={(e) =>
-                    setFormData({ ...formData, clientId: e.target.value })
-                  }
-                >
-                  <option value="">Target Identity...</option>
-                  {clients.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  required
-                  type="text"
-                  placeholder="Task Description"
-                  className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold"
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                />
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    Target Identity
+                  </label>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setIsClientDropdownOpen(!isClientDropdownOpen)
+                      }
+                      className="w-full flex items-center justify-between px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm hover:border-secondary transition-all"
+                    >
+                      <span className="text-primary truncate max-w-[90%]">
+                        {formData.clientId
+                          ? clients.find((c) => c.id === formData.clientId)
+                              ?.name
+                          : "Target Identity..."}
+                      </span>
+                      <ChevronDown
+                        size={16}
+                        className={`text-slate-400 transition-transform flex-shrink-0 ${isClientDropdownOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
+
+                    {isClientDropdownOpen && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-[80]"
+                          onClick={() => setIsClientDropdownOpen(false)}
+                        />
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[90] animate-fade-in-up origin-top max-h-60 overflow-y-auto">
+                          <div className="sticky top-0 bg-[#18254D] px-4 py-3 border-b border-white/10 z-10">
+                            <p className="text-[9px] font-black text-white/50 uppercase tracking-widest">
+                              Select Client
+                            </p>
+                          </div>
+                          {clients.map((c) => (
+                            <button
+                              key={c.id}
+                              type="button"
+                              onClick={() => {
+                                setFormData({ ...formData, clientId: c.id });
+                                setIsClientDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                                formData.clientId === c.id
+                                  ? "bg-slate-100 text-secondary"
+                                  : "text-[#18254D] hover:bg-slate-50"
+                              }`}
+                            >
+                              {c.name}
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    Task Description
+                  </label>
                   <input
                     required
-                    type="date"
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold"
-                    value={formData.dueDate}
+                    type="text"
+                    placeholder="e.g. Discuss project scope"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none"
+                    value={formData.title}
                     onChange={(e) =>
-                      setFormData({ ...formData, dueDate: e.target.value })
+                      setFormData({ ...formData, title: e.target.value })
                     }
                   />
-                  <select
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold"
-                    value={formData.priority}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        priority: e.target.value,
-                      })
-                    }
-                  >
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Low">Low</option>
-                  </select>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                      Due Date
+                    </label>
+                    <input
+                      required
+                      type="date"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-[#18254D]"
+                      value={formData.dueDate}
+                      onChange={(e) =>
+                        setFormData({ ...formData, dueDate: e.target.value })
+                      }
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                      Priority
+                    </label>
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setIsPriorityDropdownOpen(!isPriorityDropdownOpen)
+                        }
+                        className="w-full flex items-center justify-between px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm hover:border-secondary transition-all"
+                      >
+                        <span className="text-primary">
+                          {formData.priority}
+                        </span>
+                        <ChevronDown
+                          size={16}
+                          className={`text-slate-400 transition-transform ${isPriorityDropdownOpen ? "rotate-180" : ""}`}
+                        />
+                      </button>
+
+                      {isPriorityDropdownOpen && (
+                        <>
+                          <div
+                            className="fixed inset-0 z-[80]"
+                            onClick={() => setIsPriorityDropdownOpen(false)}
+                          />
+                          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[90] animate-fade-in-up origin-top">
+                            <div className="bg-[#18254D] px-4 py-3 border-b border-white/10">
+                              <p className="text-[9px] font-black text-white/50 uppercase tracking-widest">
+                                Select Priority
+                              </p>
+                            </div>
+                            {["High", "Medium", "Low"].map((level) => (
+                              <button
+                                key={level}
+                                type="button"
+                                onClick={() => {
+                                  setFormData({ ...formData, priority: level });
+                                  setIsPriorityDropdownOpen(false);
+                                }}
+                                className={`w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                                  formData.priority === level
+                                    ? "bg-slate-100 text-secondary"
+                                    : "text-[#18254D] hover:bg-slate-50"
+                                }`}
+                              >
+                                {level}
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="flex gap-3">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   LayoutDashboard,
   Users,
@@ -9,6 +9,7 @@ import {
   BellRing,
   LogOut,
   X,
+  ChevronDown,
 } from "lucide-react";
 import Logo from "./Logo";
 import anandImg from "../assets/Anand.png";
@@ -19,9 +20,22 @@ const Sidebar = ({
   onLogout,
   enquiryCount = 0,
   followUpCount = 0,
+  clientFollowUpCount = 0,
+  leadFollowUpCount = 0,
+  isCollapsed = false,
   onCloseMobile,
 }) => {
-  const [imgError, setImgError] = useState(false);
+  const [expandedItems, setExpandedItems] = useState(["followups"]);
+
+  useEffect(() => {
+    const isFollowUpRelated =
+      activeTab === "followups" || activeTab.startsWith("followups-");
+
+    if (!isFollowUpRelated) {
+      setExpandedItems((prev) => prev.filter((id) => id !== "followups"));
+    }
+  }, [activeTab]);
+
   const menuItems = [
     {
       id: "dashboard",
@@ -33,14 +47,26 @@ const Sidebar = ({
       label: "Enquiries",
       icon: <Inbox size={20} />,
       badge: enquiryCount,
-      badgeColor: "bg-rose-500",
     },
     {
       id: "followups",
       label: "Follow-ups",
       icon: <BellRing size={20} />,
       badge: followUpCount,
-      badgeColor: "bg-amber-500",
+      subItems: [
+        {
+          id: "followups-clients",
+          label: "Client Follow-ups",
+          icon: <Users size={16} />,
+          badge: clientFollowUpCount,
+        },
+        {
+          id: "followups-leads",
+          label: "Lead Follow-ups",
+          icon: <UserPlus size={16} />,
+          badge: leadFollowUpCount,
+        },
+      ],
     },
     { id: "leads", label: "Leads", icon: <UserPlus size={20} /> },
     { id: "clients", label: "Clients", icon: <Users size={20} /> },
@@ -49,60 +75,170 @@ const Sidebar = ({
   ];
 
   return (
-    <aside className="w-72 bg-[#18254D] text-slate-300 flex flex-col h-screen border-r border-white/5 shadow-2xl overflow-hidden select-none transition-all duration-300">
-      <div className="p-5 pb-3 relative shrink-0">
+    <aside
+      className={`${isCollapsed ? "w-20" : "w-72"} bg-[#18254D] text-slate-300 flex flex-col h-screen border-r border-white/5 shadow-2xl overflow-hidden select-none transition-all duration-300 relative`}
+    >
+      <div className="p-5 pb-3 relative shrink-0 flex items-center justify-between">
+        {!isCollapsed && <Logo size={48} showText={true} className="!gap-3" />}
+        {isCollapsed && (
+          <div className="mx-auto flex items-center justify-center w-full">
+            <Logo size={40} showText={false} />
+          </div>
+        )}
         <button
           onClick={onCloseMobile}
-          className="md:hidden absolute top-5 right-5 text-slate-400"
+          className="min-[1201px]:hidden text-white/80 hover:text-white p-2 hover:bg-white/10 rounded-xl transition-all"
         >
-          <X size={18} />
+          <X size={24} strokeWidth={2.5} />
         </button>
-        <Logo size={48} showText={true} className="!gap-3" />
       </div>
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto no-scrollbar">
+
+      <nav
+        className={`flex-1 ${isCollapsed ? "px-2" : "px-3"} py-4 space-y-1 overflow-y-auto no-scrollbar`}
+      >
         {menuItems.map((item) => {
-          const isActive = activeTab === item.id;
+          const isActive =
+            activeTab === item.id ||
+            (item.subItems &&
+              item.subItems.some((sub) => activeTab === sub.id));
+          const isExpanded = expandedItems.includes(item.id);
+
+          const toggleExpand = (e) => {
+            if (item.subItems) {
+              e.stopPropagation();
+              setExpandedItems((prev) =>
+                prev.includes(item.id)
+                  ? prev.filter((id) => id !== item.id)
+                  : [...prev, item.id],
+              );
+            }
+          };
+
           return (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center justify-between px-5 py-3.5 rounded-xl transition-all ${isActive ? "bg-black/20 text-white shadow-sm" : "hover:bg-white/5 hover:text-white"}`}
-            >
-              <div className="flex items-center gap-3">
-                <span
-                  className={isActive ? "text-secondary" : "text-slate-500"}
-                >
-                  {item.icon}
-                </span>
-                <span className="text-[13px] font-bold tracking-tight">
-                  {item.label}
-                </span>
-              </div>
-              {item.badge !== undefined && item.badge > 0 && (
-                <span className="bg-white text-[#18254D] text-[10px] font-black px-1.5 py-0.5 rounded-md min-w-[1.25rem] text-center shadow-sm transition-colors">
-                  {item.badge}
-                </span>
+            <div key={item.id} className="space-y-1">
+              <button
+                onClick={() => {
+                  if (item.subItems) {
+                    setExpandedItems((prev) => {
+                      const exists = prev.includes(item.id);
+                      return exists
+                        ? prev.filter((id) => id !== item.id)
+                        : [...prev, item.id];
+                    });
+                  } else {
+                    setActiveTab(item.id);
+                    if (onCloseMobile) onCloseMobile();
+                  }
+                }}
+                className={`w-full flex items-center ${isCollapsed ? "justify-center px-0 py-3.5" : "justify-between px-5 py-3"} rounded-xl transition-all ${isActive ? "bg-black/20 text-white shadow-sm" : "hover:bg-white/5 hover:text-white"}`}
+                title={isCollapsed ? item.label : ""}
+              >
+                <div className="flex items-center gap-3">
+                  <span className={isActive ? "text-white" : "text-slate-500"}>
+                    {item.icon}
+                  </span>
+                  {!isCollapsed && (
+                    <span className="text-[13px] font-bold tracking-tight">
+                      {item.label}
+                    </span>
+                  )}
+                </div>
+                {!isCollapsed && (
+                  <div className="flex items-center gap-2.5">
+                    {item.badge !== undefined &&
+                      item.badge > 0 &&
+                      !isExpanded && (
+                        <span className="bg-white text-secondary text-[11px] font-black px-2 h-6 min-w-[1.5rem] rounded-md flex items-center justify-center shadow-lg shadow-black/10">
+                          {item.badge}
+                        </span>
+                      )}
+                    <div className="w-4 flex items-center justify-center">
+                      {item.subItems && (
+                        <ChevronDown
+                          size={14}
+                          className={`text-slate-500 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                          onClick={toggleExpand}
+                        />
+                      )}
+                    </div>
+                  </div>
+                )}
+                {isCollapsed && item.badge > 0 && !isExpanded && (
+                  <div className="absolute top-1 right-1">
+                    <div className="w-2 h-2 bg-secondary rounded-full shadow-sm" />
+                  </div>
+                )}
+              </button>
+
+              {item.subItems && isExpanded && !isCollapsed && (
+                <div className="ml-10 space-y-2.5 py-2">
+                  {item.subItems.map((sub) => {
+                    const isSubActive = activeTab === sub.id;
+                    return (
+                      <button
+                        key={sub.id}
+                        onClick={() => {
+                          setActiveTab(sub.id);
+                          if (onCloseMobile) onCloseMobile();
+                        }}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-[12px] font-bold transition-all ${isSubActive ? "bg-black/20 text-white shadow-sm" : "text-slate-300 hover:text-white hover:bg-white/5"}`}
+                      >
+                        <span
+                          className={isSubActive ? "text-white" : "text-white"}
+                        >
+                          {sub.icon}
+                        </span>
+                        <div className="flex-1 flex items-center justify-between gap-2.5">
+                          <span>{sub.label}</span>
+                          {sub.badge !== undefined && sub.badge > 0 && (
+                            <span className="bg-white text-secondary text-[10px] font-black px-2 h-5.5 min-w-[1.375rem] rounded-md flex items-center justify-center shadow-lg shadow-black/10">
+                              {sub.badge}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               )}
-            </button>
+            </div>
           );
         })}
       </nav>
-      <div className="p-4 border-t border-white/5 shrink-0 bg-white/5">
-        <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors group">
+      <div
+        className={`${isCollapsed ? "p-2" : "p-4"} border-t border-white/5 shrink-0 bg-white/5 transition-all`}
+      >
+        <div
+          className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3 p-2"} rounded-xl hover:bg-white/5 transition-colors group relative`}
+        >
           <img
             src={anandImg}
             alt="User"
-            className="w-10 h-10 rounded-lg border border-white/10"
+            className="w-10 h-10 rounded-lg border border-white/10 shadow-sm"
           />
-          <div className="flex-1 min-w-0">
-            <p className="text-[13px] text-white font-bold truncate">Anand</p>
-          </div>
-          <button
-            onClick={onLogout}
-            className="p-1.5 text-slate-500 hover:text-rose-400 transition-all active:scale-90"
-          >
-            <LogOut size={18} />
-          </button>
+          {!isCollapsed && (
+            <>
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] text-white font-bold truncate">
+                  Anand
+                </p>
+              </div>
+              <button
+                onClick={onLogout}
+                className="p-1.5 text-slate-500 hover:text-rose-400 transition-all active:scale-90"
+                title="Logout"
+              >
+                <LogOut size={18} />
+              </button>
+            </>
+          )}
+          {isCollapsed && (
+            <div
+              className="absolute inset-0 cursor-pointer"
+              onClick={onLogout}
+              title="Logout"
+            />
+          )}
         </div>
       </div>
     </aside>

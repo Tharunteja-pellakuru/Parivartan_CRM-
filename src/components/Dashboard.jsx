@@ -119,8 +119,8 @@ const Dashboard = ({
   return (
     <div className="w-full relative">
       <div className="space-y-6 md:space-y-8 animate-fade-in relative z-0">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-          <div className="max-w-2xl">
+        <div className="flex flex-row flex-wrap justify-between items-center gap-6">
+          <div className="max-w-2xl shrink-0">
             <h2 className="text-xl md:text-2xl lg:text-3xl font-black text-[#18254D] tracking-tighter mb-2">
               Welcome back, Anand.
             </h2>
@@ -129,36 +129,38 @@ const Dashboard = ({
             </p>
           </div>
 
-          <div className="flex items-center bg-white p-1 rounded-full border border-slate-200 shadow-sm w-full lg:w-auto relative z-20">
+          <div className="flex items-center bg-white p-1 rounded-full border border-slate-200 shadow-sm w-auto relative z-20">
             <div
-              className="relative flex-1 lg:flex-initial lg:w-10"
+              className="relative flex-1 lg:flex-initial lg:w-10 shrink-0"
               ref={dropdownRef}
             >
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
-                className={`h-11 md:h-12 w-full rounded-full transition-all relative flex items-center justify-center ${
+                className={`h-11 md:h-12 w-full rounded-full transition-all relative flex items-center justify-center shrink-0 ${
                   showNotifications
                     ? "bg-primary text-white"
                     : "bg-transparent text-primary hover:bg-slate-50"
                 }`}
               >
-                <Bell size={18} strokeWidth={2.5} />
-                {totalNotifications > 0 && !showNotifications && (
-                  <span className="bg-[#18254D] text-white text-[9px] font-black rounded-lg px-1 py-0.5 shadow-sm absolute top-1.5 right-1/4 lg:right-0">
-                    {totalNotifications}
-                  </span>
-                )}
+                <div className="relative">
+                  <Bell size={18} strokeWidth={2.5} />
+                  {totalNotifications > 0 && !showNotifications && (
+                    <span className="bg-[#18254D] text-white text-[9px] font-black rounded-full h-4 min-w-[1rem] flex items-center justify-center shadow-lg absolute -top-1.5 -right-1.5 border border-white">
+                      {totalNotifications}
+                    </span>
+                  )}
+                </div>
               </button>
               {showNotifications && (
                 <>
                   <div
-                    className="fixed inset-0 z-[90]"
+                    className="fixed inset-0 z-[90] bg-black/10 backdrop-blur-sm"
                     onClick={() => setShowNotifications(false)}
                   />
-                  <div className="fixed lg:absolute left-1/2 md:left-auto lg:right-0 -translate-x-1/2 lg:translate-x-0 mt-3 w-[calc(100%-2rem)] md:w-[320px] bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-fade-in z-[100] top-24 lg:top-auto">
-                    <div className="p-5 pb-3 border-b border-slate-100 bg-slate-50/50">
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-[11px] font-black text-primary uppercase tracking-[0.2em]">
+                  <div className="fixed lg:absolute left-1/2 md:left-auto lg:right-0 -translate-x-1/2 lg:translate-x-0 mt-3 w-[280px] bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/40 overflow-hidden animate-pop z-[100] top-24 lg:top-auto">
+                    <div className="p-4 pb-2 border-b border-black/5 bg-black/5">
+                      <div className="flex justify-between items-center mb-3">
+                        <h3 className="text-[9px] font-black text-primary uppercase tracking-[0.2em]">
                           Notifications
                         </h3>
                         <button
@@ -171,19 +173,19 @@ const Dashboard = ({
                       <div className="flex p-1 bg-slate-200/50 rounded-xl">
                         <button
                           onClick={() => setNotifTab("tasks")}
-                          className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${notifTab === "tasks" ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
+                          className={`flex-1 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${notifTab === "tasks" ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
                         >
                           Tasks
                         </button>
                         <button
                           onClick={() => setNotifTab("enquiries")}
-                          className={`flex-1 py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all ${notifTab === "enquiries" ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
+                          className={`flex-1 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${notifTab === "enquiries" ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
                         >
                           Enquiries
                         </button>
                       </div>
                     </div>
-                    <div className="max-h-[300px] overflow-y-auto p-3 no-scrollbar space-y-2">
+                    <div className="max-h-[250px] overflow-y-auto p-2.5 no-scrollbar space-y-1.5">
                       {/* Content omitted for brevity, logic remains same */}
                       {notifTab === "tasks" &&
                         (todayTasks.length + missedTasks.length === 0 ? (
@@ -203,17 +205,17 @@ const Dashboard = ({
                                     "activity",
                                   )
                                 }
-                                className="p-3 bg-error/5 border border-error/10 rounded-xl cursor-pointer hover:bg-white hover:border-error/20 transition-all"
+                                className="p-2.5 bg-error/5 border border-error/10 rounded-xl cursor-pointer hover:bg-white hover:border-error/20 transition-all"
                               >
-                                <div className="flex justify-between items-center mb-1">
-                                  <span className="text-[8px] font-black text-error uppercase tracking-widest">
+                                <div className="flex justify-between items-center mb-0.5">
+                                  <span className="text-[7.5px] font-black text-error uppercase tracking-widest">
                                     Missed
                                   </span>
-                                  <span className="text-[8px] text-slate-400 font-bold">
+                                  <span className="text-[7.5px] text-slate-400 font-bold">
                                     {new Date(f.dueDate).toLocaleDateString()}
                                   </span>
                                 </div>
-                                <p className="text-xs font-bold text-primary truncate">
+                                <p className="text-[11px] font-bold text-primary truncate">
                                   {f.title}
                                 </p>
                               </div>
@@ -227,20 +229,20 @@ const Dashboard = ({
                                     "activity",
                                   )
                                 }
-                                className="p-3 bg-white border border-slate-100 rounded-xl cursor-pointer hover:border-secondary transition-all"
+                                className="p-2.5 bg-white border border-slate-100 rounded-xl cursor-pointer hover:border-secondary transition-all"
                               >
-                                <div className="flex justify-between items-center mb-1">
-                                  <span className="text-[8px] font-black text-secondary uppercase tracking-widest">
+                                <div className="flex justify-between items-center mb-0.5">
+                                  <span className="text-[7.5px] font-black text-secondary uppercase tracking-widest">
                                     {f.priority} Priority
                                   </span>
-                                  <span className="text-[8px] text-slate-400 font-bold">
+                                  <span className="text-[7.5px] text-slate-400 font-bold">
                                     {new Date(f.dueDate).toLocaleTimeString(
                                       [],
                                       { hour: "2-digit", minute: "2-digit" },
                                     )}
                                   </span>
                                 </div>
-                                <p className="text-xs font-bold text-primary truncate">
+                                <p className="text-[11px] font-bold text-primary truncate">
                                   {f.title}
                                 </p>
                               </div>
@@ -259,20 +261,20 @@ const Dashboard = ({
                             <div
                               key={e.id}
                               onClick={() => onNavigate("enquiries")}
-                              className="p-3 bg-white border border-slate-100 rounded-xl cursor-pointer hover:border-secondary transition-all"
+                              className="p-2.5 bg-white border border-slate-100 rounded-xl cursor-pointer hover:border-secondary transition-all"
                             >
-                              <div className="flex justify-between items-center mb-1">
-                                <span className="text-[8px] font-black text-secondary uppercase tracking-widest">
+                              <div className="flex justify-between items-center mb-0.5">
+                                <span className="text-[7.5px] font-black text-secondary uppercase tracking-widest">
                                   New Enquiry
                                 </span>
-                                <span className="text-[8px] text-slate-400 font-bold">
+                                <span className="text-[7.5px] text-slate-400 font-bold">
                                   {new Date(e.date).toLocaleDateString()}
                                 </span>
                               </div>
-                              <p className="text-xs font-bold text-primary truncate">
+                              <p className="text-[11px] font-bold text-primary truncate">
                                 {e.name}
                               </p>
-                              <p className="text-[10px] text-slate-400 truncate mt-1">
+                              <p className="text-[9px] text-slate-400 truncate mt-0.5">
                                 {e.message}
                               </p>
                             </div>

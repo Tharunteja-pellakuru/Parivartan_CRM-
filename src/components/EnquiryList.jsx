@@ -44,6 +44,7 @@ const EnquiryList = ({
     phone: "",
     website: "",
     leadType: "Warm",
+    leadCategory: "Tech",
     notes: "",
   });
   const [showSimulateForm, setShowSimulateForm] = useState(false);
@@ -106,6 +107,7 @@ const EnquiryList = ({
       phone: enquiry.phone,
       website: enquiry.website,
       leadType: "Warm",
+      leadCategory: "Tech",
       notes: enquiry.message,
     });
     setLeadModalOpen(true);
@@ -120,6 +122,7 @@ const EnquiryList = ({
         email: promoteFormData.email,
         phone: promoteFormData.phone,
         website: promoteFormData.website,
+        projectCategory: promoteFormData.leadCategory,
         message: promoteFormData.notes,
       };
       onPromote(updatedEnquiry, promoteFormData.leadType);
@@ -446,7 +449,7 @@ const EnquiryList = ({
 
       {showSimulateForm && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-fade-in relative">
+          <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-fade-in relative my-auto">
             <button
               onClick={() => setShowSimulateForm(false)}
               className="absolute top-6 right-6 p-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all z-20"
@@ -559,8 +562,8 @@ const EnquiryList = ({
       )}
 
       {leadModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-3xl rounded-[2rem] shadow-2xl border border-slate-200 overflow-hidden animate-zoom-in">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white w-full max-w-3xl rounded-[2rem] shadow-2xl border border-slate-200 overflow-hidden animate-zoom-in my-auto">
             <div className="bg-[#18254D] p-6 flex justify-between items-center text-white">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
@@ -643,6 +646,33 @@ const EnquiryList = ({
                       })
                     }
                   />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                  Lead Category
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {["Tech", "Media"].map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() =>
+                        setPromoteFormData({
+                          ...promoteFormData,
+                          leadCategory: cat,
+                        })
+                      }
+                      className={`flex items-center justify-center p-4 rounded-2xl border-2 transition-all font-black uppercase text-[10px] tracking-widest ${
+                        promoteFormData.leadCategory === cat
+                          ? "border-primary bg-primary/5 text-primary shadow-sm"
+                          : "border-slate-100 text-slate-400 hover:border-slate-200"
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
                 </div>
               </div>
 

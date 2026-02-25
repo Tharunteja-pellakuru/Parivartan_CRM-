@@ -22,6 +22,10 @@ import {
   Paperclip,
   UserX,
   RotateCcw,
+  MessageSquare,
+  Clock,
+  Calendar,
+  Zap,
 } from "lucide-react";
 
 const ClientList = ({
@@ -32,6 +36,7 @@ const ClientList = ({
   onOnboardClient,
   onDismissLead,
   onRestoreLead,
+  onAddActivity,
   allClients = [],
   title = "Clients",
 }) => {
@@ -47,12 +52,21 @@ const ClientList = ({
   const [leadView, setLeadView] = useState("Pending");
   const [clientSearchQuery, setClientSearchQuery] = useState("");
   const [isClientDropdownOpen, setIsClientDropdownOpen] = useState(false);
-  const [isProjectStatusDropdownOpen, setIsProjectStatusDropdownOpen] =
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+  const [isPriorityDropdownOpen, setIsPriorityDropdownOpen] = useState(false);
+  const [isOnboardStatusDropdownOpen, setIsOnboardStatusDropdownOpen] =
     useState(false);
-  const [
-    isOnboardProjectStatusDropdownOpen,
-    setIsOnboardProjectStatusDropdownOpen,
-  ] = useState(false);
+  const [isOnboardPriorityDropdownOpen, setIsOnboardPriorityDropdownOpen] =
+    useState(false);
+  const [showFollowUpModal, setShowFollowUpModal] = useState(false);
+  const [followUpLeadId, setFollowUpLeadId] = useState(null);
+  const [followUpLeadName, setFollowUpLeadName] = useState("");
+  const [followUpData, setFollowUpData] = useState({
+    type: "call",
+    description: "",
+    date: new Date().toISOString().split("T")[0],
+    time: new Date().toTimeString().split(" ")[0].substring(0, 5),
+  });
 
   const [onboardingData, setOnboardingData] = useState({
     name: "",
@@ -61,11 +75,10 @@ const ClientList = ({
     clientType: "New",
     status: "Active",
     projectName: "",
-    projectDescription: "",
-    onboardingDate: new Date().toISOString().split("T")[0],
-    deadline: "",
-    scopeDocument: "",
     projectStatus: "Planning",
+    projectCategory: "Tech",
+    projectPriority: "Medium",
+    projectDescription: "",
   });
 
   const [formData, setFormData] = useState({
@@ -78,13 +91,10 @@ const ClientList = ({
     industry: "",
     notes: "",
     projectName: "",
-    onboardingDate: new Date().toISOString().split("T")[0],
-    clientType: "New",
-    website: "",
-    projectDescription: "",
-    deadline: "",
-    scopeDocument: "",
     projectStatus: "Planning",
+    projectCategory: "Tech",
+    projectPriority: "Medium",
+    projectDescription: "",
   });
 
   const handleOnboardSubmit = (e) => {
@@ -106,11 +116,10 @@ const ClientList = ({
         clientType: "New",
         status: "Active",
         projectName: "",
-        projectDescription: "",
-        onboardingDate: new Date().toISOString().split("T")[0],
-        deadline: "",
-        scopeDocument: "",
         projectStatus: "Planning",
+        projectCategory: "Tech",
+        projectPriority: "Medium",
+        projectDescription: "",
       });
     }
   };
@@ -240,13 +249,10 @@ const ClientList = ({
         industry: "",
         notes: "",
         projectName: "",
-        onboardingDate: new Date().toISOString().split("T")[0],
-        clientType: "New",
-        website: "",
-        projectDescription: "",
-        deadline: "",
-        scopeDocument: "",
         projectStatus: "Planning",
+        projectCategory: "Tech",
+        projectPriority: "Medium",
+        projectDescription: "",
       });
     }
   };
@@ -395,16 +401,16 @@ const ClientList = ({
               <thead>
                 <tr className="bg-slate-50/50">
                   <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
-                    Identity
+                    Client Name
+                  </th>
+                  <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
+                    {title === "Leads" ? "Note" : "Contact Details"}
+                  </th>
+                  <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
+                    Client Category
                   </th>
                   <th className="px-6 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
                     {title === "Leads" ? "Lead Status" : "Status"}
-                  </th>
-                  <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
-                    {title === "Leads" ? "Note" : "Industry Sector"}
-                  </th>
-                  <th className="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
-                    Last Pulse
                   </th>
                   <th className="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
                     Control
@@ -429,52 +435,115 @@ const ClientList = ({
                             <div className="font-black text-sm text-primary tracking-tight leading-none mb-1 group-hover:text-secondary transition-colors">
                               {client.name}
                             </div>
-                            {title !== "Leads" && (
-                              <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest truncate">
-                                {client.company}
-                              </div>
-                            )}
+                            <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest truncate">
+                              {client.projectName || client.company}
+                            </div>
                           </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-col">
+                          {client.status === "Lead" ? (
+                            <span className="text-sm font-bold text-primary truncate max-w-[200px]">
+                              {client.notes || client.industry}
+                            </span>
+                          ) : (
+                            <>
+                              <div className="flex items-center gap-2 text-primary">
+                                <Phone size={12} className="text-secondary" />
+                                <span className="text-xs font-bold whitespace-nowrap">
+                                  {client.phone || "N/A"}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2 text-slate-400 mt-1">
+                                <Mail size={12} />
+                                <span className="text-[10px] font-bold truncate max-w-[150px]">
+                                  {client.email || "N/A"}
+                                </span>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={`w-2 h-2 rounded-full ${client.projectCategory === "Tech" ? "bg-secondary" : client.projectCategory === "Media" ? "bg-blue-400" : "bg-slate-300"}`}
+                          />
+                          <span className="text-sm font-bold text-primary">
+                            {client.projectCategory ||
+                              client.industry ||
+                              "Other"}
+                          </span>
                         </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-center">
-                          <span
-                            className={`px-4 py-1.5 rounded-xl text-[9px] font-black border uppercase flex items-center gap-2 shadow-sm transition-all ${status.className}`}
-                          >
-                            {status.icon}
-                            {status.label}
-                          </span>
+                          {client.status === "Lead" ? (
+                            <span
+                              className={`px-4 py-1.5 rounded-xl text-[9px] font-black border uppercase flex items-center gap-2 shadow-sm transition-all ${status.className}`}
+                            >
+                              {status.icon}
+                              {status.label}
+                            </span>
+                          ) : (
+                            <div className="flex flex-col items-center">
+                              <span
+                                className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest mb-1.5 ${client.status === "Active" ? "bg-success/10 text-success border border-success/20" : "bg-slate-100 text-slate-400 border border-slate-200"}`}
+                              >
+                                {client.status || "Active"}
+                              </span>
+                              <div className="w-16 bg-slate-100 h-1 rounded-full overflow-hidden">
+                                <div
+                                  className="bg-secondary h-full rounded-full transition-all duration-1000"
+                                  style={{
+                                    width:
+                                      client.projectStatus === "Completed"
+                                        ? "100%"
+                                        : client.projectStatus === "Testing"
+                                          ? "75%"
+                                          : client.projectStatus === "On Going"
+                                            ? "40%"
+                                            : "15%",
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center border border-slate-100">
-                            {client.status === "Lead" ? (
-                              <Tag size={16} className="text-secondary" />
-                            ) : (
-                              <Briefcase size={16} className="text-slate-400" />
-                            )}
-                          </div>
-                          <span className="text-sm font-bold text-primary truncate max-w-[200px]">
-                            {client.status === "Lead"
-                              ? client.notes || client.industry
-                              : client.industry}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-[10px] text-slate-400 text-right font-black uppercase tracking-widest">
-                        {new Date(client.lastContact).toLocaleDateString([], {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div
                           className="flex justify-end gap-3"
                           onClick={(e) => e.stopPropagation()}
                         >
+                          {title === "Leads" &&
+                            (client.status === "Lead" ||
+                              client.isConverted) && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setFollowUpLeadId(client.id);
+                                  setFollowUpLeadName(client.name);
+                                  setFollowUpData({
+                                    type: "call",
+                                    description: "",
+                                    date: new Date()
+                                      .toISOString()
+                                      .split("T")[0],
+                                    time: new Date()
+                                      .toTimeString()
+                                      .split(" ")[0]
+                                      .substring(0, 5),
+                                  });
+                                  setShowFollowUpModal(true);
+                                }}
+                                className="p-2.5 bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-indigo-500 hover:border-indigo-500 hover:bg-indigo-50 transition-all active:scale-90 shadow-sm"
+                                title="Follow Up"
+                              >
+                                <MessageSquare size={18} />
+                              </button>
+                            )}
                           {onOnboardClient && client.status === "Lead" && (
                             <button
                               onClick={(e) => {
@@ -680,9 +749,33 @@ const ClientList = ({
 
                   <div className="md:col-span-2 space-y-2">
                     <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      LEAD CATEGORY
+                    </label>
+                    <div className="flex gap-2">
+                      {["Tech", "Media"].map((cat) => (
+                        <button
+                          key={cat}
+                          type="button"
+                          onClick={() =>
+                            setFormData({ ...formData, projectCategory: cat })
+                          }
+                          className={`flex-1 flex items-center justify-center p-3 border-2 rounded-xl transition-all font-black uppercase text-[10px] tracking-widest ${
+                            formData.projectCategory === cat
+                              ? "border-primary bg-primary/5 text-primary shadow-sm"
+                              : "border-slate-100 text-slate-400 hover:border-slate-200"
+                          }`}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="md:col-span-2 space-y-2">
+                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
                       LEAD STATUS
                     </label>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {["Hot", "Warm", "Cold"].map((type) => (
                         <button
                           key={type}
@@ -693,7 +786,7 @@ const ClientList = ({
                               leadType: type,
                             })
                           }
-                          className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 transition-all ${
+                          className={`flex flex-col items-center justify-center gap-2 p-3 rounded-2xl border-2 transition-all ${
                             formData.leadType === type
                               ? type === "Hot"
                                 ? "bg-error/5 border-error text-error shadow-lg shadow-error/10 scale-[1.02]"
@@ -704,11 +797,11 @@ const ClientList = ({
                           }`}
                         >
                           {type === "Hot" ? (
-                            <Flame size={20} strokeWidth={2.5} />
+                            <Flame size={18} strokeWidth={2.5} />
                           ) : type === "Warm" ? (
-                            <Sun size={20} strokeWidth={2.5} />
+                            <Sun size={18} strokeWidth={2.5} />
                           ) : (
-                            <Snowflake size={20} strokeWidth={2.5} />
+                            <Snowflake size={18} strokeWidth={2.5} />
                           )}
                           <span className="text-[10px] font-black uppercase tracking-widest">
                             {type}
@@ -908,25 +1001,145 @@ const ClientList = ({
                         PROJECT STATUS
                       </label>
                       <div className="relative">
-                        <select
-                          className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold appearance-none shadow-sm"
-                          value={formData.projectStatus}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              projectStatus: e.target.value,
-                            })
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setIsStatusDropdownOpen(!isStatusDropdownOpen)
                           }
+                          className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm hover:border-secondary transition-all"
                         >
-                          <option value="Planning">Planning</option>
-                          <option value="On Going">On Going</option>
-                          <option value="Testing">Testing</option>
-                          <option value="Completed">Completed</option>
-                        </select>
-                        <ChevronDown
-                          size={16}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                        />
+                          <span className="text-primary">
+                            {formData.projectStatus}
+                          </span>
+                          <ChevronDown
+                            size={16}
+                            className={`text-slate-400 transition-transform ${isStatusDropdownOpen ? "rotate-180" : ""}`}
+                          />
+                        </button>
+
+                        {isStatusDropdownOpen && (
+                          <>
+                            <div
+                              className="fixed inset-0 z-[80]"
+                              onClick={() => setIsStatusDropdownOpen(false)}
+                            />
+                            <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[90] animate-fade-in-up origin-top">
+                              <div className="bg-[#18254D] px-4 py-3 border-b border-white/10">
+                                <p className="text-[9px] font-black text-white/50 uppercase tracking-widest">
+                                  Select Status
+                                </p>
+                              </div>
+                              {[
+                                "Planning",
+                                "On Going",
+                                "Testing",
+                                "Completed",
+                              ].map((status) => (
+                                <button
+                                  key={status}
+                                  type="button"
+                                  onClick={() => {
+                                    setFormData({
+                                      ...formData,
+                                      projectStatus: status,
+                                    });
+                                    setIsStatusDropdownOpen(false);
+                                  }}
+                                  className={`w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                                    formData.projectStatus === status
+                                      ? "bg-slate-100 text-secondary"
+                                      : "text-[#18254D] hover:bg-slate-50"
+                                  }`}
+                                >
+                                  {status}
+                                </button>
+                              ))}
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                        LEAD CATEGORY
+                      </label>
+                      <div className="flex gap-2">
+                        {["Tech", "Media"].map((cat) => (
+                          <button
+                            key={cat}
+                            type="button"
+                            onClick={() =>
+                              setFormData({ ...formData, projectCategory: cat })
+                            }
+                            className={`flex-1 flex items-center justify-center p-3 border-2 rounded-xl transition-all font-black uppercase text-[10px] tracking-widest ${
+                              formData.projectCategory === cat
+                                ? "border-primary bg-primary/5 text-primary shadow-sm"
+                                : "border-slate-100 text-slate-400 hover:border-slate-200"
+                            }`}
+                          >
+                            {cat}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                        PROJECT PRIORITY
+                      </label>
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setIsPriorityDropdownOpen(!isPriorityDropdownOpen)
+                          }
+                          className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm hover:border-secondary transition-all"
+                        >
+                          <span className="text-primary">
+                            {formData.projectPriority}
+                          </span>
+                          <ChevronDown
+                            size={16}
+                            className={`text-slate-400 transition-transform ${isPriorityDropdownOpen ? "rotate-180" : ""}`}
+                          />
+                        </button>
+
+                        {isPriorityDropdownOpen && (
+                          <>
+                            <div
+                              className="fixed inset-0 z-[80]"
+                              onClick={() => setIsPriorityDropdownOpen(false)}
+                            />
+                            <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[90] animate-fade-in-up origin-top">
+                              <div className="bg-[#18254D] px-4 py-3 border-b border-white/10">
+                                <p className="text-[9px] font-black text-white/50 uppercase tracking-widest">
+                                  Select Priority
+                                </p>
+                              </div>
+                              {["High", "Medium", "Low"].map((level) => (
+                                <button
+                                  key={level}
+                                  type="button"
+                                  onClick={() => {
+                                    setFormData({
+                                      ...formData,
+                                      projectPriority: level,
+                                    });
+                                    setIsPriorityDropdownOpen(false);
+                                  }}
+                                  className={`w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                                    formData.projectPriority === level
+                                      ? "bg-slate-100 text-secondary"
+                                      : "text-[#18254D] hover:bg-slate-50"
+                                  }`}
+                                >
+                                  {level}
+                                </button>
+                              ))}
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
 
@@ -1400,25 +1613,153 @@ const ClientList = ({
                   <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
                     PROJECT STATUS
                   </label>
-                  <select
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold appearance-none shadow-sm"
-                    value={onboardingData.projectStatus}
-                    onChange={(e) =>
-                      setOnboardingData({
-                        ...onboardingData,
-                        projectStatus: e.target.value,
-                      })
-                    }
-                  >
-                    <option value="Planning">Planning</option>
-                    <option value="On Going">On Going</option>
-                    <option value="Testing">Testing</option>
-                    <option value="Completed">Completed</option>
-                  </select>
-                  <ChevronDown
-                    size={16}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-                  />
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setIsOnboardStatusDropdownOpen(
+                          !isOnboardStatusDropdownOpen,
+                        )
+                      }
+                      className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm hover:border-secondary transition-all"
+                    >
+                      <span className="text-primary">
+                        {onboardingData.projectStatus}
+                      </span>
+                      <ChevronDown
+                        size={16}
+                        className={`text-slate-400 transition-transform ${isOnboardStatusDropdownOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
+
+                    {isOnboardStatusDropdownOpen && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-[80]"
+                          onClick={() => setIsOnboardStatusDropdownOpen(false)}
+                        />
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[90] animate-fade-in-up origin-top">
+                          <div className="bg-[#18254D] px-4 py-3 border-b border-white/10">
+                            <p className="text-[9px] font-black text-white/50 uppercase tracking-widest">
+                              Select Status
+                            </p>
+                          </div>
+                          {["Planning", "On Going", "Testing", "Completed"].map(
+                            (status) => (
+                              <button
+                                key={status}
+                                type="button"
+                                onClick={() => {
+                                  setOnboardingData({
+                                    ...onboardingData,
+                                    projectStatus: status,
+                                  });
+                                  setIsOnboardStatusDropdownOpen(false);
+                                }}
+                                className={`w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                                  onboardingData.projectStatus === status
+                                    ? "bg-slate-100 text-secondary"
+                                    : "text-[#18254D] hover:bg-slate-50"
+                                }`}
+                              >
+                                {status}
+                              </button>
+                            ),
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    LEAD CATEGORY
+                  </label>
+                  <div className="flex gap-2">
+                    {["Tech", "Media"].map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() =>
+                          setOnboardingData({
+                            ...onboardingData,
+                            projectCategory: cat,
+                          })
+                        }
+                        className={`flex-1 flex items-center justify-center p-3 border-2 rounded-xl transition-all font-black uppercase text-[10px] tracking-widest ${
+                          onboardingData.projectCategory === cat
+                            ? "border-primary bg-primary/5 text-primary shadow-sm"
+                            : "border-slate-100 text-slate-400 hover:border-slate-200"
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    PROJECT PRIORITY
+                  </label>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setIsOnboardPriorityDropdownOpen(
+                          !isOnboardPriorityDropdownOpen,
+                        )
+                      }
+                      className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm hover:border-secondary transition-all"
+                    >
+                      <span className="text-primary">
+                        {onboardingData.projectPriority}
+                      </span>
+                      <ChevronDown
+                        size={16}
+                        className={`text-slate-400 transition-transform ${isOnboardPriorityDropdownOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
+
+                    {isOnboardPriorityDropdownOpen && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-[80]"
+                          onClick={() =>
+                            setIsOnboardPriorityDropdownOpen(false)
+                          }
+                        />
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[90] animate-fade-in-up origin-top">
+                          <div className="bg-[#18254D] px-4 py-3 border-b border-white/10">
+                            <p className="text-[9px] font-black text-white/50 uppercase tracking-widest">
+                              Select Priority
+                            </p>
+                          </div>
+                          {["High", "Medium", "Low"].map((level) => (
+                            <button
+                              key={level}
+                              type="button"
+                              onClick={() => {
+                                setOnboardingData({
+                                  ...onboardingData,
+                                  projectPriority: level,
+                                });
+                                setIsOnboardPriorityDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                                onboardingData.projectPriority === level
+                                  ? "bg-slate-100 text-secondary"
+                                  : "text-[#18254D] hover:bg-slate-50"
+                              }`}
+                            >
+                              {level}
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
@@ -1516,6 +1857,160 @@ const ClientList = ({
                     className="group-hover/btn:translate-x-1 transition-transform"
                   />
                   <span>CONVERT TO CLIENT</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Follow Up Modal */}
+      {showFollowUpModal && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-[100] flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-fade-in my-auto flex flex-col">
+            <div className="bg-primary p-6 text-white relative">
+              <button
+                onClick={() => setShowFollowUpModal(false)}
+                className="absolute top-6 right-6 p-2 hover:bg-white/10 rounded-2xl transition-colors"
+              >
+                <X size={28} strokeWidth={3} />
+              </button>
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-indigo-400/20 rounded-xl flex items-center justify-center shadow-lg border border-indigo-400/30">
+                  <MessageSquare
+                    size={24}
+                    className="text-indigo-300"
+                    strokeWidth={2.5}
+                  />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black tracking-tighter leading-none">
+                    Follow Up
+                  </h3>
+                  <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mt-1">
+                    {followUpLeadName}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (followUpData.description && followUpLeadId) {
+                  if (onAddActivity) {
+                    const combinedDateTime = new Date(
+                      `${followUpData.date}T${followUpData.time}`,
+                    );
+                    onAddActivity({
+                      clientId: followUpLeadId,
+                      type: followUpData.type,
+                      description: followUpData.description,
+                      date: combinedDateTime.toISOString(),
+                    });
+                  }
+                  setShowFollowUpModal(false);
+                  const lead = clients.find((c) => c.id === followUpLeadId);
+                  if (lead) {
+                    onSelectClient(lead, "activity");
+                  }
+                }
+              }}
+              className="p-6 space-y-5"
+            >
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    Date
+                  </label>
+                  <div className="relative">
+                    <input
+                      required
+                      type="date"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 focus:outline-none text-sm font-bold"
+                      value={followUpData.date}
+                      onChange={(e) =>
+                        setFollowUpData({
+                          ...followUpData,
+                          date: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    Time
+                  </label>
+                  <div className="relative">
+                    <input
+                      required
+                      type="time"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 focus:outline-none text-sm font-bold"
+                      value={followUpData.time}
+                      onChange={(e) =>
+                        setFollowUpData({
+                          ...followUpData,
+                          time: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                  Interaction Type
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {["call", "email", "meeting"].map((type) => (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() =>
+                        setFollowUpData({
+                          ...followUpData,
+                          type: type,
+                        })
+                      }
+                      className={`py-2.5 px-3 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all ${
+                        followUpData.type === type
+                          ? "bg-indigo-500 border-indigo-500 text-white shadow-md shadow-indigo-200"
+                          : "bg-white border-slate-100 text-slate-400 hover:border-slate-300"
+                      }`}
+                    >
+                      {type}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                  Follow Up Message
+                </label>
+                <textarea
+                  required
+                  placeholder="Write your follow-up notes..."
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 focus:outline-none text-sm font-bold min-h-[120px] resize-none"
+                  value={followUpData.description}
+                  onChange={(e) =>
+                    setFollowUpData({
+                      ...followUpData,
+                      description: e.target.value,
+                    })
+                  }
+                />
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="w-full py-4 bg-primary text-white rounded-xl hover:bg-slate-800 text-[12px] font-black uppercase tracking-[0.4em] transition-all shadow-lg active:scale-95 flex items-center justify-center gap-3"
+                >
+                  <MessageSquare size={18} />
+                  Save & View Conversations
                 </button>
               </div>
             </form>
