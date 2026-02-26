@@ -95,11 +95,11 @@ const ClientDetail = ({
               <ArrowLeft size={20} strokeWidth={3} />
             </button>
             <div className="flex items-center gap-5 overflow-hidden">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary flex items-center justify-center text-white font-black text-xl border-2 border-slate-50 shadow-lg shrink-0">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary flex items-center justify-center text-white font-bold text-xl border-2 border-slate-50 shadow-lg shrink-0">
                 {client.name.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0">
-                <h2 className="text-lg md:text-xl font-black text-primary tracking-tighter truncate leading-none mb-1.5">
+                <h2 className="text-lg md:text-xl font-bold text-primary tracking-tight truncate leading-none mb-1.5">
                   {client.name}
                 </h2>
                 <div className="flex items-center gap-2.5 text-[11px] text-textMuted font-bold uppercase tracking-widest truncate">
@@ -110,7 +110,7 @@ const ClientDetail = ({
                         client.company ||
                         "Global Project"}
                   </span>
-                  <span className="px-3 py-1 bg-secondary/10 text-secondary rounded-lg text-[9px] font-black tracking-widest border border-secondary/20">
+                  <span className="px-3 py-1 bg-secondary/10 text-secondary rounded-lg text-[9px] font-bold tracking-widest border border-secondary/20">
                     {client.status}
                   </span>
                 </div>
@@ -144,10 +144,10 @@ const ClientDetail = ({
           {/* Edit Lead Modal */}
           {showEditModal && (
             <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-primary/40 backdrop-blur-sm animate-fade-in overflow-y-auto py-10">
-              <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-zoom-in my-auto">
+              <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-zoom-in my-auto">
                 <div className="bg-primary p-6 flex justify-between items-center text-white">
                   <div>
-                    <h3 className="text-lg font-black tracking-tighter uppercase leading-tight">
+                    <h3 className="text-lg font-bold tracking-tight uppercase leading-tight">
                       Edit Lead Details
                     </h3>
                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
@@ -181,14 +181,14 @@ const ClientDetail = ({
                   className="p-6 space-y-5"
                 >
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                       Full Name
                     </label>
                     <input
                       required
                       type="text"
                       placeholder="e.g. Anand Kumar"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                       value={editFormData.name}
                       onChange={(e) =>
                         setEditFormData({
@@ -200,14 +200,14 @@ const ClientDetail = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                       Email ID
                     </label>
                     <input
                       required
                       type="email"
                       placeholder="e.g. anand.kumar@fintech.in"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                       value={editFormData.email}
                       onChange={(e) =>
                         setEditFormData({
@@ -219,13 +219,13 @@ const ClientDetail = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                       Phone Number
                     </label>
                     <input
                       required
                       type="tel"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                       value={editFormData.phone}
                       onChange={(e) =>
                         setEditFormData({
@@ -237,13 +237,13 @@ const ClientDetail = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                       Website Url
                     </label>
                     <input
                       type="url"
                       placeholder="e.g. https://www.company.com"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                       value={editFormData.website}
                       onChange={(e) =>
                         setEditFormData({
@@ -255,7 +255,7 @@ const ClientDetail = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                       Lead Status
                     </label>
                     <div className="grid grid-cols-3 gap-3">
@@ -286,7 +286,7 @@ const ClientDetail = ({
                           ) : (
                             <Snowflake size={18} strokeWidth={2.5} />
                           )}
-                          <span className="text-[10px] font-black uppercase tracking-widest">
+                          <span className="text-[10px] font-bold uppercase tracking-widest">
                             {type}
                           </span>
                         </button>
@@ -295,7 +295,7 @@ const ClientDetail = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                       Note
                     </label>
                     <textarea
@@ -315,7 +315,7 @@ const ClientDetail = ({
                   <div className="pt-2">
                     <button
                       type="submit"
-                      className="w-full py-4 bg-primary text-white rounded-xl hover:bg-slate-800 text-[12px] font-black uppercase tracking-[0.4em] transition-all shadow-lg active:scale-95"
+                      className="w-full py-4 bg-primary text-white rounded-xl hover:bg-slate-800 text-[12px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95"
                     >
                       Update Lead
                     </button>
@@ -328,10 +328,10 @@ const ClientDetail = ({
           {/* Log Activity Modal */}
           {isLogging && (
             <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-primary/40 backdrop-blur-sm animate-fade-in overflow-y-auto py-10">
-              <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden animate-zoom-in my-auto">
+              <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-zoom-in my-auto">
                 <div className="bg-primary p-6 flex justify-between items-center text-white">
                   <div>
-                    <h3 className="text-lg font-black tracking-tighter uppercase leading-tight">
+                    <h3 className="text-lg font-bold tracking-tight uppercase leading-tight">
                       Log Conversation
                     </h3>
                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
@@ -349,13 +349,13 @@ const ClientDetail = ({
                 <form onSubmit={handleLogInteraction} className="p-6 space-y-5">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                      <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                         Date
                       </label>
                       <input
                         required
                         type="date"
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                         value={logData.date}
                         onChange={(e) =>
                           setLogData({ ...logData, date: e.target.value })
@@ -363,13 +363,13 @@ const ClientDetail = ({
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                      <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                         Time
                       </label>
                       <input
                         required
                         type="time"
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                         value={logData.time}
                         onChange={(e) =>
                           setLogData({ ...logData, time: e.target.value })
@@ -379,7 +379,7 @@ const ClientDetail = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                       Interaction Type
                     </label>
                     <div className="grid grid-cols-3 gap-2">
@@ -393,7 +393,7 @@ const ClientDetail = ({
                               type: type,
                             })
                           }
-                          className={`py-2 px-3 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all ${
+                          className={`py-2 px-3 rounded-xl border text-[10px] font-bold uppercase tracking-widest transition-all ${
                             logData.type === type
                               ? "bg-secondary border-secondary text-white shadow-md shadow-secondary/20"
                               : "bg-white border-slate-100 text-slate-400 hover:border-slate-300"
@@ -406,7 +406,7 @@ const ClientDetail = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                       Conversation Details
                     </label>
                     <textarea
@@ -423,7 +423,7 @@ const ClientDetail = ({
                   <div className="pt-2">
                     <button
                       type="submit"
-                      className="w-full py-4 bg-primary text-white rounded-xl hover:bg-slate-800 text-[12px] font-black uppercase tracking-[0.4em] transition-all shadow-lg active:scale-95"
+                      className="w-full py-4 bg-primary text-white rounded-xl hover:bg-slate-800 text-[12px] font-bold uppercase tracking-widest transition-all shadow-lg active:scale-95"
                     >
                       Save Entry
                     </button>
@@ -437,7 +437,7 @@ const ClientDetail = ({
           <div className="w-full lg:w-[280px] border-b lg:border-b-0 lg:border-r border-slate-100 p-4 md:p-6 overflow-y-auto bg-slate-50/20 no-scrollbar shrink-0">
             <div className="space-y-8">
               <div>
-                <h3 className="text-[9px] font-black text-primary uppercase tracking-[0.4em] mb-4 opacity-40">
+                <h3 className="text-[9px] font-bold text-primary uppercase tracking-widest mb-4 opacity-40">
                   Contact Dossier
                 </h3>
                 <div className="space-y-3">
@@ -459,7 +459,7 @@ const ClientDetail = ({
                 </div>
               </div>
               <div>
-                <h3 className="text-[9px] font-black text-primary uppercase tracking-[0.4em] mb-4 opacity-40">
+                <h3 className="text-[9px] font-bold text-primary uppercase tracking-widest mb-4 opacity-40">
                   Discovery
                 </h3>
                 <div className="p-5 bg-white border border-slate-100 rounded-xl shadow-inner italic text-xs md:text-sm text-primary leading-relaxed font-medium">
@@ -487,7 +487,7 @@ const ClientDetail = ({
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex-1 px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-primary"}`}
+                    className={`flex-1 px-6 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === tab.id ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-primary"}`}
                   >
                     {tab.label}
                   </button>
@@ -504,11 +504,11 @@ const ClientDetail = ({
                         <div className="p-2 bg-secondary/5 text-secondary rounded-lg w-fit mb-3 group-hover:bg-secondary group-hover:text-white transition-all">
                           <Zap size={16} />
                         </div>
-                        <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                        <h3 className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
                           Lead Status
                         </h3>
                         <p
-                          className={`text-lg md:text-xl font-black tracking-tighter uppercase ${
+                          className={`text-lg md:text-xl font-bold tracking-tight uppercase ${
                             client.leadType === "Hot"
                               ? "text-orange-500"
                               : client.leadType === "Warm"
@@ -523,7 +523,7 @@ const ClientDetail = ({
                         <div className="p-2 bg-primary/5 text-primary rounded-lg w-fit mb-3 group-hover:bg-primary group-hover:text-white transition-all">
                           <MessageSquare size={16} />
                         </div>
-                        <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                        <h3 className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
                           Recent Context
                         </h3>
                         <p className="text-sm font-bold text-primary truncate">
@@ -539,10 +539,10 @@ const ClientDetail = ({
                         <div className="p-2 bg-primary/5 text-primary rounded-lg w-fit mb-3 group-hover:bg-primary group-hover:text-white transition-all">
                           <Target size={16} />
                         </div>
-                        <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                        <h3 className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
                           Project Category
                         </h3>
-                        <p className="text-lg md:text-xl font-black text-primary tracking-tighter uppercase">
+                        <p className="text-lg md:text-xl font-bold text-primary tracking-tight uppercase">
                           {client.projectCategory || client.industry || "Tech"}
                         </p>
                       </div>
@@ -550,10 +550,10 @@ const ClientDetail = ({
                         <div className="p-2 bg-secondary/5 text-secondary rounded-lg w-fit mb-3 group-hover:bg-secondary group-hover:text-white transition-all">
                           <Zap size={16} />
                         </div>
-                        <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                        <h3 className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
                           Project Priority
                         </h3>
-                        <p className="text-lg md:text-xl font-black text-primary tracking-tighter uppercase">
+                        <p className="text-lg md:text-xl font-bold text-primary tracking-tight uppercase">
                           {client.projectPriority || "Medium"}
                         </p>
                       </div>
@@ -563,10 +563,10 @@ const ClientDetail = ({
                         </div>
                         <div className="flex justify-between items-end">
                           <div>
-                            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                            <h3 className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
                               Current Deadline
                             </h3>
-                            <p className="text-lg md:text-xl font-black text-primary tracking-tighter uppercase">
+                            <p className="text-lg md:text-xl font-bold text-primary tracking-tighter uppercase">
                               {client.deadline
                                 ? new Date(client.deadline).toLocaleDateString(
                                     [],
@@ -580,10 +580,10 @@ const ClientDetail = ({
                             </p>
                           </div>
                           <div className="text-right">
-                            <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">
+                            <h3 className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">
                               Status
                             </h3>
-                            <p className="text-xs font-black text-secondary uppercase tracking-widest">
+                            <p className="text-xs font-bold text-secondary uppercase tracking-widest">
                               {client.projectStatus || "Active"}
                             </p>
                           </div>
@@ -596,19 +596,19 @@ const ClientDetail = ({
               {activeTab === "activity" && (
                 <div className="space-y-8 animate-fade-in">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-sm font-black text-primary tracking-tighter">
+                    <h3 className="text-sm font-bold text-primary tracking-tight">
                       Timeline
                     </h3>
                     <button
                       onClick={() => setIsLogging(true)}
-                      className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg active:scale-95"
+                      className="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg active:scale-95"
                     >
                       <Plus size={16} /> Log Entry
                     </button>
                   </div>
                   <div className="relative border-l-2 border-slate-100 ml-4 space-y-8 pb-10">
                     {clientActivities.length === 0 ? (
-                      <p className="ml-8 text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                      <p className="ml-8 text-[10px] font-bold text-slate-300 uppercase tracking-widest">
                         Historical Void
                       </p>
                     ) : (
@@ -624,7 +624,7 @@ const ClientDetail = ({
                             )}
                           </div>
                           <div className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">
                               {new Date(activity.date).toLocaleDateString([], {
                                 month: "short",
                                 day: "numeric",
@@ -648,7 +648,7 @@ const ClientDetail = ({
                       className="p-4 bg-white border border-slate-200 rounded-xl hover:border-secondary transition-all flex items-center gap-5"
                     >
                       <div className="flex-1">
-                        <h4 className="text-sm font-black text-primary truncate mb-1">
+                        <h4 className="text-sm font-bold text-primary truncate mb-1">
                           {project.name}
                         </h4>
                         <div className="w-full bg-slate-50 border border-slate-100 rounded-full h-2 overflow-hidden mt-3">
@@ -659,10 +659,10 @@ const ClientDetail = ({
                         </div>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-[10px] font-black text-primary">
+                        <p className="text-[10px] font-bold text-primary">
                           ${(project.budget / 1000).toFixed(0)}k
                         </p>
-                        <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-1">
+                        <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">
                           {project.status}
                         </p>
                       </div>

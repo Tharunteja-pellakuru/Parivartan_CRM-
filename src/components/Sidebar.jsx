@@ -138,7 +138,7 @@ const Sidebar = ({
                     {item.icon}
                   </span>
                   {!isCollapsed && (
-                    <span className="text-[13px] font-bold tracking-tight">
+                    <span className="text-sidebar-nav font-medium tracking-wide">
                       {item.label}
                     </span>
                   )}
@@ -148,7 +148,7 @@ const Sidebar = ({
                     {item.badge !== undefined &&
                       item.badge > 0 &&
                       !isExpanded && (
-                        <span className="bg-white text-secondary text-[11px] font-black px-2 h-6 min-w-[1.5rem] rounded-md flex items-center justify-center shadow-lg shadow-black/10">
+                        <span className="bg-white text-secondary text-sidebar-badge font-bold px-2 h-5 min-w-[1.25rem] rounded-md flex items-center justify-center shadow-lg shadow-black/10">
                           {item.badge}
                         </span>
                       )}
@@ -181,7 +181,7 @@ const Sidebar = ({
                           setActiveTab(sub.id);
                           if (onCloseMobile) onCloseMobile();
                         }}
-                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-[12px] font-bold transition-all ${isSubActive ? "bg-black/20 text-white shadow-sm" : "text-slate-300 hover:text-white hover:bg-white/5"}`}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all ${isSubActive ? "bg-black/20 text-white shadow-sm" : "text-slate-300 hover:text-white hover:bg-white/5"}`}
                       >
                         <span
                           className={isSubActive ? "text-white" : "text-white"}
@@ -191,7 +191,7 @@ const Sidebar = ({
                         <div className="flex-1 flex items-center justify-between gap-2.5">
                           <span>{sub.label}</span>
                           {sub.badge !== undefined && sub.badge > 0 && (
-                            <span className="bg-white text-secondary text-[10px] font-black px-2 h-5.5 min-w-[1.375rem] rounded-md flex items-center justify-center shadow-lg shadow-black/10">
+                            <span className="bg-white text-secondary text-sidebar-badge font-bold px-2 h-4.5 min-w-[1.125rem] rounded-md flex items-center justify-center shadow-lg shadow-black/10">
                               {sub.badge}
                             </span>
                           )}
@@ -219,7 +219,7 @@ const Sidebar = ({
           {!isCollapsed && (
             <>
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] text-white font-bold truncate">
+                <p className="text-sm text-white font-semibold truncate">
                   Anand
                 </p>
               </div>

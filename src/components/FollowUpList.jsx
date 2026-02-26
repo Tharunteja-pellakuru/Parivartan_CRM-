@@ -97,7 +97,7 @@ const FollowUpList = ({
       <div className="space-y-5 animate-fade-in w-full">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div className="max-w-2xl">
-            <h2 className="text-lg md:text-xl lg:text-2xl font-black text-primary tracking-tighter mb-1.5">
+            <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-primary tracking-tight mb-1.5">
               {typeFilter === "Active"
                 ? "Client Follow-Ups"
                 : typeFilter === "Lead"
@@ -115,7 +115,7 @@ const FollowUpList = ({
           <div className="w-full lg:w-auto">
             <button
               onClick={() => onNavigate && onNavigate("leads")}
-              className="w-full lg:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all text-[11px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 group"
+              className="w-full lg:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all text-xs font-bold uppercase tracking-wider shadow-lg active:scale-95 group"
             >
               <Plus
                 size={16}
@@ -133,7 +133,7 @@ const FollowUpList = ({
               <button
                 key={f}
                 onClick={() => setActiveFilter(f)}
-                className={`flex-1 px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeFilter === f ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
+                className={`flex-1 px-6 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap ${activeFilter === f ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
               >
                 {f}
               </button>
@@ -145,7 +145,7 @@ const FollowUpList = ({
           {filteredFollowUps.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 bg-white rounded-2xl border border-slate-200 shadow-sm w-full">
               <Bell size={24} className="text-slate-100 mb-3" />
-              <p className="text-[10px] font-black text-primary uppercase tracking-widest">
+              <p className="text-[11px] font-bold text-primary uppercase tracking-wider">
                 No Active Tasks
               </p>
             </div>
@@ -171,22 +171,22 @@ const FollowUpList = ({
                   <div className="flex-1 min-w-0 text-center md:text-left">
                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-1.5">
                       <span
-                        className={`px-2.5 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest border ${getPriorityBadge(f.priority)}`}
+                        className={`px-2.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider border ${getPriorityBadge(f.priority)}`}
                       >
                         {f.priority}
                       </span>
                       {overdue && (
-                        <span className="text-[8px] font-black uppercase tracking-widest text-error bg-error/10 px-2.5 py-0.5 rounded-md border border-error/20">
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-error bg-error/10 px-2.5 py-0.5 rounded-md border border-error/20">
                           Overdue
                         </span>
                       )}
                     </div>
                     <h4
-                      className={`text-sm font-black text-primary tracking-tight truncate ${f.status === "completed" ? "line-through opacity-50" : ""}`}
+                      className={`text-sm font-bold text-primary tracking-tight truncate ${f.status === "completed" ? "line-through opacity-50" : ""}`}
                     >
                       {f.title}
                     </h4>
-                    <div className="flex items-center justify-center md:justify-start gap-2 mt-1.5 text-[10px] text-textMuted font-black uppercase tracking-widest">
+                    <div className="flex items-center justify-center md:justify-start gap-2 mt-1.5 text-[10px] text-textMuted font-bold uppercase tracking-widest">
                       <Clock size={12} className="text-secondary" />
                       {new Date(f.dueDate).toLocaleDateString([], {
                         month: "short",
@@ -204,10 +204,10 @@ const FollowUpList = ({
                       alt=""
                     />
                     <div className="text-left">
-                      <p className="text-[12px] font-black text-primary truncate leading-none">
+                      <p className="text-[13px] font-bold text-primary truncate leading-none">
                         {client?.name}
                       </p>
-                      <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-1">
+                      <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-1">
                         {client?.company}
                       </p>
                     </div>
@@ -242,17 +242,17 @@ const FollowUpList = ({
               >
                 <X size={24} strokeWidth={3} />
               </button>
-              <h3 className="text-lg font-black tracking-tighter mb-1">
+              <h3 className="text-lg font-bold tracking-tighter mb-1">
                 New Task
               </h3>
-              <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest">
+              <p className="text-slate-400 text-[9px] font-bold uppercase tracking-widest">
                 Schedule Follow-up
               </p>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-primary uppercase tracking-wider ml-1">
                     Target Identity
                   </label>
                   <div className="relative">
@@ -261,7 +261,7 @@ const FollowUpList = ({
                       onClick={() =>
                         setIsClientDropdownOpen(!isClientDropdownOpen)
                       }
-                      className="w-full flex items-center justify-between px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm hover:border-secondary transition-all"
+                      className="w-full flex items-center justify-between px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium shadow-sm hover:border-secondary transition-all"
                     >
                       <span className="text-primary truncate max-w-[90%]">
                         {formData.clientId
@@ -283,7 +283,7 @@ const FollowUpList = ({
                         />
                         <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[90] animate-fade-in-up origin-top max-h-60 overflow-y-auto">
                           <div className="sticky top-0 bg-[#18254D] px-4 py-3 border-b border-white/10 z-10">
-                            <p className="text-[9px] font-black text-white/50 uppercase tracking-widest">
+                            <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest">
                               Select Client
                             </p>
                           </div>
@@ -295,7 +295,7 @@ const FollowUpList = ({
                                 setFormData({ ...formData, clientId: c.id });
                                 setIsClientDropdownOpen(false);
                               }}
-                              className={`w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                              className={`w-full text-left px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${
                                 formData.clientId === c.id
                                   ? "bg-slate-100 text-secondary"
                                   : "text-[#18254D] hover:bg-slate-50"
@@ -311,14 +311,14 @@ const FollowUpList = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                     Task Description
                   </label>
                   <input
                     required
                     type="text"
                     placeholder="e.g. Discuss project scope"
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium shadow-sm focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none"
                     value={formData.title}
                     onChange={(e) =>
                       setFormData({ ...formData, title: e.target.value })
@@ -328,13 +328,13 @@ const FollowUpList = ({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                       Due Date
                     </label>
                     <input
                       required
                       type="date"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-[#18254D]"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium shadow-sm focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-[#18254D]"
                       value={formData.dueDate}
                       onChange={(e) =>
                         setFormData({ ...formData, dueDate: e.target.value })
@@ -343,7 +343,7 @@ const FollowUpList = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                       Priority
                     </label>
                     <div className="relative">
@@ -371,7 +371,7 @@ const FollowUpList = ({
                           />
                           <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[90] animate-fade-in-up origin-top">
                             <div className="bg-[#18254D] px-4 py-3 border-b border-white/10">
-                              <p className="text-[9px] font-black text-white/50 uppercase tracking-widest">
+                              <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest">
                                 Select Priority
                               </p>
                             </div>
@@ -383,7 +383,7 @@ const FollowUpList = ({
                                   setFormData({ ...formData, priority: level });
                                   setIsPriorityDropdownOpen(false);
                                 }}
-                                className={`w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                                className={`w-full text-left px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${
                                   formData.priority === level
                                     ? "bg-slate-100 text-secondary"
                                     : "text-[#18254D] hover:bg-slate-50"
@@ -403,13 +403,13 @@ const FollowUpList = ({
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest"
+                  className="flex-1 py-3.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-3.5 bg-secondary text-primary rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg"
+                  className="flex-1 py-3.5 bg-secondary text-primary rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg"
                 >
                   Deploy
                 </button>

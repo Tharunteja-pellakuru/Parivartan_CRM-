@@ -263,7 +263,7 @@ const ClientList = ({
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div className="max-w-2xl">
-            <h2 className="text-lg md:text-xl lg:text-2xl font-black text-primary tracking-tighter mb-2">
+            <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-primary tracking-tight mb-2">
               {title}
             </h2>
             <p className="text-xs md:text-sm text-textMuted font-medium leading-relaxed">
@@ -274,7 +274,7 @@ const ClientList = ({
           <div className="w-full lg:w-auto">
             <button
               onClick={() => setShowAddModal(true)}
-              className="w-full lg:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all text-[11px] font-black uppercase tracking-[0.25em] shadow-lg active:scale-95 group"
+              className="w-full lg:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all text-xs font-bold uppercase tracking-wider shadow-lg active:scale-95 group"
             >
               <Plus
                 size={18}
@@ -298,7 +298,7 @@ const ClientList = ({
               placeholder={`Search ${title.toLowerCase()}...`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-14 pr-6 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all"
+              className="w-full pl-14 pr-6 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-medium focus:outline-none focus:ring-4 focus:ring-secondary/10 focus:border-secondary transition-all"
             />
           </div>
 
@@ -307,7 +307,7 @@ const ClientList = ({
               <div className="relative shrink-0">
                 <button
                   onClick={() => setIsTierDropdownOpen(!isTierDropdownOpen)}
-                  className="flex items-center justify-between gap-4 px-6 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-[11px] font-black uppercase tracking-widest text-[#18254D] hover:bg-white hover:border-slate-200 transition-all min-w-[180px] shadow-sm shadow-slate-200/50 group"
+                  className="flex items-center justify-between gap-4 px-6 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-[11px] font-bold uppercase tracking-widest text-[#18254D] hover:bg-white hover:border-slate-200 transition-all min-w-[180px] shadow-sm shadow-slate-200/50 group"
                 >
                   <span>
                     {leadTypeFilter === "All"
@@ -316,7 +316,7 @@ const ClientList = ({
                   </span>
                   <ChevronDown
                     size={16}
-                    strokeWidth={3}
+                    strokeWidth={2.5}
                     className={`transition-transform duration-300 ${isTierDropdownOpen ? "rotate-180" : ""}`}
                   />
                 </button>
@@ -335,7 +335,7 @@ const ClientList = ({
                             setLeadTypeFilter(tier);
                             setIsTierDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-5 py-4 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                          className={`w-full text-left px-5 py-4 text-[10px] font-bold uppercase tracking-wider transition-colors ${
                             tier === "All"
                               ? "bg-[#18254D] text-white"
                               : leadTypeFilter === tier
@@ -380,7 +380,7 @@ const ClientList = ({
                   <button
                     key={view}
                     onClick={() => setLeadView(view)}
-                    className={`px-6 h-full rounded-xl text-[11px] font-black uppercase tracking-[0.15em] transition-all flex items-center justify-center min-w-[120px] border border-transparent ${
+                    className={`px-6 h-full rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center min-w-[120px] border border-transparent ${
                       leadView === view
                         ? `${activeColor} shadow-md`
                         : `text-slate-400 ${hoverColor}`
@@ -400,19 +400,19 @@ const ClientList = ({
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-slate-50/50">
-                  <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
+                  <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
                     Client Name
                   </th>
-                  <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
+                  <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
                     {title === "Leads" ? "Note" : "Contact Details"}
                   </th>
-                  <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
+                  <th className="px-6 py-4 text-left text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
                     Client Category
                   </th>
-                  <th className="px-6 py-4 text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
+                  <th className="px-6 py-4 text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
                     {title === "Leads" ? "Lead Status" : "Status"}
                   </th>
-                  <th className="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100">
+                  <th className="px-6 py-4 text-right text-[10px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100">
                     Control
                   </th>
                 </tr>
@@ -428,14 +428,14 @@ const ClientList = ({
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-6">
-                          <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary flex items-center justify-center text-white font-black text-xl border-2 border-slate-50 shadow-lg shrink-0">
+                          <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary flex items-center justify-center text-white font-bold text-xl border-2 border-slate-50 shadow-lg shrink-0">
                             {client.name.charAt(0).toUpperCase()}
                           </div>
                           <div className="min-w-0">
-                            <div className="font-black text-sm text-primary tracking-tight leading-none mb-1 group-hover:text-secondary transition-colors">
+                            <div className="font-bold text-sm text-primary tracking-tight leading-none mb-1 group-hover:text-secondary transition-colors">
                               {client.name}
                             </div>
-                            <div className="text-[10px] text-slate-400 font-black uppercase tracking-widest truncate">
+                            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest truncate">
                               {client.projectName || client.company}
                             </div>
                           </div>
@@ -481,7 +481,7 @@ const ClientList = ({
                         <div className="flex justify-center">
                           {client.status === "Lead" ? (
                             <span
-                              className={`px-4 py-1.5 rounded-xl text-[9px] font-black border uppercase flex items-center gap-2 shadow-sm transition-all ${status.className}`}
+                              className={`px-4 py-1.5 rounded-xl text-[10px] font-bold border uppercase flex items-center gap-2 shadow-sm transition-all ${status.className}`}
                             >
                               {status.icon}
                               {status.label}
@@ -489,7 +489,7 @@ const ClientList = ({
                           ) : (
                             <div className="flex flex-col items-center">
                               <span
-                                className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest mb-1.5 ${client.status === "Active" ? "bg-success/10 text-success border border-success/20" : "bg-slate-100 text-slate-400 border border-slate-200"}`}
+                                className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest mb-1.5 ${client.status === "Active" ? "bg-success/10 text-success border border-success/20" : "bg-slate-100 text-slate-400 border border-slate-200"}`}
                               >
                                 {client.status || "Active"}
                               </span>
@@ -635,7 +635,7 @@ const ClientList = ({
                       <div className="w-14 h-14 bg-slate-50 text-slate-200 p-4 rounded-xl mb-4 shadow-inner flex items-center justify-center mx-auto">
                         <Search size={32} />
                       </div>
-                      <p className="text-[11px] font-black text-primary uppercase tracking-[0.4em]">
+                      <p className="text-[11px] font-bold text-primary uppercase tracking-[0.4em]">
                         Zero Results
                       </p>
                       <p className="text-sm font-medium text-slate-400 mt-2">
@@ -670,10 +670,10 @@ const ClientList = ({
                   />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black tracking-tighter leading-none">
+                  <h3 className="text-xl font-bold tracking-tighter leading-none">
                     New {title === "Leads" ? "Lead" : "Client"}
                   </h3>
-                  <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mt-1">
+                  <p className="text-slate-400 text-[9px] font-bold uppercase tracking-widest mt-1">
                     {title === "Leads" ? "Lead Details" : "Client Details"}
                   </p>
                 </div>
@@ -685,14 +685,14 @@ const ClientList = ({
                 /* ADD LEAD FIELDS */
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                       CLIENT NAME
                     </label>
                     <input
                       required
                       type="text"
                       placeholder="Anand Kumar"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                       value={formData.name}
                       onChange={(e) =>
                         setFormData({ ...formData, name: e.target.value })
@@ -701,14 +701,14 @@ const ClientList = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                       EMAIL ID
                     </label>
                     <input
                       required
                       type="email"
                       placeholder="anand.kumar@fintech.in"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                       value={formData.email}
                       onChange={(e) =>
                         setFormData({ ...formData, email: e.target.value })
@@ -717,14 +717,14 @@ const ClientList = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                       PHONE NUMBER
                     </label>
                     <input
                       required
                       type="tel"
                       placeholder="+91 98765 43210"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                       value={formData.phone}
                       onChange={(e) =>
                         setFormData({ ...formData, phone: e.target.value })
@@ -733,13 +733,13 @@ const ClientList = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                       WEBSITE URL
                     </label>
                     <input
                       type="url"
                       placeholder="https://www.company.com"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                       value={formData.website}
                       onChange={(e) =>
                         setFormData({ ...formData, website: e.target.value })
@@ -748,7 +748,7 @@ const ClientList = ({
                   </div>
 
                   <div className="md:col-span-2 space-y-2">
-                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                       LEAD CATEGORY
                     </label>
                     <div className="flex gap-2">
@@ -759,7 +759,7 @@ const ClientList = ({
                           onClick={() =>
                             setFormData({ ...formData, projectCategory: cat })
                           }
-                          className={`flex-1 flex items-center justify-center p-3 border-2 rounded-xl transition-all font-black uppercase text-[10px] tracking-widest ${
+                          className={`flex-1 flex items-center justify-center p-3 border-2 rounded-xl transition-all font-bold uppercase text-[10px] tracking-widest ${
                             formData.projectCategory === cat
                               ? "border-primary bg-primary/5 text-primary shadow-sm"
                               : "border-slate-100 text-slate-400 hover:border-slate-200"
@@ -772,7 +772,7 @@ const ClientList = ({
                   </div>
 
                   <div className="md:col-span-2 space-y-2">
-                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                       LEAD STATUS
                     </label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -803,7 +803,7 @@ const ClientList = ({
                           ) : (
                             <Snowflake size={18} strokeWidth={2.5} />
                           )}
-                          <span className="text-[10px] font-black uppercase tracking-widest">
+                          <span className="text-[10px] font-bold uppercase tracking-widest">
                             {type}
                           </span>
                         </button>
@@ -812,13 +812,13 @@ const ClientList = ({
                   </div>
 
                   <div className="md:col-span-2 space-y-2">
-                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                       NOTE
                     </label>
                     <textarea
                       rows={3}
                       placeholder="Add any additional context..."
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold resize-none shadow-sm"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium resize-none shadow-sm"
                       value={formData.notes || formData.industry}
                       onChange={(e) =>
                         setFormData({
@@ -836,7 +836,7 @@ const ClientList = ({
                   {/* CLIENT DETAILS HEADING */}
                   <div className="flex items-center gap-3 pt-2">
                     <div className="h-[2px] w-8 bg-secondary rounded-full" />
-                    <h4 className="text-[14px] font-black text-[#18254D] uppercase tracking-[0.2em]">
+                    <h4 className="text-[14px] font-bold text-[#18254D] uppercase tracking-[0.2em]">
                       Client Details
                     </h4>
                     <div className="h-[2px] flex-1 bg-slate-100 rounded-full" />
@@ -844,11 +844,11 @@ const ClientList = ({
 
                   {/* CLIENT TYPE */}
                   <div className="space-y-3 pb-2">
-                    <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                       CLIENT TYPE
                     </label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <label className="flex-1 flex items-center gap-3 p-4 bg-white border-2 border-[#18254D] rounded-2xl cursor-pointer transition-all group shadow-sm">
+                      <label className="flex-1 flex items-center gap-3 p-4 bg-white border-2 border-[#18254D] rounded-xl cursor-pointer transition-all group shadow-sm">
                         <div className="relative flex items-center justify-center">
                           <input
                             type="radio"
@@ -861,7 +861,7 @@ const ClientList = ({
                           <div className="absolute w-3 h-3 bg-[#18254D] rounded-full" />
                         </div>
                         <div>
-                          <p className="text-sm font-black text-[#18254D] leading-none">
+                          <p className="text-sm font-bold text-[#18254D] leading-none">
                             New Client
                           </p>
                           <p className="text-[9px] text-slate-400 font-bold mt-1">
@@ -876,14 +876,14 @@ const ClientList = ({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {/* NAME & EMAIL */}
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                         CLIENT NAME
                       </label>
                       <input
                         required
                         type="text"
                         placeholder="Anand Kumar"
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                         value={formData.name}
                         onChange={(e) =>
                           setFormData({ ...formData, name: e.target.value })
@@ -892,14 +892,14 @@ const ClientList = ({
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                         EMAIL ID
                       </label>
                       <input
                         required
                         type="email"
                         placeholder="anand.kumar@fintech.in"
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                         value={formData.email}
                         onChange={(e) =>
                           setFormData({ ...formData, email: e.target.value })
@@ -909,14 +909,14 @@ const ClientList = ({
 
                     {/* PHONE & STATUS */}
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                         PHONE NUMBER
                       </label>
                       <input
                         required
                         type="tel"
                         placeholder="+91 98765 43210"
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                         value={formData.phone}
                         onChange={(e) =>
                           setFormData({ ...formData, phone: e.target.value })
@@ -925,7 +925,7 @@ const ClientList = ({
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                         CLIENT STATUS
                       </label>
                       <div className="grid grid-cols-2 gap-3">
@@ -957,7 +957,7 @@ const ClientList = ({
                                 }`}
                               />
                             </div>
-                            <p className="text-sm font-black text-[#18254D] leading-none">
+                            <p className="text-sm font-bold text-[#18254D] leading-none">
                               {status}
                             </p>
                           </label>
@@ -969,7 +969,7 @@ const ClientList = ({
                   {/* PROJECT DETAILS HEADING */}
                   <div className="flex items-center gap-3 pt-6">
                     <div className="h-[2px] w-8 bg-secondary rounded-full" />
-                    <h4 className="text-[14px] font-black text-[#18254D] uppercase tracking-[0.2em]">
+                    <h4 className="text-[14px] font-bold text-[#18254D] uppercase tracking-[0.2em]">
                       Project Details
                     </h4>
                     <div className="h-[2px] flex-1 bg-slate-100 rounded-full" />
@@ -978,14 +978,14 @@ const ClientList = ({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {/* PROJECT NAME & STATUS */}
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                         PROJECT NAME
                       </label>
                       <input
                         required
                         type="text"
                         placeholder="e.g. Website Redesign"
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                         value={formData.projectName}
                         onChange={(e) =>
                           setFormData({
@@ -997,7 +997,7 @@ const ClientList = ({
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                         PROJECT STATUS
                       </label>
                       <div className="relative">
@@ -1006,7 +1006,7 @@ const ClientList = ({
                           onClick={() =>
                             setIsStatusDropdownOpen(!isStatusDropdownOpen)
                           }
-                          className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm hover:border-secondary transition-all"
+                          className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium hover:border-secondary transition-all"
                         >
                           <span className="text-primary">
                             {formData.projectStatus}
@@ -1025,7 +1025,7 @@ const ClientList = ({
                             />
                             <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[90] animate-fade-in-up origin-top">
                               <div className="bg-[#18254D] px-4 py-3 border-b border-white/10">
-                                <p className="text-[9px] font-black text-white/50 uppercase tracking-widest">
+                                <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest">
                                   Select Status
                                 </p>
                               </div>
@@ -1045,7 +1045,7 @@ const ClientList = ({
                                     });
                                     setIsStatusDropdownOpen(false);
                                   }}
-                                  className={`w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                                  className={`w-full text-left px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${
                                     formData.projectStatus === status
                                       ? "bg-slate-100 text-secondary"
                                       : "text-[#18254D] hover:bg-slate-50"
@@ -1061,7 +1061,7 @@ const ClientList = ({
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                         LEAD CATEGORY
                       </label>
                       <div className="flex gap-2">
@@ -1072,7 +1072,7 @@ const ClientList = ({
                             onClick={() =>
                               setFormData({ ...formData, projectCategory: cat })
                             }
-                            className={`flex-1 flex items-center justify-center p-3 border-2 rounded-xl transition-all font-black uppercase text-[10px] tracking-widest ${
+                            className={`flex-1 flex items-center justify-center p-3 border-2 rounded-xl transition-all font-bold uppercase text-[10px] tracking-widest ${
                               formData.projectCategory === cat
                                 ? "border-primary bg-primary/5 text-primary shadow-sm"
                                 : "border-slate-100 text-slate-400 hover:border-slate-200"
@@ -1085,7 +1085,7 @@ const ClientList = ({
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                         PROJECT PRIORITY
                       </label>
                       <div className="relative">
@@ -1094,7 +1094,7 @@ const ClientList = ({
                           onClick={() =>
                             setIsPriorityDropdownOpen(!isPriorityDropdownOpen)
                           }
-                          className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm hover:border-secondary transition-all"
+                          className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium hover:border-secondary transition-all"
                         >
                           <span className="text-primary">
                             {formData.projectPriority}
@@ -1113,7 +1113,7 @@ const ClientList = ({
                             />
                             <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[90] animate-fade-in-up origin-top">
                               <div className="bg-[#18254D] px-4 py-3 border-b border-white/10">
-                                <p className="text-[9px] font-black text-white/50 uppercase tracking-widest">
+                                <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest">
                                   Select Priority
                                 </p>
                               </div>
@@ -1128,7 +1128,7 @@ const ClientList = ({
                                     });
                                     setIsPriorityDropdownOpen(false);
                                   }}
-                                  className={`w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                                  className={`w-full text-left px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${
                                     formData.projectPriority === level
                                       ? "bg-slate-100 text-secondary"
                                       : "text-[#18254D] hover:bg-slate-50"
@@ -1145,7 +1145,7 @@ const ClientList = ({
 
                     {/* PROJECT DESCRIPTION */}
                     <div className="space-y-2 md:col-span-2">
-                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                         PROJECT DESCRIPTION
                       </label>
                       <textarea
@@ -1164,12 +1164,12 @@ const ClientList = ({
 
                     {/* DATES */}
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                         ONBOARDING DATE
                       </label>
                       <input
                         type="date"
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                         value={formData.onboardingDate}
                         onChange={(e) =>
                           setFormData({
@@ -1181,12 +1181,12 @@ const ClientList = ({
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                         DEADLINE (TENTATIVE)
                       </label>
                       <input
                         type="date"
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                         value={formData.deadline}
                         onChange={(e) =>
                           setFormData({
@@ -1199,7 +1199,7 @@ const ClientList = ({
 
                     {/* SCOPE DOCUMENT */}
                     <div className="space-y-2 md:col-span-2">
-                      <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                      <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                         SCOPE DOCUMENT
                       </label>
                       <div className="relative group">
@@ -1236,7 +1236,7 @@ const ClientList = ({
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full h-14 bg-[#18254D] text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] shadow-xl active:scale-[0.97] transition-all hover:bg-[#1e2e5e] hover:shadow-2xl flex items-center justify-center gap-3 group/btn"
+                  className="w-full h-14 bg-[#18254D] text-white rounded-2xl text-[11px] font-bold uppercase tracking-[0.25em] shadow-xl active:scale-[0.97] transition-all hover:bg-[#1e2e5e] hover:shadow-2xl flex items-center justify-center gap-3 group/btn"
                 >
                   <UserPlus
                     size={20}
@@ -1269,7 +1269,7 @@ const ClientList = ({
                   />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black tracking-tighter leading-none">
+                  <h3 className="text-xl font-bold tracking-tighter leading-none">
                     Convert to Client
                   </h3>
                   <p className="text-secondary text-[11px] font-bold uppercase tracking-widest mt-1">
@@ -1286,7 +1286,7 @@ const ClientList = ({
               {/* CLIENT DETAILS HEADING */}
               <div className="flex items-center gap-3 pt-2">
                 <div className="h-[2px] w-8 bg-secondary rounded-full" />
-                <h4 className="text-[14px] font-black text-[#18254D] uppercase tracking-[0.2em]">
+                <h4 className="text-[14px] font-bold text-[#18254D] uppercase tracking-[0.2em]">
                   Client Details
                 </h4>
                 <div className="h-[2px] flex-1 bg-slate-100 rounded-full" />
@@ -1294,12 +1294,12 @@ const ClientList = ({
 
               {/* CLIENT TYPE */}
               <div className="space-y-3 pb-2">
-                <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                   CLIENT TYPE
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <label
-                    className={`flex-1 flex items-center gap-3 p-4 bg-white border-2 rounded-2xl cursor-pointer transition-all group shadow-sm ${
+                    className={`flex-1 flex items-center gap-3 p-4 bg-white border-2 rounded-xl cursor-pointer transition-all group shadow-sm ${
                       onboardingData.clientType === "New"
                         ? "border-[#18254D]"
                         : "border-slate-100"
@@ -1328,7 +1328,7 @@ const ClientList = ({
                       />
                     </div>
                     <div>
-                      <p className="text-sm font-black text-[#18254D] leading-none">
+                      <p className="text-sm font-bold text-[#18254D] leading-none">
                         New Client
                       </p>
                       <p className="text-[9px] text-slate-400 font-bold mt-1">
@@ -1338,7 +1338,7 @@ const ClientList = ({
                   </label>
 
                   <label
-                    className={`flex-1 flex items-center gap-3 p-4 bg-white border-2 rounded-2xl cursor-pointer transition-all group shadow-sm ${
+                    className={`flex-1 flex items-center gap-3 p-4 bg-white border-2 rounded-xl cursor-pointer transition-all group shadow-sm ${
                       onboardingData.clientType === "Existing Client"
                         ? "border-[#18254D]"
                         : "border-slate-100"
@@ -1369,7 +1369,7 @@ const ClientList = ({
                       />
                     </div>
                     <div>
-                      <p className="text-sm font-black text-[#18254D] leading-none">
+                      <p className="text-sm font-bold text-[#18254D] leading-none">
                         Existing Client
                       </p>
                       <p className="text-[9px] text-slate-400 font-bold mt-1">
@@ -1382,7 +1382,7 @@ const ClientList = ({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-2 relative">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     CLIENT NAME
                   </label>
                   <div className="relative">
@@ -1395,7 +1395,7 @@ const ClientList = ({
                           }
                         >
                           <span
-                            className={`text-sm font-black uppercase tracking-tight ${onboardingData.name ? "text-primary" : "text-slate-400"}`}
+                            className={`text-sm font-bold uppercase tracking-tight ${onboardingData.name ? "text-primary" : "text-slate-400"}`}
                           >
                             {onboardingData.name || "Select an existing client"}
                           </span>
@@ -1453,7 +1453,7 @@ const ClientList = ({
                                       setClientSearchQuery("");
                                     }}
                                   >
-                                    <p className="text-sm font-black text-[#18254D] group-hover:text-secondary transition-colors">
+                                    <p className="text-sm font-bold text-[#18254D] group-hover:text-secondary transition-colors">
                                       {client.name}
                                     </p>
                                     <p className="text-[10px] text-slate-400 font-bold mt-0.5">
@@ -1484,7 +1484,7 @@ const ClientList = ({
                         required
                         type="text"
                         placeholder="e.g. Anand Kumar"
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                         value={onboardingData.name}
                         onChange={(e) =>
                           setOnboardingData({
@@ -1498,14 +1498,14 @@ const ClientList = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     EMAIL ID
                   </label>
                   <input
                     required
                     type="email"
                     placeholder="e.g. anand.kumar@fintech.in"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                     value={onboardingData.email}
                     onChange={(e) =>
                       setOnboardingData({
@@ -1517,14 +1517,14 @@ const ClientList = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     PHONE NUMBER
                   </label>
                   <input
                     required
                     type="tel"
                     placeholder="+91 98765 43210"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                     value={onboardingData.phone}
                     onChange={(e) =>
                       setOnboardingData({
@@ -1536,7 +1536,7 @@ const ClientList = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     CLIENT STATUS
                   </label>
                   <div className="grid grid-cols-2 gap-3">
@@ -1571,7 +1571,7 @@ const ClientList = ({
                             }`}
                           />
                         </div>
-                        <p className="text-sm font-black text-[#18254D] leading-none">
+                        <p className="text-sm font-bold text-[#18254D] leading-none">
                           {status}
                         </p>
                       </label>
@@ -1583,7 +1583,7 @@ const ClientList = ({
               {/* PROJECT DETAILS HEADING */}
               <div className="flex items-center gap-3 pt-6">
                 <div className="h-[2px] w-8 bg-secondary rounded-full" />
-                <h4 className="text-[14px] font-black text-[#18254D] uppercase tracking-[0.2em]">
+                <h4 className="text-[14px] font-bold text-[#18254D] uppercase tracking-[0.2em]">
                   Project Details
                 </h4>
                 <div className="h-[2px] flex-1 bg-slate-100 rounded-full" />
@@ -1591,14 +1591,14 @@ const ClientList = ({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     PROJECT NAME
                   </label>
                   <input
                     required
                     type="text"
                     placeholder="e.g. Website Redesign"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                     value={onboardingData.projectName}
                     onChange={(e) =>
                       setOnboardingData({
@@ -1610,7 +1610,7 @@ const ClientList = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     PROJECT STATUS
                   </label>
                   <div className="relative">
@@ -1621,7 +1621,7 @@ const ClientList = ({
                           !isOnboardStatusDropdownOpen,
                         )
                       }
-                      className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm hover:border-secondary transition-all"
+                      className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium shadow-sm hover:border-secondary transition-all"
                     >
                       <span className="text-primary">
                         {onboardingData.projectStatus}
@@ -1640,7 +1640,7 @@ const ClientList = ({
                         />
                         <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[90] animate-fade-in-up origin-top">
                           <div className="bg-[#18254D] px-4 py-3 border-b border-white/10">
-                            <p className="text-[9px] font-black text-white/50 uppercase tracking-widest">
+                            <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest">
                               Select Status
                             </p>
                           </div>
@@ -1656,7 +1656,7 @@ const ClientList = ({
                                   });
                                   setIsOnboardStatusDropdownOpen(false);
                                 }}
-                                className={`w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                                className={`w-full text-left px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${
                                   onboardingData.projectStatus === status
                                     ? "bg-slate-100 text-secondary"
                                     : "text-[#18254D] hover:bg-slate-50"
@@ -1673,7 +1673,7 @@ const ClientList = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     LEAD CATEGORY
                   </label>
                   <div className="flex gap-2">
@@ -1687,7 +1687,7 @@ const ClientList = ({
                             projectCategory: cat,
                           })
                         }
-                        className={`flex-1 flex items-center justify-center p-3 border-2 rounded-xl transition-all font-black uppercase text-[10px] tracking-widest ${
+                        className={`flex-1 flex items-center justify-center p-3 border-2 rounded-xl transition-all font-bold uppercase text-[10px] tracking-widest ${
                           onboardingData.projectCategory === cat
                             ? "border-primary bg-primary/5 text-primary shadow-sm"
                             : "border-slate-100 text-slate-400 hover:border-slate-200"
@@ -1700,7 +1700,7 @@ const ClientList = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     PROJECT PRIORITY
                   </label>
                   <div className="relative">
@@ -1711,7 +1711,7 @@ const ClientList = ({
                           !isOnboardPriorityDropdownOpen,
                         )
                       }
-                      className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm hover:border-secondary transition-all"
+                      className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium shadow-sm hover:border-secondary transition-all"
                     >
                       <span className="text-primary">
                         {onboardingData.projectPriority}
@@ -1732,7 +1732,7 @@ const ClientList = ({
                         />
                         <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[90] animate-fade-in-up origin-top">
                           <div className="bg-[#18254D] px-4 py-3 border-b border-white/10">
-                            <p className="text-[9px] font-black text-white/50 uppercase tracking-widest">
+                            <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest">
                               Select Priority
                             </p>
                           </div>
@@ -1747,7 +1747,7 @@ const ClientList = ({
                                 });
                                 setIsOnboardPriorityDropdownOpen(false);
                               }}
-                              className={`w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                              className={`w-full text-left px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${
                                 onboardingData.projectPriority === level
                                   ? "bg-slate-100 text-secondary"
                                   : "text-[#18254D] hover:bg-slate-50"
@@ -1763,7 +1763,7 @@ const ClientList = ({
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     PROJECT DESCRIPTION
                   </label>
                   <textarea
@@ -1781,12 +1781,12 @@ const ClientList = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     ONBOARDING DATE
                   </label>
                   <input
                     type="date"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                     value={onboardingData.onboardingDate}
                     onChange={(e) =>
                       setOnboardingData({
@@ -1798,12 +1798,12 @@ const ClientList = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     DEADLINE (TENTATIVE)
                   </label>
                   <input
                     type="date"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium"
                     value={onboardingData.deadline}
                     onChange={(e) =>
                       setOnboardingData({
@@ -1815,7 +1815,7 @@ const ClientList = ({
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     SCOPE DOCUMENT
                   </label>
                   <div className="relative group">
@@ -1850,7 +1850,7 @@ const ClientList = ({
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full h-14 bg-[#18254D] text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] shadow-xl active:scale-[0.97] transition-all hover:bg-[#1e2e5e] hover:shadow-2xl flex items-center justify-center gap-3 group/btn"
+                  className="w-full h-14 bg-[#18254D] text-white rounded-2xl text-[11px] font-bold uppercase tracking-[0.25em] shadow-xl active:scale-[0.97] transition-all hover:bg-[#1e2e5e] hover:shadow-2xl flex items-center justify-center gap-3 group/btn"
                 >
                   <UserCheck
                     size={20}
@@ -1884,10 +1884,10 @@ const ClientList = ({
                   />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black tracking-tighter leading-none">
+                  <h3 className="text-xl font-bold tracking-tighter leading-none">
                     Follow Up
                   </h3>
-                  <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mt-1">
+                  <p className="text-slate-400 text-[9px] font-bold uppercase tracking-widest mt-1">
                     {followUpLeadName}
                   </p>
                 </div>
@@ -1920,14 +1920,14 @@ const ClientList = ({
             >
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                     Date
                   </label>
                   <div className="relative">
                     <input
                       required
                       type="date"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 focus:outline-none text-sm font-bold"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 focus:outline-none text-sm font-medium"
                       value={followUpData.date}
                       onChange={(e) =>
                         setFollowUpData({
@@ -1939,14 +1939,14 @@ const ClientList = ({
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                     Time
                   </label>
                   <div className="relative">
                     <input
                       required
                       type="time"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 focus:outline-none text-sm font-bold"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 focus:outline-none text-sm font-medium"
                       value={followUpData.time}
                       onChange={(e) =>
                         setFollowUpData({
@@ -1960,7 +1960,7 @@ const ClientList = ({
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                   Interaction Type
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -1974,7 +1974,7 @@ const ClientList = ({
                           type: type,
                         })
                       }
-                      className={`py-2.5 px-3 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all ${
+                      className={`py-2.5 px-3 rounded-xl border text-[10px] font-bold uppercase tracking-widest transition-all ${
                         followUpData.type === type
                           ? "bg-indigo-500 border-indigo-500 text-white shadow-md shadow-indigo-200"
                           : "bg-white border-slate-100 text-slate-400 hover:border-slate-300"
@@ -1987,13 +1987,13 @@ const ClientList = ({
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                   Follow Up Message
                 </label>
                 <textarea
                   required
                   placeholder="Write your follow-up notes..."
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 focus:outline-none text-sm font-bold min-h-[120px] resize-none"
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 focus:outline-none text-sm font-medium min-h-[120px] resize-none"
                   value={followUpData.description}
                   onChange={(e) =>
                     setFollowUpData({
@@ -2007,7 +2007,7 @@ const ClientList = ({
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full py-4 bg-primary text-white rounded-xl hover:bg-slate-800 text-[12px] font-black uppercase tracking-[0.4em] transition-all shadow-lg active:scale-95 flex items-center justify-center gap-3"
+                  className="w-full py-4 bg-primary text-white rounded-xl hover:bg-slate-800 text-[12px] font-bold uppercase tracking-[0.4em] transition-all shadow-lg active:scale-95 flex items-center justify-center gap-3"
                 >
                   <MessageSquare size={18} />
                   Save & View Conversations

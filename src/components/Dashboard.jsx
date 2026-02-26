@@ -37,17 +37,17 @@ const StatCard = ({ title, value, trend, trendUp, icon }) => (
         </div>
         {trend && (
           <span
-            className={`flex items-center text-[9px] font-black uppercase tracking-tight px-2 py-0.5 rounded-full whitespace-nowrap ${trendUp ? "bg-success/10 text-success" : "bg-error/10 text-error"}`}
+            className={`flex items-center text-[10px] font-bold uppercase tracking-tight px-2 py-0.5 rounded-full whitespace-nowrap ${trendUp ? "bg-success/10 text-success" : "bg-error/10 text-error"}`}
           >
             {trend}
           </span>
         )}
       </div>
-      <h3 className="text-textMuted text-[10px] font-black uppercase tracking-widest relative z-10 truncate">
+      <h3 className="text-textMuted text-[11px] font-semibold uppercase tracking-wider relative z-10 truncate">
         {title}
       </h3>
       <div className="flex items-baseline gap-2 mt-1.5 relative z-10">
-        <p className="text-2xl sm:text-3xl font-black text-primary tracking-tighter">
+        <p className="text-2xl sm:text-3xl font-bold text-primary tracking-tighter">
           {value}
         </p>
       </div>
@@ -121,7 +121,7 @@ const Dashboard = ({
       <div className="space-y-6 md:space-y-8 animate-fade-in relative z-0">
         <div className="flex flex-row flex-wrap justify-between items-center gap-6">
           <div className="max-w-2xl shrink-0">
-            <h2 className="text-xl md:text-2xl lg:text-3xl font-black text-[#18254D] tracking-tighter mb-2">
+            <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-[#18254D] tracking-tighter mb-2">
               Welcome back, Anand.
             </h2>
             <p className="text-sm md:text-base text-textMuted font-medium leading-relaxed">
@@ -145,7 +145,7 @@ const Dashboard = ({
                 <div className="relative">
                   <Bell size={18} strokeWidth={2.5} />
                   {totalNotifications > 0 && !showNotifications && (
-                    <span className="bg-[#18254D] text-white text-[9px] font-black rounded-full h-4 min-w-[1rem] flex items-center justify-center shadow-lg absolute -top-1.5 -right-1.5 border border-white">
+                    <span className="bg-[#18254D] text-white text-[10px] font-bold rounded-full h-4 min-w-[1rem] flex items-center justify-center shadow-lg absolute -top-1.5 -right-1.5 border border-white">
                       {totalNotifications}
                     </span>
                   )}
@@ -157,10 +157,10 @@ const Dashboard = ({
                     className="fixed inset-0 z-[90] bg-black/10 backdrop-blur-sm"
                     onClick={() => setShowNotifications(false)}
                   />
-                  <div className="fixed lg:absolute left-1/2 md:left-auto lg:right-0 -translate-x-1/2 lg:translate-x-0 mt-3 w-[280px] bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/40 overflow-hidden animate-pop z-[100] top-24 lg:top-auto">
+                  <div className="fixed lg:absolute left-1/2 md:left-auto lg:right-0 -translate-x-1/2 lg:translate-x-0 mt-3 w-[280px] bg-white/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/40 overflow-hidden animate-pop z-[100] top-24 lg:top-auto">
                     <div className="p-4 pb-2 border-b border-black/5 bg-black/5">
                       <div className="flex justify-between items-center mb-3">
-                        <h3 className="text-[9px] font-black text-primary uppercase tracking-[0.2em]">
+                        <h3 className="text-[10px] font-bold text-primary uppercase tracking-widest">
                           Notifications
                         </h3>
                         <button
@@ -173,13 +173,13 @@ const Dashboard = ({
                       <div className="flex p-1 bg-slate-200/50 rounded-xl">
                         <button
                           onClick={() => setNotifTab("tasks")}
-                          className={`flex-1 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${notifTab === "tasks" ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
+                          className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wide transition-all ${notifTab === "tasks" ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
                         >
                           Tasks
                         </button>
                         <button
                           onClick={() => setNotifTab("enquiries")}
-                          className={`flex-1 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${notifTab === "enquiries" ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
+                          className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wide transition-all ${notifTab === "enquiries" ? "bg-white text-primary shadow-sm" : "text-slate-500"}`}
                         >
                           Enquiries
                         </button>
@@ -190,7 +190,7 @@ const Dashboard = ({
                       {notifTab === "tasks" &&
                         (todayTasks.length + missedTasks.length === 0 ? (
                           <div className="text-center py-8">
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                            <p className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">
                               No pending tasks
                             </p>
                           </div>
@@ -208,10 +208,10 @@ const Dashboard = ({
                                 className="p-2.5 bg-error/5 border border-error/10 rounded-xl cursor-pointer hover:bg-white hover:border-error/20 transition-all"
                               >
                                 <div className="flex justify-between items-center mb-0.5">
-                                  <span className="text-[7.5px] font-black text-error uppercase tracking-widest">
+                                  <span className="text-[8px] font-bold text-error uppercase tracking-widest">
                                     Missed
                                   </span>
-                                  <span className="text-[7.5px] text-slate-400 font-bold">
+                                  <span className="text-[8px] text-slate-400 font-semibold">
                                     {new Date(f.dueDate).toLocaleDateString()}
                                   </span>
                                 </div>
@@ -232,10 +232,10 @@ const Dashboard = ({
                                 className="p-2.5 bg-white border border-slate-100 rounded-xl cursor-pointer hover:border-secondary transition-all"
                               >
                                 <div className="flex justify-between items-center mb-0.5">
-                                  <span className="text-[7.5px] font-black text-secondary uppercase tracking-widest">
+                                  <span className="text-[8px] font-bold text-secondary uppercase tracking-widest">
                                     {f.priority} Priority
                                   </span>
-                                  <span className="text-[7.5px] text-slate-400 font-bold">
+                                  <span className="text-[8px] text-slate-400 font-semibold">
                                     {new Date(f.dueDate).toLocaleTimeString(
                                       [],
                                       { hour: "2-digit", minute: "2-digit" },
@@ -264,7 +264,7 @@ const Dashboard = ({
                               className="p-2.5 bg-white border border-slate-100 rounded-xl cursor-pointer hover:border-secondary transition-all"
                             >
                               <div className="flex justify-between items-center mb-0.5">
-                                <span className="text-[7.5px] font-black text-secondary uppercase tracking-widest">
+                                <span className="text-[7.5px] font-bold text-secondary uppercase tracking-widest">
                                   New Enquiry
                                 </span>
                                 <span className="text-[7.5px] text-slate-400 font-bold">
@@ -288,10 +288,10 @@ const Dashboard = ({
             <div className="w-[1px] h-6 bg-slate-100 mx-1" />
             <div className="flex-1 lg:flex-initial flex items-center justify-center sm:justify-end gap-2 px-2 min-w-max">
               <div className="text-right flex flex-col items-end">
-                <p className="text-xs font-black text-primary leading-none">
+                <p className="text-xs font-bold text-primary leading-none">
                   Anand
                 </p>
-                <p className="text-[9px] font-black text-secondary uppercase tracking-widest mt-0.5">
+                <p className="text-[9px] font-bold text-secondary uppercase tracking-widest mt-0.5">
                   Root
                 </p>
               </div>
@@ -338,14 +338,14 @@ const Dashboard = ({
         <div className="flex flex-col gap-4 md:gap-5">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
             <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col w-full h-[500px]">
-              <h3 className="text-base font-black text-primary tracking-tighter mb-5">
+              <h3 className="text-base font-bold text-primary tracking-tight mb-5">
                 Today's Task
               </h3>
               <div className="space-y-4 flex-1 overflow-y-auto pr-1 no-scrollbar">
                 {todayTasks.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center">
                     <CheckCircle2 size={24} className="text-slate-200 mb-3" />
-                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                    <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
                       All Caught Up
                     </p>
                   </div>
@@ -362,11 +362,11 @@ const Dashboard = ({
                       >
                         <div className="flex justify-between items-start mb-2">
                           <span
-                            className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest ${f.priority === "High" ? "bg-error/10 text-error" : "bg-info/10 text-info"}`}
+                            className={`px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-widest ${f.priority === "High" ? "bg-error/10 text-error" : "bg-info/10 text-info"}`}
                           >
                             {f.priority}
                           </span>
-                          <span className="text-[8px] text-textMuted font-black flex items-center gap-1 uppercase">
+                          <span className="text-[9px] text-textMuted font-bold flex items-center gap-1 uppercase">
                             <Clock size={10} />{" "}
                             {new Date(f.dueDate).toLocaleTimeString([], {
                               hour: "2-digit",
@@ -384,14 +384,14 @@ const Dashboard = ({
               </div>
               <button
                 onClick={onViewAllFollowUps}
-                className="w-full text-center text-[10px] text-primary font-black uppercase tracking-[0.2em] bg-slate-100 py-4 rounded-xl hover:bg-slate-200 transition-all mt-6 shrink-0"
+                className="w-full text-center text-[10px] text-primary font-bold uppercase tracking-[0.2em] bg-slate-100 py-4 rounded-xl hover:bg-slate-200 transition-all mt-6 shrink-0"
               >
                 View All Tasks
               </button>
             </div>
 
             <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col w-full h-[500px]">
-              <h3 className="text-base font-black text-error tracking-tighter mb-5 flex items-center gap-2">
+              <h3 className="text-base font-bold text-error tracking-tighter mb-5 flex items-center gap-2">
                 Missed Tasks
                 {missedTasks.length > 0 && (
                   <span className="bg-error/10 text-error text-[10px] px-2 py-0.5 rounded-full">
@@ -403,7 +403,7 @@ const Dashboard = ({
                 {missedTasks.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-center">
                     <CheckCircle2 size={24} className="text-slate-200 mb-3" />
-                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                    <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
                       No Missed Tasks
                     </p>
                   </div>
@@ -439,7 +439,7 @@ const Dashboard = ({
               </div>
               <button
                 onClick={onViewAllFollowUps}
-                className="w-full text-center text-[10px] text-error font-black uppercase tracking-[0.2em] bg-error/5 py-4 rounded-xl hover:bg-error/10 transition-all mt-6 shrink-0"
+                className="w-full text-center text-[10px] text-error font-bold uppercase tracking-[0.2em] bg-error/5 py-4 rounded-xl hover:bg-error/10 transition-all mt-6 shrink-0"
               >
                 View All Tasks
               </button>
@@ -449,20 +449,20 @@ const Dashboard = ({
           <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 flex-1">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div>
-                <h3 className="text-base font-black text-primary tracking-tighter">
+                <h3 className="text-base font-bold text-primary tracking-tighter">
                   Engagement Rate
                 </h3>
               </div>
               <div className="flex gap-1.5 bg-slate-100 p-1 rounded-lg">
                 <button
                   onClick={() => setChartInterval("monthly")}
-                  className={`text-[9px] font-black px-4 py-1.5 rounded-md transition-all ${chartInterval === "monthly" ? "bg-white text-primary shadow-sm" : "text-textMuted"}`}
+                  className={`text-[9px] font-bold px-4 py-1.5 rounded-md transition-all ${chartInterval === "monthly" ? "bg-white text-primary shadow-sm" : "text-textMuted"}`}
                 >
                   Month
                 </button>
                 <button
                   onClick={() => setChartInterval("quarterly")}
-                  className={`text-[9px] font-black px-4 py-1.5 rounded-md transition-all ${chartInterval === "quarterly" ? "bg-white text-primary shadow-sm" : "text-textMuted"}`}
+                  className={`text-[9px] font-bold px-4 py-1.5 rounded-md transition-all ${chartInterval === "quarterly" ? "bg-white text-primary shadow-sm" : "text-textMuted"}`}
                 >
                   Quarter
                 </button>

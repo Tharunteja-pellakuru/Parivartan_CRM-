@@ -51,10 +51,10 @@ const ProjectCard = ({ project, clients }) => {
   const client = clients.find((c) => c.id === project.clientId);
 
   return (
-    <div className="group bg-white p-4 rounded-xl border border-slate-200 hover:border-secondary/50 hover:shadow-lg transition-all cursor-pointer animate-fade-in">
+    <div className="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-secondary/50 hover:shadow-lg transition-all cursor-pointer animate-fade-in">
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-center gap-2">
-          <div className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[9px] font-black text-slate-400 uppercase tracking-widest">
+          <div className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[9px] font-bold text-slate-400 uppercase tracking-widest">
             {client?.company}
           </div>
         </div>
@@ -63,12 +63,12 @@ const ProjectCard = ({ project, clients }) => {
         </button>
       </div>
 
-      <h4 className="font-black text-primary text-sm md:text-base tracking-tight mb-4 group-hover:text-secondary transition-colors">
+      <h4 className="font-bold text-primary text-sm md:text-base tracking-tight mb-4 group-hover:text-secondary transition-colors">
         {project.name}
       </h4>
 
       <div className="space-y-2 mb-4">
-        <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest mb-1.5">
+        <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest mb-1.5">
           <span className="text-slate-400">Completion</span>
           <span className="text-primary">{project.progress}%</span>
         </div>
@@ -80,7 +80,7 @@ const ProjectCard = ({ project, clients }) => {
         </div>
       </div>
 
-      <div className="flex justify-between items-center pt-4 border-t border-slate-100 text-[10px] font-black uppercase tracking-widest text-textMuted">
+      <div className="flex justify-between items-center pt-4 border-t border-slate-100 text-[10px] font-bold uppercase tracking-widest text-textMuted">
         <div className="flex items-center gap-2">
           <Clock size={10} className="text-secondary" />
           <span>
@@ -192,19 +192,19 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
         {/* Header */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div className="max-w-2xl">
-            <h2 className="text-lg md:text-xl lg:text-2xl font-black text-primary tracking-tighter mb-2">
+            <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-primary tracking-tight mb-2">
               Projects
             </h2>
-            <p className="text-xs md:text-sm text-textMuted font-medium leading-relaxed">
+            <p className="text-sm text-textMuted font-medium leading-relaxed">
               Manage and track all your projects and their delivery status.
             </p>
           </div>
           <div className="w-full lg:w-auto">
             <button
               onClick={() => setShowAddModal(true)}
-              className="w-full lg:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all text-[11px] font-black uppercase tracking-[0.25em] shadow-lg active:scale-95"
+              className="w-full lg:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all text-[11px] font-bold uppercase tracking-wider shadow-lg active:scale-95"
             >
-              <Plus size={14} strokeWidth={3} /> Add New Project
+              <Plus size={14} strokeWidth={2.5} /> Add New Project
             </button>
           </div>
         </div>
@@ -218,7 +218,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
               <button
                 key={column.id}
                 onClick={() => setActiveStage(column.id)}
-                className={`flex-1 min-w-[120px] flex items-center justify-center gap-2.5 px-5 py-3.5 rounded-xl transition-all text-[10px] font-black uppercase tracking-[0.2em] ${
+                className={`flex-1 min-w-[120px] flex items-center justify-center gap-2.5 px-5 py-3.5 rounded-xl transition-all text-[10px] font-bold uppercase tracking-wider ${
                   isActive
                     ? `${column.activeTabBg} ${column.activeTabText} shadow-sm`
                     : "text-slate-400 hover:bg-slate-50 hover:text-slate-600"
@@ -229,7 +229,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
                 ></div>
                 <span>{column.title}</span>
                 <span
-                  className={`ml-1 px-2 py-0.5 rounded-full text-[9px] font-black border ${
+                  className={`ml-1 px-2 py-0.5 rounded-full text-[9px] font-bold border ${
                     isActive
                       ? `${column.activeTabBg} ${column.activeTabText} border-current/20`
                       : "bg-slate-100 text-slate-400 border-slate-200"
@@ -250,11 +250,11 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
               <div
                 className={`w-3 h-3 rounded-full ${activeColumn.dotColor}`}
               ></div>
-              <h3 className="text-sm font-black text-primary uppercase tracking-[0.3em]">
+              <h3 className="text-sm font-bold text-primary uppercase tracking-[0.25em]">
                 {activeColumn.title}
               </h3>
             </div>
-            <span className="bg-slate-100 text-slate-500 text-[10px] font-black px-3 py-1 rounded-full border border-slate-200 uppercase tracking-widest">
+            <span className="bg-slate-100 text-slate-500 text-[10px] font-bold px-3 py-1 rounded-full border border-slate-200 uppercase tracking-widest">
               {filteredProjects.length}{" "}
               {filteredProjects.length === 1 ? "Project" : "Projects"}
             </span>
@@ -272,7 +272,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
               ))}
               <button
                 onClick={() => setShowAddModal(true)}
-                className="py-6 border-2 border-dashed border-slate-100 rounded-xl text-slate-300 text-[10px] font-black uppercase tracking-widest hover:border-secondary hover:text-secondary hover:bg-secondary/[0.02] transition-all group flex flex-col items-center justify-center gap-2 min-h-[100px]"
+                className="py-6 border-2 border-dashed border-slate-100 rounded-2xl text-slate-300 text-[10px] font-bold uppercase tracking-widest hover:border-secondary hover:text-secondary hover:bg-secondary/[0.02] transition-all group flex flex-col items-center justify-center gap-2 min-h-[100px]"
               >
                 <Plus
                   size={16}
@@ -286,11 +286,11 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
             <div className="flex flex-col items-center justify-center py-10">
               <button
                 onClick={() => setShowAddModal(true)}
-                className="w-full max-w-sm py-6 border-2 border-dashed border-slate-100 rounded-xl text-slate-300 text-[10px] font-black uppercase tracking-widest hover:border-secondary hover:text-secondary hover:bg-secondary/[0.02] transition-all group flex flex-col items-center justify-center gap-2"
+                className="w-full max-w-sm py-6 border-2 border-dashed border-slate-100 rounded-2xl text-slate-300 text-[10px] font-bold uppercase tracking-widest hover:border-secondary hover:text-secondary hover:bg-secondary/[0.02] transition-all group flex flex-col items-center justify-center gap-2"
               >
                 <Plus
                   size={18}
-                  strokeWidth={3}
+                  strokeWidth={2.5}
                   className="group-hover:scale-125 transition-transform"
                 />
                 Initiate Project
@@ -320,10 +320,10 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
                   />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black tracking-tighter leading-none">
+                  <h3 className="text-xl font-bold tracking-tight leading-none">
                     Add New Project
                   </h3>
-                  <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mt-1">
+                  <p className="text-slate-400 text-[9px] font-bold uppercase tracking-widest mt-1">
                     Project and Client Details
                   </p>
                 </div>
@@ -334,7 +334,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
               {/* CLIENT DETAILS HEADING */}
               <div className="flex items-center gap-3 pt-2">
                 <div className="h-[2px] w-8 bg-secondary rounded-full" />
-                <h4 className="text-[14px] font-black text-[#18254D] uppercase tracking-[0.2em]">
+                <h4 className="text-[14px] font-bold text-[#18254D] uppercase tracking-widest">
                   Client Details
                 </h4>
                 <div className="h-[2px] flex-1 bg-slate-100 rounded-full" />
@@ -342,18 +342,18 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
 
               {/* CLIENT TYPE (Simplified version as per image) */}
               <div className="space-y-3 pb-2">
-                <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                   CLIENT TYPE
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <label className="flex items-center gap-3 p-4 bg-white border-2 border-[#18254D] rounded-2xl cursor-pointer transition-all group shadow-sm">
+                  <label className="flex items-center gap-3 p-4 bg-white border-2 border-[#18254D] rounded-xl cursor-pointer transition-all group shadow-sm">
                     <div className="relative flex items-center justify-center">
                       <div className="w-6 h-6 border-2 border-[#18254D] rounded-full flex items-center justify-center">
                         <div className="w-3 h-3 bg-[#18254D] rounded-full" />
                       </div>
                     </div>
                     <div>
-                      <p className="text-sm font-black text-[#18254D] leading-none">
+                      <p className="text-sm font-bold text-[#18254D] leading-none">
                         New Client
                       </p>
                       <p className="text-[9px] text-slate-400 font-bold mt-1">
@@ -367,14 +367,14 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {/* NAME & EMAIL */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     CLIENT NAME
                   </label>
                   <input
                     required
                     type="text"
                     placeholder="Anand Kumar"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium shadow-sm"
                     value={formData.name}
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
@@ -383,14 +383,14 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     EMAIL ID
                   </label>
                   <input
                     required
                     type="email"
                     placeholder="anand.kumar@fintech.in"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium shadow-sm"
                     value={formData.email}
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
@@ -400,14 +400,14 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
 
                 {/* PHONE & STATUS */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     PHONE NUMBER
                   </label>
                   <input
                     required
                     type="tel"
                     placeholder="+91 98765 43210"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium shadow-sm"
                     value={formData.phone}
                     onChange={(e) =>
                       setFormData({ ...formData, phone: e.target.value })
@@ -416,7 +416,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     CLIENT STATUS
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -445,7 +445,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
                             )}
                           </div>
                         </div>
-                        <p className="text-sm font-black text-[#18254D] leading-none">
+                        <p className="text-sm font-bold text-[#18254D] leading-none">
                           {status}
                         </p>
                       </label>
@@ -457,7 +457,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
               {/* PROJECT DETAILS HEADING */}
               <div className="flex items-center gap-3 pt-6">
                 <div className="h-[2px] w-8 bg-secondary rounded-full" />
-                <h4 className="text-[14px] font-black text-[#18254D] uppercase tracking-[0.2em]">
+                <h4 className="text-[14px] font-bold text-[#18254D] uppercase tracking-widest">
                   Project Details
                 </h4>
                 <div className="h-[2px] flex-1 bg-slate-100 rounded-full" />
@@ -466,14 +466,14 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {/* PROJECT NAME & STATUS */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     PROJECT NAME
                   </label>
                   <input
                     required
                     type="text"
                     placeholder="e.g. Website Redesign"
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium shadow-sm"
                     value={formData.projectName}
                     onChange={(e) =>
                       setFormData({
@@ -485,7 +485,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     PROJECT STATUS
                   </label>
                   <div className="relative">
@@ -494,7 +494,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
                       onClick={() =>
                         setIsStatusDropdownOpen(!isStatusDropdownOpen)
                       }
-                      className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm hover:border-secondary transition-all"
+                      className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium shadow-sm hover:border-secondary transition-all"
                     >
                       <span className="text-primary">
                         {formData.projectStatus}
@@ -529,7 +529,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
                                   });
                                   setIsStatusDropdownOpen(false);
                                 }}
-                                className={`w-full text-left px-5 py-3.5 text-[10px] font-black uppercase tracking-widest transition-colors ${
+                                className={`w-full text-left px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${
                                   formData.projectStatus === status
                                     ? "bg-slate-100 text-secondary"
                                     : "text-[#18254D] hover:bg-slate-50"
@@ -557,7 +557,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
                         onClick={() =>
                           setFormData({ ...formData, projectCategory: cat })
                         }
-                        className={`flex-1 flex items-center justify-center p-3 border-2 rounded-xl transition-all font-black uppercase text-[10px] tracking-widest ${
+                        className={`flex-1 flex items-center justify-center p-3 border-2 rounded-xl transition-all font-bold uppercase text-[10px] tracking-widest ${
                           formData.projectCategory === cat
                             ? "border-primary bg-primary/5 text-primary shadow-sm"
                             : "border-slate-100 text-slate-400 hover:border-slate-200"
@@ -570,7 +570,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     PROJECT PRIORITY
                   </label>
                   <div className="relative">
@@ -579,7 +579,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
                       onClick={() =>
                         setIsPriorityDropdownOpen(!isPriorityDropdownOpen)
                       }
-                      className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm hover:border-secondary transition-all"
+                      className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium shadow-sm hover:border-secondary transition-all"
                     >
                       <span className="text-primary">
                         {formData.projectPriority}
@@ -630,13 +630,13 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
 
                 {/* PROJECT DESCRIPTION */}
                 <div className="space-y-2 md:col-span-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     PROJECT DESCRIPTION
                   </label>
                   <textarea
                     rows={2}
                     placeholder="Brief overview of the project scope..."
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold resize-none shadow-sm"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium resize-none shadow-sm"
                     value={formData.projectDescription}
                     onChange={(e) =>
                       setFormData({
@@ -649,13 +649,13 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
 
                 {/* DATES */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     ONBOARDING DATE
                   </label>
                   <div className="relative">
                     <input
                       type="date"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium shadow-sm"
                       value={formData.onboardingDate}
                       onChange={(e) =>
                         setFormData({
@@ -672,13 +672,13 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-[#18254D] uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-[#18254D] uppercase tracking-widest ml-1">
                     DEADLINE (TENTATIVE)
                   </label>
                   <div className="relative">
                     <input
                       type="date"
-                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-bold shadow-sm"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-sm font-medium shadow-sm"
                       value={formData.deadline}
                       onChange={(e) =>
                         setFormData({
@@ -731,7 +731,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full h-14 bg-[#18254D] text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] shadow-xl active:scale-[0.97] transition-all hover:bg-[#1e2e5e] hover:shadow-2xl flex items-center justify-center gap-3 group/btn"
+                  className="w-full h-14 bg-[#18254D] text-white rounded-xl text-[11px] font-bold uppercase tracking-widest shadow-xl active:scale-[0.97] transition-all hover:bg-[#1e2e5e] hover:shadow-2xl flex items-center justify-center gap-3 group/btn"
                 >
                   <UserPlus
                     size={20}

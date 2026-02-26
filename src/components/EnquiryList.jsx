@@ -160,21 +160,21 @@ const EnquiryList = ({
       <div className="space-y-5 animate-fade-in w-full">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div className="max-w-2xl">
-            <h2 className="text-lg md:text-xl lg:text-2xl font-black text-primary tracking-tighter mb-1.5">
+            <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-primary tracking-tight mb-1.5">
               Enquiry Hub
             </h2>
-            <p className="text-xs md:text-sm text-textMuted font-medium leading-relaxed">
+            <p className="text-sm text-textMuted font-medium leading-relaxed">
               Manage and qualify all incoming business enquiries.
             </p>
           </div>
           <div className="w-full lg:w-auto">
             <button
               onClick={() => setShowSimulateForm(true)}
-              className="w-full lg:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all text-[11px] font-black uppercase tracking-[0.2em] shadow-lg active:scale-95 group"
+              className="w-full lg:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all text-[11px] font-bold uppercase tracking-wider shadow-lg active:scale-95 group"
             >
               <Plus
                 size={16}
-                strokeWidth={3}
+                strokeWidth={2.5}
                 className="group-hover:rotate-90 transition-transform"
               />
               New Enquiry
@@ -203,7 +203,7 @@ const EnquiryList = ({
               {activeTab === "new" && (
                 <div className="flex items-center gap-2.5 px-4 h-[46px] bg-slate-50 border border-slate-100 rounded-xl">
                   <span
-                    className={`text-[9px] font-black uppercase tracking-widest ${aiAnalysisEnabled ? "text-primary" : "text-slate-400"}`}
+                    className={`text-[9px] font-bold uppercase tracking-widest ${aiAnalysisEnabled ? "text-primary" : "text-slate-400"}`}
                   >
                     AI Analysis
                   </span>
@@ -218,7 +218,7 @@ const EnquiryList = ({
                   {aiAnalysisEnabled && (
                     <div className="flex items-center gap-2.5 pl-4 border-l border-slate-200 ml-4 h-full">
                       <span
-                        className={`text-[9px] font-black uppercase tracking-widest ${hideIrrelevant ? "text-primary" : "text-slate-400"}`}
+                        className={`text-[9px] font-bold uppercase tracking-widest ${hideIrrelevant ? "text-primary" : "text-slate-400"}`}
                       >
                         Filter Spam
                       </span>
@@ -263,7 +263,7 @@ const EnquiryList = ({
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-6 h-full rounded-xl text-[11px] font-black uppercase tracking-[0.15em] transition-all flex items-center justify-center min-w-[120px] border border-transparent whitespace-nowrap ${
+                  className={`px-6 h-full rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all flex items-center justify-center min-w-[120px] border border-transparent whitespace-nowrap ${
                     activeTab === tab
                       ? `${activeColor} shadow-md`
                       : `text-slate-400 ${hoverColor}`
@@ -284,7 +284,7 @@ const EnquiryList = ({
           {filteredEnquiries.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-14 bg-white rounded-2xl border border-slate-200 shadow-sm w-full">
               <Inbox size={24} className="text-slate-100 mb-3" />
-              <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+              <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">
                 Clear
               </p>
             </div>
@@ -292,21 +292,21 @@ const EnquiryList = ({
             filteredEnquiries.map((enquiry) => (
               <div
                 key={enquiry.id}
-                className={`group bg-white rounded-[1.75rem] border transition-all hover:shadow-xl overflow-hidden flex flex-col w-full ${enquiry.aiAnalysis && !enquiry.aiAnalysis.isRelevant ? "border-error/10 bg-error/[0.01]" : "border-slate-200 hover:border-secondary/30"}`}
+                className={`group bg-white rounded-2xl border transition-all hover:shadow-xl overflow-hidden flex flex-col w-full ${enquiry.aiAnalysis && !enquiry.aiAnalysis.isRelevant ? "border-error/10 bg-error/[0.01]" : "border-slate-200 hover:border-secondary/30"}`}
               >
                 <div className="p-5 md:p-6 flex flex-col lg:flex-row gap-6 items-start">
                   <div className="lg:w-[260px] shrink-0 space-y-4">
                     <div className="flex items-center gap-4">
                       <div
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-black text-sm shadow-md shrink-0 ${enquiry.status === "hold" ? "bg-warning" : enquiry.status === "dismissed" ? "bg-slate-400" : "bg-primary"}`}
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-md shrink-0 ${enquiry.status === "hold" ? "bg-warning" : enquiry.status === "dismissed" ? "bg-slate-400" : "bg-primary"}`}
                       >
                         {enquiry.name.charAt(0)}
                       </div>
                       <div className="min-w-0">
-                        <h3 className="font-black text-primary text-sm md:text-base tracking-tighter truncate leading-none mb-1">
+                        <h3 className="font-bold text-primary text-sm md:text-base tracking-tight truncate leading-none mb-1">
                           {enquiry.name}
                         </h3>
-                        <div className="flex items-center gap-1.5 text-[9px] text-textMuted font-black uppercase tracking-widest">
+                        <div className="flex items-center gap-1.5 text-[9px] text-textMuted font-bold uppercase tracking-widest">
                           <Clock size={12} className="text-secondary" />
                           {new Date(enquiry.date).toLocaleDateString([], {
                             month: "short",
@@ -317,7 +317,7 @@ const EnquiryList = ({
                     </div>
 
                     <div className="space-y-3">
-                      <h4 className="text-[8px] font-black text-primary uppercase tracking-[0.4em] opacity-40">
+                      <h4 className="text-[8px] font-bold text-primary uppercase tracking-[0.3em] opacity-40">
                         Identity Dossier
                       </h4>
                       <div className="space-y-2.5">
@@ -344,18 +344,18 @@ const EnquiryList = ({
                   <div className="flex-1 w-full space-y-4">
                     <div>
                       <div className="flex justify-between items-center mb-4">
-                        <h4 className="text-[8px] font-black text-primary uppercase tracking-[0.4em] opacity-40">
+                        <h4 className="text-[8px] font-bold text-primary uppercase tracking-[0.3em] opacity-40">
                           Briefing
                         </h4>
                         <div className="flex gap-2">
                           {enquiry.holdReason && (
-                            <div className="px-3 py-1 bg-warning/10 text-warning border border-warning/20 rounded-lg text-[8px] font-black uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
+                            <div className="px-3 py-1 bg-warning/10 text-warning border border-warning/20 rounded-lg text-[8px] font-bold uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
                               <PauseCircle size={12} /> Reason Logged
                             </div>
                           )}
                           {enquiry.aiAnalysis && (
                             <div
-                              className={`px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border flex items-center gap-1.5 shadow-sm ${enquiry.aiAnalysis.isRelevant ? "bg-success/10 text-success border-success/20" : "bg-error/10 text-error border-error/20"}`}
+                              className={`px-3 py-1 rounded-lg text-[8px] font-bold uppercase tracking-widest border flex items-center gap-1.5 shadow-sm ${enquiry.aiAnalysis.isRelevant ? "bg-success/10 text-success border-success/20" : "bg-error/10 text-error border-error/20"}`}
                             >
                               <Sparkles size={12} />
                               {enquiry.aiAnalysis.isRelevant
@@ -365,13 +365,13 @@ const EnquiryList = ({
                           )}
                         </div>
                       </div>
-                      <div className="bg-slate-50/50 p-6 md:p-8 rounded-[1.5rem] border border-slate-100 group-hover:bg-white group-hover:border-slate-200 transition-all shadow-inner relative space-y-4">
+                      <div className="bg-slate-50/50 p-6 md:p-8 rounded-2xl border border-slate-100 group-hover:bg-white group-hover:border-slate-200 transition-all shadow-inner relative space-y-4">
                         <p className="text-xs md:text-sm text-primary font-medium italic leading-relaxed">
                           "{enquiry.message}"
                         </p>
                         {enquiry.holdReason && (
                           <div className="pt-4 border-t border-slate-200/60">
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">
                               Hold Reason
                             </p>
                             <p className="text-[11px] text-warning font-bold bg-warning/5 p-3 rounded-xl border border-warning/10">
@@ -389,19 +389,19 @@ const EnquiryList = ({
                     <React.Fragment>
                       <button
                         onClick={() => openLeadModal(enquiry)}
-                        className="bg-[#18254D] text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-md active:scale-95 hover:bg-slate-800 transition-all whitespace-nowrap"
+                        className="bg-[#18254D] text-white px-5 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-md active:scale-95 hover:bg-slate-800 transition-all whitespace-nowrap"
                       >
-                        <CheckCircle size={14} strokeWidth={3} /> Add to Lead
+                        <CheckCircle size={14} strokeWidth={2.5} /> Add to Lead
                       </button>
                       <button
                         onClick={() => openHoldModal(enquiry)}
-                        className="px-5 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl hover:text-warning hover:border-warning transition-all text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 whitespace-nowrap"
+                        className="px-5 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl hover:text-warning hover:border-warning transition-all text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 whitespace-nowrap"
                       >
                         <PauseCircle size={14} /> Hold
                       </button>
                       <button
                         onClick={() => onDismiss(enquiry.id)}
-                        className="px-5 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl hover:text-error hover:border-error transition-all text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 whitespace-nowrap"
+                        className="px-5 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl hover:text-error hover:border-error transition-all text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 whitespace-nowrap"
                       >
                         <X size={14} /> Dismiss
                       </button>
@@ -411,13 +411,13 @@ const EnquiryList = ({
                     <React.Fragment>
                       <button
                         onClick={() => onRestore(enquiry.id)}
-                        className="bg-primary text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-md shadow-primary/20 active:scale-95 transition-all whitespace-nowrap"
+                        className="bg-primary text-white px-5 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-md shadow-primary/20 active:scale-95 transition-all whitespace-nowrap"
                       >
                         <RefreshCcw size={14} strokeWidth={3} /> Restore Enquiry
                       </button>
                       <button
                         onClick={() => onDismiss(enquiry.id)}
-                        className="px-5 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl hover:text-error hover:border-error transition-all text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 whitespace-nowrap"
+                        className="px-5 py-2.5 bg-white border border-slate-200 text-slate-500 rounded-xl hover:text-error hover:border-error transition-all text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 whitespace-nowrap"
                       >
                         <X size={14} /> Dismiss
                       </button>
@@ -427,9 +427,10 @@ const EnquiryList = ({
                     <React.Fragment>
                       <button
                         onClick={() => onRestore(enquiry.id)}
-                        className="bg-primary text-white px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 shadow-md shadow-primary/20 active:scale-95 transition-all whitespace-nowrap"
+                        className="bg-primary text-white px-5 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-md shadow-primary/20 active:scale-95 transition-all whitespace-nowrap"
                       >
-                        <RefreshCcw size={14} strokeWidth={3} /> Restore Enquiry
+                        <RefreshCcw size={14} strokeWidth={2.5} /> Restore
+                        Enquiry
                       </button>
                       <button
                         onClick={() => onDelete(enquiry.id)}
@@ -458,23 +459,23 @@ const EnquiryList = ({
               <X size={20} strokeWidth={3} />
             </button>
             <div className="bg-primary p-6 text-white">
-              <h3 className="text-2xl font-black tracking-tighter mb-1">
+              <h3 className="text-2xl font-bold tracking-tight mb-1">
                 New Enquiry
               </h3>
-              <p className="text-slate-400 text-[11px] font-black uppercase tracking-widest">
+              <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest">
                 Manual Entry
               </p>
             </div>
             <form onSubmit={handleSimulateSubmit} className="p-7 space-y-5">
               <div className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                     Full Name
                   </label>
                   <input
                     required
                     type="text"
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary/5 outline-none transition-all"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary/5 outline-none transition-all"
                     placeholder="Enter full name..."
                     value={formData.name}
                     onChange={(e) =>
@@ -484,13 +485,13 @@ const EnquiryList = ({
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                       Email
                     </label>
                     <input
                       required
                       type="email"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary/5 outline-none transition-all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary/5 outline-none transition-all"
                       placeholder="Email address..."
                       value={formData.email}
                       onChange={(e) =>
@@ -499,12 +500,12 @@ const EnquiryList = ({
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                    <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                       Phone
                     </label>
                     <input
                       type="tel"
-                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary/5 outline-none transition-all"
+                      className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary/5 outline-none transition-all"
                       placeholder="Phone number..."
                       value={formData.phone}
                       onChange={(e) =>
@@ -514,12 +515,12 @@ const EnquiryList = ({
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                     Website URL
                   </label>
                   <input
                     type="text"
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary/5 outline-none transition-all"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-primary/5 outline-none transition-all"
                     placeholder="https://example.com"
                     value={formData.website}
                     onChange={(e) =>
@@ -528,13 +529,13 @@ const EnquiryList = ({
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                     Requirement Briefing
                   </label>
                   <textarea
                     required
                     rows={4}
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold resize-none focus:ring-2 focus:ring-primary/5 outline-none transition-all"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium resize-none focus:ring-2 focus:ring-primary/5 outline-none transition-all"
                     placeholder="Type message here..."
                     value={formData.message}
                     onChange={(e) =>
@@ -546,12 +547,12 @@ const EnquiryList = ({
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full h-14 bg-[#18254D] text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] shadow-xl active:scale-[0.97] transition-all hover:bg-[#1e2e5e] hover:shadow-2xl flex items-center justify-center gap-3 group/btn"
+                  className="w-full h-14 bg-[#18254D] text-white rounded-2xl text-[11px] font-bold uppercase tracking-widest shadow-xl active:scale-[0.97] transition-all hover:bg-[#1e2e5e] hover:shadow-2xl flex items-center justify-center gap-3 group/btn"
                 >
                   <span>Add Enquiry</span>
                   <Send
                     size={16}
-                    strokeWidth={3}
+                    strokeWidth={2.5}
                     className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform"
                   />
                 </button>
@@ -563,13 +564,13 @@ const EnquiryList = ({
 
       {leadModalOpen && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white w-full max-w-3xl rounded-[2rem] shadow-2xl border border-slate-200 overflow-hidden animate-zoom-in my-auto">
+          <div className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-zoom-in my-auto">
             <div className="bg-[#18254D] p-6 flex justify-between items-center text-white">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
                   <Plus size={24} className="text-white" />
                 </div>
-                <h3 className="text-2xl font-black tracking-tighter uppercase">
+                <h3 className="text-2xl font-bold tracking-tight uppercase">
                   New Lead
                 </h3>
               </div>
@@ -584,12 +585,12 @@ const EnquiryList = ({
             <div className="p-8 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                     Full Name
                   </label>
                   <input
                     type="text"
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all"
+                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-primary/5 outline-none transition-all"
                     value={promoteFormData.name}
                     onChange={(e) =>
                       setPromoteFormData({
@@ -600,12 +601,12 @@ const EnquiryList = ({
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                     Email ID
                   </label>
                   <input
                     type="email"
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all"
+                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-primary/5 outline-none transition-all"
                     value={promoteFormData.email}
                     onChange={(e) =>
                       setPromoteFormData({
@@ -616,12 +617,12 @@ const EnquiryList = ({
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                     Phone Number
                   </label>
                   <input
                     type="tel"
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all"
+                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-primary/5 outline-none transition-all"
                     value={promoteFormData.phone}
                     onChange={(e) =>
                       setPromoteFormData({
@@ -632,12 +633,12 @@ const EnquiryList = ({
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                     Website URL
                   </label>
                   <input
                     type="text"
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:ring-4 focus:ring-primary/5 outline-none transition-all"
+                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-primary/5 outline-none transition-all"
                     value={promoteFormData.website}
                     onChange={(e) =>
                       setPromoteFormData({
@@ -650,7 +651,7 @@ const EnquiryList = ({
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                   Lead Category
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -664,7 +665,7 @@ const EnquiryList = ({
                           leadCategory: cat,
                         })
                       }
-                      className={`flex items-center justify-center p-4 rounded-2xl border-2 transition-all font-black uppercase text-[10px] tracking-widest ${
+                      className={`flex items-center justify-center p-4 rounded-2xl border-2 transition-all font-bold uppercase text-[10px] tracking-widest ${
                         promoteFormData.leadCategory === cat
                           ? "border-primary bg-primary/5 text-primary shadow-sm"
                           : "border-slate-100 text-slate-400 hover:border-slate-200"
@@ -677,7 +678,7 @@ const EnquiryList = ({
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                   Lead Status
                 </label>
                 <div className="grid grid-cols-3 gap-3">
@@ -708,7 +709,7 @@ const EnquiryList = ({
                       ) : (
                         <Snowflake size={24} strokeWidth={2.5} />
                       )}
-                      <span className="text-[10px] font-black uppercase tracking-widest">
+                      <span className="text-[10px] font-bold uppercase tracking-widest">
                         {type}
                       </span>
                     </button>
@@ -717,12 +718,12 @@ const EnquiryList = ({
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                   Note
                 </label>
                 <textarea
                   rows={4}
-                  className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold resize-none focus:ring-4 focus:ring-primary/5 outline-none transition-all"
+                  className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium resize-none focus:ring-4 focus:ring-primary/5 outline-none transition-all"
                   value={promoteFormData.notes}
                   onChange={(e) =>
                     setPromoteFormData({
@@ -736,7 +737,7 @@ const EnquiryList = ({
               <div className="pt-4">
                 <button
                   onClick={confirmLeadConversion}
-                  className="w-full py-5 bg-[#18254D] text-white rounded-[1.25rem] text-[13px] font-black uppercase tracking-[0.4em] shadow-2xl active:scale-[0.98] transition-all hover:bg-slate-800"
+                  className="w-full py-5 bg-[#18254D] text-white rounded-xl text-[13px] font-bold uppercase tracking-widest shadow-2xl active:scale-[0.98] transition-all hover:bg-slate-800"
                 >
                   Add Lead
                 </button>
@@ -751,9 +752,7 @@ const EnquiryList = ({
           <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-fade-in relative">
             <div className="bg-primary p-6 text-white">
               <div className="flex justify-between items-center mb-1">
-                <h3 className="text-2xl font-black tracking-tighter">
-                  On Hold
-                </h3>
+                <h3 className="text-2xl font-bold tracking-tight">On Hold</h3>
                 <button
                   onClick={() => setHoldModalOpen(false)}
                   className="p-1 hover:bg-white/10 rounded-lg transition-colors border border-white/10"
@@ -765,13 +764,13 @@ const EnquiryList = ({
             <div className="p-7 space-y-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest ml-1">
+                  <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
                     Hold Reason
                   </label>
                   <textarea
                     required
                     rows={4}
-                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold resize-none focus:ring-2 focus:ring-primary/5 outline-none transition-all placeholder:text-slate-300"
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium resize-none focus:ring-2 focus:ring-primary/5 outline-none transition-all placeholder:text-slate-300"
                     placeholder="Enter reason for suspending this enquiry..."
                     value={holdReason}
                     onChange={(e) => setHoldReason(e.target.value)}
@@ -782,10 +781,10 @@ const EnquiryList = ({
                 <button
                   onClick={confirmHold}
                   disabled={!holdReason.trim()}
-                  className="w-full h-14 bg-[#18254D] text-white rounded-xl text-xs font-black uppercase tracking-[0.25em] shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:grayscale hover:bg-slate-800"
+                  className="w-full h-14 bg-[#18254D] text-white rounded-xl text-xs font-bold uppercase tracking-widest shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-3 disabled:opacity-50 disabled:grayscale hover:bg-slate-800"
                 >
                   <span>Add To Hold</span>
-                  <PauseCircle size={16} strokeWidth={3} />
+                  <PauseCircle size={16} strokeWidth={2.5} />
                 </button>
               </div>
             </div>
