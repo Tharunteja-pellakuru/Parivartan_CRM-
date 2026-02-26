@@ -10,12 +10,16 @@ import {
   X,
   Upload,
   ChevronDown,
+  Tag,
+  AlertCircle,
+  CheckCircle,
+  Zap,
 } from "lucide-react";
 
 const COLUMNS = [
   {
-    id: "Planning",
-    title: "Planning",
+    id: "Pending",
+    title: "Pending",
     color: "text-info",
     dotColor: "bg-info",
     activeTabBg: "bg-info/10",
@@ -23,23 +27,23 @@ const COLUMNS = [
   },
   {
     id: "In Progress",
-    title: "Execution",
+    title: "In Progress",
     color: "text-warning",
     dotColor: "bg-warning",
     activeTabBg: "bg-warning/10",
     activeTabText: "text-warning",
   },
   {
-    id: "Review",
-    title: "Audit",
+    id: "Testing",
+    title: "Testing",
     color: "text-secondary",
     dotColor: "bg-secondary",
     activeTabBg: "bg-secondary/10",
     activeTabText: "text-secondary",
   },
   {
-    id: "Completed",
-    title: "Deployed",
+    id: "Live",
+    title: "Live",
     color: "text-success",
     dotColor: "bg-success",
     activeTabBg: "bg-success/10",
@@ -50,29 +54,118 @@ const COLUMNS = [
 const ProjectCard = ({ project, clients }) => {
   const client = clients.find((c) => c.id === project.clientId);
 
+  const getPriorityStyles = (priority) => {
+    switch (priority?.toLowerCase()) {
+      case "critical":
+        return {
+          badge: "bg-error/10 text-error border-error/30",
+          icon: AlertCircle,
+          color: "text-error",
+        };
+      case "high":
+        return {
+          badge: "bg-warning/10 text-warning border-warning/30",
+          icon: Zap,
+          color: "text-warning",
+        };
+      case "medium":
+        return {
+          badge: "bg-secondary/10 text-secondary border-secondary/30",
+          icon: CheckCircle,
+          color: "text-secondary",
+        };
+      case "low":
+        return {
+          badge: "bg-info/10 text-info border-info/30",
+          icon: Tag,
+          color: "text-info",
+        };
+      default:
+        return {
+          badge: "bg-slate-100 text-slate-600 border-slate-200",
+          icon: Tag,
+          color: "text-slate-400",
+        };
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case "completed":
+        return "bg-success/10 text-success border-success/30";
+      case "in_progress":
+        return "bg-warning/10 text-warning border-warning/30";
+      case "on_hold":
+        return "bg-error/10 text-error border-error/30";
+      case "planning":
+        return "bg-info/10 text-info border-info/30";
+      default:
+        return "bg-slate-100 text-slate-600 border-slate-200";
+    }
+  };
+
+  const getCategoryColor = (category) => {
+    switch (category?.toLowerCase()) {
+      case "tech":
+        return "bg-secondary/10 text-secondary border-secondary/30";
+      case "media":
+        return "bg-warning/10 text-warning border-warning/30";
+      default:
+        return "bg-slate-100 text-slate-600 border-slate-200";
+    }
+  };
+
+  const priorityStyle = getPriorityStyles(project.priority);
+  const PriorityIcon = priorityStyle.icon;
+
   return (
-    <div className="group bg-white p-6 rounded-2xl border border-slate-200 hover:border-secondary/50 hover:shadow-lg transition-all cursor-pointer animate-fade-in">
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex items-center gap-2">
-          <div className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[9px] font-bold text-slate-400 uppercase tracking-widest">
-            {client?.company}
-          </div>
+    <div className="group bg-white p-5 rounded-2xl border border-slate-200 hover:border-secondary/50 hover:shadow-lg transition-all cursor-pointer animate-fade-in flex flex-col h-full">
+      {/* Header with Company and Menu */}
+      <div className="flex justify-between items-start mb-3">
+        <div className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[8px] font-bold text-slate-400 uppercase tracking-widest">
+          {client?.company || "N/A"}
         </div>
         <button className="p-1.5 text-slate-300 hover:text-primary transition-colors">
           <MoreVertical size={14} />
         </button>
       </div>
 
-      <h4 className="font-bold text-primary text-sm md:text-base tracking-tight mb-4 group-hover:text-secondary transition-colors">
+      {/* Project Name */}
+      <h4 className="font-bold text-primary text-sm tracking-tight mb-2 group-hover:text-secondary transition-colors line-clamp-2">
         {project.name}
       </h4>
 
-      <div className="space-y-2 mb-4">
-        <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest mb-1.5">
-          <span className="text-slate-400">Completion</span>
+      {/* Status & Category Badges */}
+      <div className="flex gap-2 mb-3 flex-wrap">
+        <span
+          className={`px-2.5 py-1 text-[8px] font-bold uppercase tracking-widest border rounded-md ${getStatusColor(project.status)}`}
+        >
+          {project.status?.replace("_", " ") || "Planning"}
+        </span>
+        <span
+          className={`px-2.5 py-1 text-[8px] font-bold uppercase tracking-widest border rounded-md ${getCategoryColor(project.category)}`}
+        >
+          {project.category || "Tech"}
+        </span>
+      </div>
+
+      {/* Priority Badge */}
+      <div className="mb-3">
+        <span
+          className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-[8px] font-bold uppercase tracking-widest border rounded-md ${priorityStyle.badge}`}
+        >
+          <PriorityIcon size={10} />
+          {project.priority?.toUpperCase() || "MEDIUM"}
+        </span>
+      </div>
+
+      {/* Progress Section */}
+      <div className="space-y-2 mb-4 flex-1">
+        <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-widest">
+          <span className="text-slate-400">Progress</span>
           <span className="text-primary">{project.progress}%</span>
         </div>
-        <div className="w-full bg-slate-50 border border-slate-100 rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-slate-100 border border-slate-150 rounded-full h-1.5 overflow-hidden">
           <div
             className="bg-secondary h-full rounded-full transition-all duration-1000 ease-out"
             style={{ width: `${project.progress}%` }}
@@ -80,29 +173,34 @@ const ProjectCard = ({ project, clients }) => {
         </div>
       </div>
 
-      <div className="flex justify-between items-center pt-4 border-t border-slate-100 text-[10px] font-bold uppercase tracking-widest text-textMuted">
-        <div className="flex items-center gap-2">
-          <Clock size={10} className="text-secondary" />
+      {/* Footer with Deadline */}
+      <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[9px] font-bold uppercase tracking-widest text-slate-500">
+        <div className="flex items-center gap-1.5">
+          <Calendar size={12} className="text-secondary" />
           <span>
-            {new Date(project.deadline).toLocaleDateString(undefined, {
-              month: "short",
-              day: "numeric",
-            })}
+            {project.deadline
+              ? new Date(project.deadline).toLocaleDateString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                })
+              : "No deadline"}
           </span>
         </div>
-        <div className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">
-          <DollarSign size={10} className="text-success" />
-          <span className="text-primary">
-            {(project.budget / 1000).toFixed(0)}k
-          </span>
-        </div>
+        {project.budget && (
+          <div className="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100">
+            <DollarSign size={10} className="text-success" />
+            <span className="text-primary">
+              {(project.budget / 1000).toFixed(0)}k
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
 const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
-  const [activeStage, setActiveStage] = useState("Planning");
+  const [activeStage, setActiveStage] = useState("Pending");
   const [showAddModal, setShowAddModal] = useState(false);
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const [isPriorityDropdownOpen, setIsPriorityDropdownOpen] = useState(false);
@@ -112,7 +210,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
     phone: "",
     status: "Active",
     projectName: "",
-    projectStatus: "Planning",
+    projectStatus: "Pending",
     projectCategory: "Tech",
     projectPriority: "Medium",
     projectDescription: "",
@@ -156,11 +254,11 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
         budget: 0, // Default for now
         deadline: formData.deadline,
         progress:
-          formData.projectStatus === "Completed"
+          formData.projectStatus === "Live"
             ? 100
             : formData.projectStatus === "Testing"
               ? 75
-              : formData.projectStatus === "On Going"
+              : formData.projectStatus === "In Progress"
                 ? 40
                 : 10,
         category: formData.projectCategory,
@@ -176,7 +274,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
       phone: "",
       status: "Active",
       projectName: "",
-      projectStatus: "Planning",
+      projectStatus: "Pending",
       projectCategory: "Tech",
       projectPriority: "Medium",
       projectDescription: "",
@@ -517,7 +615,7 @@ const ProjectBoard = ({ projects, clients, onAddProject, onAddClient }) => {
                               Select Status
                             </p>
                           </div>
-                          {["Planning", "On Going", "Testing", "Completed"].map(
+                          {["Pending", "In Progress", "Testing", "Live"].map(
                             (status) => (
                               <button
                                 key={status}

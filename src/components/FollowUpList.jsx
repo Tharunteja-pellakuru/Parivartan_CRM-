@@ -28,9 +28,15 @@ const FollowUpList = ({
   const [formData, setFormData] = useState({
     clientId: "",
     title: "",
-    dueDate: new Date().toISOString().split("T")[0],
+    description: "",
+    followup_date: new Date().toISOString().split("T")[0],
+    followup_mode: "call",
+    followup_status: "pending",
+    follow_brief: "",
     priority: "Medium",
   });
+  const [isModeDropdownOpen, setIsModeDropdownOpen] = useState(false);
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
 
   const getClientById = (id) => clients.find((c) => c.id === id);
   const isOverdue = (date) =>
@@ -76,7 +82,11 @@ const FollowUpList = ({
     setFormData({
       clientId: "",
       title: "",
-      dueDate: new Date().toISOString().split("T")[0],
+      description: "",
+      followup_date: new Date().toISOString().split("T")[0],
+      followup_mode: "call",
+      followup_status: "pending",
+      follow_brief: "",
       priority: "Medium",
     });
   };
@@ -114,7 +124,7 @@ const FollowUpList = ({
           </div>
           <div className="w-full lg:w-auto">
             <button
-              onClick={() => onNavigate && onNavigate("leads")}
+              onClick={() => setShowAddModal(true)}
               className="w-full lg:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl hover:bg-slate-800 transition-all text-xs font-bold uppercase tracking-wider shadow-lg active:scale-95 group"
             >
               <Plus
@@ -122,7 +132,7 @@ const FollowUpList = ({
                 strokeWidth={3}
                 className="group-hover:rotate-90 transition-transform"
               />{" "}
-              New Follow-Up
+              Add Follow-Up
             </button>
           </div>
         </div>
@@ -243,10 +253,10 @@ const FollowUpList = ({
                 <X size={24} strokeWidth={3} />
               </button>
               <h3 className="text-lg font-bold tracking-tighter mb-1">
-                New Task
+                Add Follow Up
               </h3>
               <p className="text-slate-400 text-[9px] font-bold uppercase tracking-widest">
-                Schedule Follow-up
+                Create a new follow-up task
               </p>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
@@ -326,77 +336,179 @@ const FollowUpList = ({
                   />
                 </div>
 
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
+                    Description
+                  </label>
+                  <textarea
+                    placeholder="Add details about your follow-up..."
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium shadow-sm focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none resize-none"
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
+                    rows="3"
+                  />
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
-                      Due Date
+                      Follow-up Date
                     </label>
                     <input
                       required
                       type="date"
                       className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium shadow-sm focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none text-[#18254D]"
-                      value={formData.dueDate}
+                      value={formData.followup_date}
                       onChange={(e) =>
-                        setFormData({ ...formData, dueDate: e.target.value })
+                        setFormData({
+                          ...formData,
+                          followup_date: e.target.value,
+                        })
                       }
                     />
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
-                      Priority
+                      Follow-up Mode
                     </label>
                     <div className="relative">
                       <button
                         type="button"
                         onClick={() =>
-                          setIsPriorityDropdownOpen(!isPriorityDropdownOpen)
+                          setIsModeDropdownOpen(!isModeDropdownOpen)
                         }
                         className="w-full flex items-center justify-between px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm hover:border-secondary transition-all"
                       >
-                        <span className="text-primary">
-                          {formData.priority}
+                        <span className="text-primary capitalize">
+                          {formData.followup_mode}
                         </span>
                         <ChevronDown
                           size={16}
-                          className={`text-slate-400 transition-transform ${isPriorityDropdownOpen ? "rotate-180" : ""}`}
+                          className={`text-slate-400 transition-transform ${isModeDropdownOpen ? "rotate-180" : ""}`}
                         />
                       </button>
 
-                      {isPriorityDropdownOpen && (
+                      {isModeDropdownOpen && (
                         <>
                           <div
                             className="fixed inset-0 z-[80]"
-                            onClick={() => setIsPriorityDropdownOpen(false)}
+                            onClick={() => setIsModeDropdownOpen(false)}
                           />
                           <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[90] animate-fade-in-up origin-top">
                             <div className="bg-[#18254D] px-4 py-3 border-b border-white/10">
                               <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest">
-                                Select Priority
+                                Select Mode
                               </p>
                             </div>
-                            {["High", "Medium", "Low"].map((level) => (
-                              <button
-                                key={level}
-                                type="button"
-                                onClick={() => {
-                                  setFormData({ ...formData, priority: level });
-                                  setIsPriorityDropdownOpen(false);
-                                }}
-                                className={`w-full text-left px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest transition-colors ${
-                                  formData.priority === level
-                                    ? "bg-slate-100 text-secondary"
-                                    : "text-[#18254D] hover:bg-slate-50"
-                                }`}
-                              >
-                                {level}
-                              </button>
-                            ))}
+                            {["call", "email", "meeting", "whatsapp"].map(
+                              (mode) => (
+                                <button
+                                  key={mode}
+                                  type="button"
+                                  onClick={() => {
+                                    setFormData({
+                                      ...formData,
+                                      followup_mode: mode,
+                                    });
+                                    setIsModeDropdownOpen(false);
+                                  }}
+                                  className={`w-full text-left px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest transition-colors capitalize ${
+                                    formData.followup_mode === mode
+                                      ? "bg-slate-100 text-secondary"
+                                      : "text-[#18254D] hover:bg-slate-50"
+                                  }`}
+                                >
+                                  {mode}
+                                </button>
+                              ),
+                            )}
                           </div>
                         </>
                       )}
                     </div>
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
+                    Follow-up Status
+                  </label>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setIsStatusDropdownOpen(!isStatusDropdownOpen)
+                      }
+                      className="w-full flex items-center justify-between px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold shadow-sm hover:border-secondary transition-all"
+                    >
+                      <span className="text-primary capitalize">
+                        {formData.followup_status}
+                      </span>
+                      <ChevronDown
+                        size={16}
+                        className={`text-slate-400 transition-transform ${isStatusDropdownOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
+
+                    {isStatusDropdownOpen && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-[80]"
+                          onClick={() => setIsStatusDropdownOpen(false)}
+                        />
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden z-[90] animate-fade-in-up origin-top">
+                          <div className="bg-[#18254D] px-4 py-3 border-b border-white/10">
+                            <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest">
+                              Select Status
+                            </p>
+                          </div>
+                          {[
+                            "pending",
+                            "completed",
+                            "rescheduled",
+                            "cancelled",
+                          ].map((status) => (
+                            <button
+                              key={status}
+                              type="button"
+                              onClick={() => {
+                                setFormData({
+                                  ...formData,
+                                  followup_status: status,
+                                });
+                                setIsStatusDropdownOpen(false);
+                              }}
+                              className={`w-full text-left px-5 py-3.5 text-[10px] font-bold uppercase tracking-widest transition-colors capitalize ${
+                                formData.followup_status === status
+                                  ? "bg-slate-100 text-secondary"
+                                  : "text-[#18254D] hover:bg-slate-50"
+                              }`}
+                            >
+                              {status}
+                            </button>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-primary uppercase tracking-widest ml-1">
+                    Brief Notes
+                  </label>
+                  <textarea
+                    placeholder="Add any brief notes..."
+                    className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium shadow-sm focus:ring-4 focus:ring-secondary/10 focus:border-secondary focus:outline-none resize-none"
+                    value={formData.follow_brief}
+                    onChange={(e) =>
+                      setFormData({ ...formData, follow_brief: e.target.value })
+                    }
+                    rows="2"
+                  />
                 </div>
               </div>
               <div className="flex gap-3">
@@ -411,7 +523,7 @@ const FollowUpList = ({
                   type="submit"
                   className="flex-1 py-3.5 bg-secondary text-primary rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg"
                 >
-                  Deploy
+                  Create Follow-up
                 </button>
               </div>
             </form>
